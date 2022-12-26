@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "RoboJesus",
-    "slug": "RoboJesus",
+    "name": "Faith Forward",
+    "slug": "faith-forward",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,6 +28,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "bad18883-3f8c-4b7d-acd3-5da0563faab9"
+      }
     }
   }
 }
