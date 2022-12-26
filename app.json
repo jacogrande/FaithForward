@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Faith Forward",
+    "name": "faith-forward",
     "slug": "faith-forward",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,7 +18,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.phaedrus.faithforward"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,7 +32,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "bad18883-3f8c-4b7d-acd3-5da0563faab9"
+        "projectId": "f0e47dc4-652b-438e-a726-e4db36dec0cb"
       }
     }
   }
