@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
-import colors from "../styles/colors";
+import React from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
 import { auth } from "../../firebase";
+import colors from "../styles/colors";
 
 // TODO: Unstub
 //       - email
@@ -11,8 +11,12 @@ const ProfileScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.section}>
-        <Text style={{ fontSize: 16, marginBottom: 5 }}>Email: {auth.currentUser?.email}</Text>
-        <Text style={{ fontSize: 16, marginBottom: 5 }}>Account Level: Free</Text>
+        <Text style={{ fontSize: 16, marginBottom: 5 }}>
+          Email: {auth.currentUser?.email}
+        </Text>
+        <Text style={{ fontSize: 16, marginBottom: 5 }}>
+          Account Level: Free
+        </Text>
       </View>
       <Button
         title="Reset Password"

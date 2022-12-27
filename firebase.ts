@@ -19,9 +19,27 @@ const firebaseConfig = {
   projectId: "robo-jesus",
   storageBucket: "robo-jesus.appspot.com",
   messagingSenderId: "758499978476",
-  appId: "1:758499978476:web:b0a923bdce3247a90b09c9"
+  appId: "1:758499978476:web:b0a923bdce3247a90b09c9",
 };
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
+export interface PromptPayload {
+  userInput: string;
+  response: string;
+}
+
+export const createPrompt = async (newPrompt: PromptPayload) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const promptRef = await addDoc(collection(userRef, "prompts"), {
+    ...newPrompt,
+    createdAt: new Date(),
+  });
+  return promptRef;
+};
