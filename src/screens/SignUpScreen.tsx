@@ -1,71 +1,95 @@
-import * as React from "react";
 import {
-  View,
-  TouchableWithoutFeedback,
-  Text,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import React, { useState } from "react";
+import {
   Button,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
   StyleSheet,
-  Keyboard,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-import useInput from "../components/useInput";
-import { useApi } from "../services/api";
+import { auth } from "../../firebase";
 import colors from "../styles/colors";
 
-const SignUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const [emailComponent, email, setEmail] = useInput("Email");
-  const [passwordComponent, password, setPassword] = useInput("Password", {
-    type: "password",
-  });
+// TODO: Should create / auth user in auth and in Firestore
+// TODO: Support forgot password flow
+export const SignUpScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const {
-    isLoading: isRegistering,
-    data: registrationData,
-    fetch: register,
-  } = useApi(
-    "https://us-central1-robo-jesus.cloudfunctions.net/getGpt3Response",
-    {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: { "Content-Type": "application/json" },
+  const handleError = (err: any): void => {
+    console.error(err);
+    // If message contains "email-already-in-use" then set error to "Email already in use. Try logging in."
+    if (err.message.includes("email-already-in-use")) {
+      setError("Email already in use. Try logging in.");
+    } else if (err.message.includes("wrong-password")) {
+      setError("Wrong password. Try again.");
+    } else if (err.message.includes("invalid-email")) {
+      setError("Invalid email. Try again.");
+    } else if (err.message.includes("user-not-found")) {
+      setError("User not found. Try signing up.");
+    } else {
+      setError(err.message);
     }
-  );
+  };
 
-  const {
-    isLoading: isLoggingIn,
-    data: loginData,
-    fetch: login,
-  } = useApi(
-    "https://us-central1-robo-jesus.cloudfunctions.net/getGpt3Response",
-    {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: { "Content-Type": "application/json" },
+  const signUp = async (): Promise<void> => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      setError("");
+    } catch (err) {
+      handleError(err);
     }
-  );
+  };
 
-  const handleRegister = async () => {};
-
-  const handleLogin = async () => {
-    navigation.navigate("Zeal");
+  const signIn = async (): Promise<void> => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      setError("");
+    } catch (err) {
+      handleError(err);
+    }
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Welcome</Text>
-        {emailComponent}
-        {passwordComponent}
-        <Button title="Sign In" onPress={handleLogin} color={colors.orange} />
-        <View style={styles.signUp}>
-          <Text style={styles.signUpText}>Don't have an account?</Text>
-          <Button
-            color={colors.blue}
-            title="Sign Up"
-            onPress={handleRegister}
-          />
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.content}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <TextInput
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Email"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          returnKeyType="next"
+          testID="EmailInput"
+          style={styles.input}
+        />
+        <TextInput
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Password"
+          returnKeyType="done"
+          autoCapitalize="none"
+          testID="PasswordInput"
+          style={styles.input}
+          secureTextEntry
+        />
+        {!!error && <Text style={styles.error}>{error}</Text>}
+        <View style={styles.actions}>
+          <Button title="Sign Up" onPress={signUp} testID="SignUpButton" />
+          <Button title="Sign In" onPress={signIn} testID="SignInButton" />
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
@@ -91,6 +115,28 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontStyle: "italic",
     color: "rgba(0,0,0,0.6)",
+  },
+  actions: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  error: {
+    color: "#cc0000",
+  },
+  input: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 6,
+    height: 40,
+    width: "75%",
+    margin: 10,
   },
 });
 

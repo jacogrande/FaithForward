@@ -1,14 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
-  View,
-  TextInput,
-  TouchableWithoutFeedback,
-  Button,
-  Text,
-  Keyboard,
-  StyleSheet,
-  ScrollView,
   Animated,
+  Button,
+  Keyboard,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import KeywordManager from "../components/KeywordManager";
 import useInput from "../components/useInput";
