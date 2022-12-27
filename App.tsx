@@ -1,6 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import BaseScreen from "./src/screens/BaseScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import SignUpScreen from "./src/screens/SignUpScreen";
 import colors from "./src/styles/colors";
@@ -10,15 +9,16 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Zeal"
+        initialRouteName="Faith Forward"
         screenOptions={{
           headerStyle: {
             backgroundColor: colors.paper,
           },
+          header: () => null,
         }}
       >
         <Stack.Screen
-          name="Zeal"
+          name="Faith Forward"
           component={HomeScreen}
           options={{
             headerLeft: () => null,
