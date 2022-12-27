@@ -5,13 +5,21 @@ import colors from "../styles/colors";
 interface Props {
   keyword: string;
   onPress: () => void;
+  active?: boolean;
 }
 
-const KeywordChip: React.FC<Props> = ({ keyword, onPress }) => {
+const KeywordChip: React.FC<Props> = ({ keyword, onPress, active }) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={styles.chip}>
-        <Text style={styles.chipText}>{keyword}</Text>
+      <View style={[styles.chip, active && styles.activeChip]}>
+        <Text
+          style={[
+            styles.chipText,
+            active && { color: "#fff", fontWeight: "bold" },
+          ]}
+        >
+          {keyword}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -20,14 +28,17 @@ const KeywordChip: React.FC<Props> = ({ keyword, onPress }) => {
 const styles = StyleSheet.create({
   chip: {
     backgroundColor: colors.darkPaper,
-    borderRadius: 0,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    marginRight: 8,
-    marginBottom: 8,
+    borderRadius: 32,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginHorizontal: 8,
+    marginVertical: 4,
+  },
+  activeChip: {
+    backgroundColor: colors.blue,
   },
   chipText: {
-    fontSize: 12,
+    fontSize: 18,
     color: "#222",
   },
 });

@@ -1,105 +1,135 @@
 import React, { useState } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Animated,
-  Button,
-  ScrollView,
-} from "react-native";
-import colors from "../styles/colors";
+import { View, StyleSheet, Animated } from "react-native";
+import HeaderChip from "./HeaderChip";
 import KeywordChip from "./KeywordChip";
 
-interface Props {
-  onPress: (input: string) => void;
-}
-
-interface IKeywordDictionary {
-  [key: string]: string[];
-}
-
 const emotions: string[] = [
-  "Happiness",
-  "Sadness",
-  "Fear",
-  "Anger",
-  "Surprise",
-  "Disgust",
-  "Love",
-  "Guilt",
-  "Envy",
-  "Jealousy",
-  "Embarrassment",
-  "Nostalgia",
-  "Awe",
-  "Curiosity",
-  "Excitement",
-  "Optimism",
-  "Pessimism",
-].sort(() => 0.5 - Math.random());
+  "Happy",
+  "Sad",
+  "Angry",
+  "Fearful",
+  "Loving",
+  "Hopeful",
+  "Envious",
+  "Disgusted",
+  "Frustrated",
+  "Confused",
+  "Anxious",
+  "Excited",
+  "Depressed",
+  "Proud",
+  "Embarrassed",
+  "Guilty",
+].sort((a, b) => a.localeCompare(b));
 
 const topics: string[] = [
-  "Work",
   "Relationships",
-  "Church",
   "Family",
+  "Career",
+  "Finances",
   "Health",
-  "Finance",
-  "Education",
-  "Leisure",
-  "Travel",
   "Politics",
-].sort(() => 0.5 - Math.random());
+  "Self-Esteem",
+  "Loss",
+  "Change",
+  "Failure",
+  "Success",
+  "Safety",
+  "Rejection",
+  "Values",
+  "Self-Expression",
+  "Mortality",
+].sort((a, b) => a.localeCompare(b));
 
-const KeywordManager: React.FC<Props> = ({ onPress }) => {
+interface Props {
+  setTopic: (newValue: string | null) => void;
+  setEmotion: (newValue: string | null) => void;
+  setShowSubmit: (newValue: boolean) => void;
+  verseLoaded: boolean;
+  resetParent: () => void;
+}
+
+const KeywordManager: React.FC<Props> = ({
+  setTopic,
+  setEmotion,
+  setShowSubmit,
+  resetParent,
+}) => {
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
   const [opacity] = useState(new Animated.Value(1));
 
-  const selectEmotion = (emotion: string) => {
+  const selectTopic = (emotion: string) => {
     Animated.timing(opacity, {
       toValue: 0,
       duration: 500,
       useNativeDriver: true,
     }).start();
     setTimeout(() => {
-      setSelectedEmotion(emotion);
+      setSelectedTopic(emotion);
       Animated.timing(opacity, {
         toValue: 1,
         duration: 500,
         useNativeDriver: true,
       }).start();
+      setShowSubmit(true);
     }, 600);
   };
 
   const handlePress = (keyword: string) => {
-    if (!selectedEmotion) {
-      selectEmotion(keyword);
+    if (!selectedTopic) {
+      selectTopic(keyword);
+      setTopic(keyword);
     } else {
-      onPress(`I feel ${selectedEmotion} about ${keyword}`);
+      setSelectedEmotion(keyword);
+      setEmotion(keyword);
     }
   };
 
-  const handleBack = () => {
+  const handleSomethingElse = () => {
     setSelectedEmotion(null);
-    onPress("");
+    setShowSubmit(false);
+    setTopic("Something Else");
+  };
+
+  const reset = () => {
+    setSelectedEmotion(null);
+    setSelectedTopic(null);
+    setShowSubmit(false);
+    resetParent();
   };
 
   return (
     <View style={styles.container}>
-      {selectedEmotion && (
-        <Button onPress={handleBack} title="Back" color={colors.orange} />
+      {selectedTopic && (
+        <View
+          style={{
+            flexDirection: "row",
+            marginVertical: 12,
+            alignItems: "baseline",
+          }}
+        >
+          <HeaderChip keyword={selectedTopic} onPress={reset} />
+          {/* <Text style={styles.header}>?</Text> */}
+        </View>
       )}
       <Animated.View style={[styles.keywordChipsContainer, { opacity }]}>
-        <ScrollView horizontal>
-          {(selectedEmotion ? topics : emotions).map((keyword) => (
+        <View style={styles.keywordChipsContainer}>
+          {(selectedTopic ? emotions : topics).map((keyword) => (
             <KeywordChip
               keyword={keyword}
               onPress={() => handlePress(keyword)}
+              active={selectedTopic ? keyword === selectedEmotion : false}
               key={keyword}
             />
           ))}
-        </ScrollView>
+          {!selectedTopic && (
+            <KeywordChip
+              keyword="Something Else"
+              onPress={handleSomethingElse}
+            />
+          )}
+        </View>
       </Animated.View>
     </View>
   );
@@ -110,12 +140,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",
-    marginLeft: 8,
+    width: "100%",
   },
+
   keywordChipsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
+    marginTop: 24,
   },
   keywordsContainer: {
     alignItems: "center",
