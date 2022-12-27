@@ -1,13 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
+  Animated,
+  Button,
   Keyboard,
   StyleSheet,
-  Animated,
+  Text,
   TouchableOpacity,
-  Button,
+  View,
 } from "react-native";
+import { auth } from "../../firebase";
 import KeywordManager from "../components/KeywordManager";
 import useInput from "../components/useInput";
 import VerseContainer from "../components/VerseContainer";
@@ -37,7 +38,10 @@ const HomeScreen: React.FC = () => {
     "https://us-central1-robo-jesus.cloudfunctions.net/getGpt3Response",
     {
       method: "POST",
-      body: JSON.stringify({ prompt: inputValue }),
+      body: JSON.stringify({
+        userId: auth.currentUser?.uid,
+        prompt: inputValue,
+      }),
       headers: { "Content-Type": "application/json" },
     }
   );

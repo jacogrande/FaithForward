@@ -1,24 +1,29 @@
-import * as React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import React from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { auth } from "../../firebase";
 import colors from "../styles/colors";
 
+// TODO: Unstub
+//       - account level
+//       - reset password link
 const ProfileScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.section}>
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>jane.doe@example.com</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.label}>Account Level:</Text>
-        <Text style={styles.value}>Premium</Text>
+        <Text style={{ fontSize: 16, marginBottom: 5 }}>
+          Email: {auth.currentUser?.email}
+        </Text>
+        <Text style={{ fontSize: 16, marginBottom: 5 }}>
+          Account Level: Free
+        </Text>
       </View>
       <Button
         title="Reset Password"
         onPress={() => {
-          // Perform reset password logic here
+          // TODO: Perform reset password logic here
         }}
       />
+      <Button title="Sign Out" onPress={() => auth.signOut()} />
     </View>
   );
 };
@@ -27,21 +32,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    textAlign: "center",
+    textAlign: "left",
     backgroundColor: colors.paper,
+    paddingTop: 64,
   },
   section: {
     marginBottom: 16,
     marginTop: 8,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  value: {
-    fontSize: 16,
-    textAlign: "center",
   },
 });
 
