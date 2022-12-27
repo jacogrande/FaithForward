@@ -1,7 +1,13 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import colors from "../styles/colors";
+import { auth } from "../../firebase";
 
+// TODO: Unstub
+//       - email
+//       - account level
+//       - reset password link
+// TODO: Add signout button
 const ProfileScreen: React.FC = () => {
   return (
     <View style={styles.container}>
@@ -16,9 +22,10 @@ const ProfileScreen: React.FC = () => {
       <Button
         title="Reset Password"
         onPress={() => {
-          // Perform reset password logic here
+          // TODO: Perform reset password logic here
         }}
       />
+      <Button title="Sign Out" onPress={() => auth.signOut()} />
     </View>
   );
 };

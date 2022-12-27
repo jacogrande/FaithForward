@@ -9,9 +9,11 @@ export const useApi = (url: string, data?: RequestInit) => {
     try {
       const response = await fetch(url, data);
       console.log(response.status);
-      if (response.status === 200) setResponseData(await response.json());
-      else
+      if (response.status === 200) {
+        setResponseData(await response.json());
+      } else {
         throw new Error("Error fetching data. Status code: " + response.status);
+      }
     } catch (error) {
       console.error(error);
       setResponseData(error);
