@@ -7,17 +7,12 @@ import { auth } from "../../firebase";
 //       - email
 //       - account level
 //       - reset password link
-// TODO: Add signout button
 const ProfileScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.section}>
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>jane.doe@example.com</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.label}>Account Level:</Text>
-        <Text style={styles.value}>Premium</Text>
+        <Text style={{ fontSize: 16, marginBottom: 5 }}>Email: {auth.currentUser?.email}</Text>
+        <Text style={{ fontSize: 16, marginBottom: 5 }}>Account Level: Free</Text>
       </View>
       <Button
         title="Reset Password"
@@ -34,21 +29,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    textAlign: "center",
+    textAlign: "left",
     backgroundColor: colors.paper,
   },
   section: {
     marginBottom: 16,
     marginTop: 8,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  value: {
-    fontSize: 16,
-    textAlign: "center",
   },
 });
 
