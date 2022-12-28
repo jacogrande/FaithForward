@@ -1,136 +1,40 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, ScrollView } from "react-native";
+import useStore from "../Store";
 import HeaderChip from "./HeaderChip";
 import KeywordChip from "./KeywordChip";
 
-const emotions: string[] = [
-  "Happy",
-  "Sad",
-  "Angry",
-  "Fearful",
-  "Loving",
-  "Hopeful",
-  "Envious",
-  "Disgusted",
-  "Frustrated",
-  "Confused",
-  "Anxious",
-  "Excited",
-  "Depressed",
-  "Proud",
-  "Embarrassed",
-  "Guilty",
-].sort((a, b) => a.localeCompare(b));
+const prompts: string[] = [
+  "I am worried about...",
+  "I am grateful for...",
+  "I am struggling with...",
+  "I am curious about...",
+  "I am feeling...",
+].sort(() => 0.5 - Math.random());
 
-const topics: string[] = [
-  "Relationships",
-  "Family",
-  "Career",
-  "Finances",
-  "Health",
-  "Politics",
-  "Self-Esteem",
-  "Loss",
-  "Change",
-  "Failure",
-  "Success",
-  "Safety",
-  "Rejection",
-  "Values",
-  "Self-Expression",
-  "Mortality",
-].sort((a, b) => a.localeCompare(b));
+const KeywordManager: React.FC = () => {
+  const { promptStart, setPromptStart } = useStore((state) => ({
+    promptStart: state.promptStart,
+    setPromptStart: state.setPromptStart,
+  }));
 
-interface Props {
-  setTopic: (newValue: string | null) => void;
-  setEmotion: (newValue: string | null) => void;
-  setShowSubmit: (newValue: boolean) => void;
-  verseLoaded: boolean;
-  resetParent: () => void;
-}
-
-const KeywordManager: React.FC<Props> = ({
-  setTopic,
-  setEmotion,
-  setShowSubmit,
-  resetParent,
-}) => {
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
-  const [opacity] = useState(new Animated.Value(1));
-
-  const selectTopic = (emotion: string) => {
-    Animated.timing(opacity, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-    setTimeout(() => {
-      setSelectedTopic(emotion);
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
-      setShowSubmit(true);
-    }, 600);
-  };
-
-  const handlePress = (keyword: string) => {
-    if (!selectedTopic) {
-      selectTopic(keyword);
-      setTopic(keyword);
-    } else {
-      setSelectedEmotion(keyword);
-      setEmotion(keyword);
-    }
-  };
-
-  const handleSomethingElse = () => {
-    setSelectedEmotion(null);
-    setShowSubmit(false);
-    setTopic("Something Else");
-  };
-
-  const reset = () => {
-    setSelectedEmotion(null);
-    setSelectedTopic(null);
-    setShowSubmit(false);
-    resetParent();
+  const handlePress = (e: string) => {
+    if (promptStart !== e) setPromptStart(e);
+    else setPromptStart(null);
   };
 
   return (
     <View style={styles.container}>
-      {selectedTopic && (
-        <View
-          style={{
-            flexDirection: "row",
-            marginVertical: 12,
-            alignItems: "baseline",
-          }}
-        >
-          <HeaderChip keyword={selectedTopic} onPress={reset} />
-          {/* <Text style={styles.header}>?</Text> */}
-        </View>
-      )}
-      <Animated.View style={[styles.keywordChipsContainer, { opacity }]}>
-        <View style={styles.keywordChipsContainer}>
-          {(selectedTopic ? emotions : topics).map((keyword) => (
-            <KeywordChip
-              keyword={keyword}
-              onPress={() => handlePress(keyword)}
-              active={selectedTopic ? keyword === selectedEmotion : false}
-              key={keyword}
-            />
-          ))}
-          {!selectedTopic && (
-            <KeywordChip
-              keyword="Something Else"
-              onPress={handleSomethingElse}
-            />
-          )}
-        </View>
-      </Animated.View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {prompts.map((prompt, index) => (
+          <KeywordChip
+            key={index}
+            keyword={prompt}
+            onPress={() => handlePress(prompt)}
+            active={promptStart === prompt}
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -138,20 +42,9 @@ const KeywordManager: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-    width: "100%",
-  },
-
-  keywordChipsContainer: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
+    width: "80%",
     marginTop: 24,
-  },
-  keywordsContainer: {
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 export default KeywordManager;

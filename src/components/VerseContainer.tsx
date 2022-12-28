@@ -1,33 +1,43 @@
-import { Animated, ScrollView, Text, StyleSheet } from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import colors from "../styles/colors";
 
-const VerseContainer: React.FC<{ verse: any; anim: Animated.Value }> = ({
+const VerseContainer: React.FC<{ verse: any; isLoading: boolean }> = ({
   verse,
-  anim,
+  isLoading,
 }) => {
   return (
-    <Animated.View style={[styles.verse, { opacity: anim }]}>
+    <View style={styles.verse}>
       <ScrollView style={{ paddingTop: 24 }}>
-        {verse && verse.response ? (
+        {verse && verse.response && (
           <Text style={styles.response}>{verse.response}</Text>
-        ) : (
-          <Text style={styles.response}>Loading</Text>
+        )}
+        {isLoading && (
+          <ActivityIndicator
+            color={colors.blue}
+            size={"large"}
+            style={{ marginTop: 48 }}
+          />
         )}
       </ScrollView>
-    </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   response: {
-    fontSize: 20,
+    fontSize: 16,
     padding: 36,
     paddingTop: 8,
     color: "#333",
     lineHeight: 28,
   },
   verse: {
-    flex: 1,
     // paddingTop: 24,
     // marginTop: 24,
     width: "100%",

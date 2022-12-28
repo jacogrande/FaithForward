@@ -3,10 +3,21 @@ import { Keyboard, TextInput, StyleSheet } from "react-native";
 
 const useInput = (
   placeholder: string,
-  config?: { type?: string; align?: "left" | "center"; multiline?: boolean }
+  config?: {
+    type?: string;
+    align?: "left" | "center";
+    multiline?: boolean;
+    setLinkedValue?: (e: string) => void;
+  }
 ): [JSX.Element, string, React.Dispatch<React.SetStateAction<string>>] => {
   const [value, setValue] = useState("");
   const inputRef = useRef<TextInput>(null);
+
+  React.useEffect(() => {
+    if (config && config.setLinkedValue) {
+      config.setLinkedValue(value);
+    }
+  }, [config?.setLinkedValue, value]);
 
   const handleBlur = () => {
     Keyboard.dismiss();
@@ -36,10 +47,7 @@ const useInput = (
 const styles = StyleSheet.create({
   input: {
     height: 40,
-    // backgroundColor: "#fff",
     backgroundColor: "rgba(0, 0, 0, 0.07)",
-    // borderWidth: 1,
-    // borderColor: "gray",
     borderRadius: 4,
     margin: 10,
     padding: 12,
@@ -47,6 +55,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     width: "80%",
     fontSize: 16,
+    fontWeight: "500",
+    color: "#444",
   },
 });
 
