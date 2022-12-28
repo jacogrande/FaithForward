@@ -89,7 +89,11 @@ const HomeScreen: React.FC = () => {
   // }
 
   return (
-    <ScrollView style={styles.scroller} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      style={styles.scroller}
+      contentContainerStyle={{ flexGrow: 1 }}
+      keyboardShouldPersistTaps="always"
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -121,7 +125,7 @@ const HomeScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   scroller: {
-    height: "100%",
+    // height: "100%",
     backgroundColor: colors.paper,
     flex: 1,
   },
