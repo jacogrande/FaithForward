@@ -1,4 +1,5 @@
 import {
+  sendPasswordResetEmail,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
@@ -18,14 +19,13 @@ import colors from "../styles/colors";
 
 // TODO: Should create / auth user in auth and in Firestore
 // TODO: Support forgot password flow
-export const SignUpScreen = () => {
+export const AuthScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleError = (err: any): void => {
     console.error(err);
-    // If message contains "email-already-in-use" then set error to "Email already in use. Try logging in."
     if (err.message.includes("email-already-in-use")) {
       setError("Email already in use. Try logging in.");
     } else if (err.message.includes("wrong-password")) {
@@ -34,6 +34,8 @@ export const SignUpScreen = () => {
       setError("Invalid email. Try again.");
     } else if (err.message.includes("user-not-found")) {
       setError("User not found. Try signing up.");
+    } else if (err.message.includes("missing-email")) {
+      setError("Please enter an email.");
     } else {
       setError(err.message);
     }
@@ -51,6 +53,15 @@ export const SignUpScreen = () => {
   const signIn = async (): Promise<void> => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      setError("");
+    } catch (err) {
+      handleError(err);
+    }
+  };
+
+  const handlePasswordReset = async (): Promise<void> => {
+    try {
+      await sendPasswordResetEmail(auth, email);
       setError("");
     } catch (err) {
       handleError(err);
@@ -87,6 +98,10 @@ export const SignUpScreen = () => {
         <View style={styles.actions}>
           <Button title="Sign Up" onPress={signUp} testID="SignUpButton" />
           <Button title="Sign In" onPress={signIn} testID="SignInButton" />
+        </View>
+        {/* TODO: Add "forgot password" flow */}
+        <View style={styles.actions}>
+          <Button title="Forgot Password" onPress={handlePasswordReset} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -140,4 +155,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUpScreen;
+export default AuthScreen;
