@@ -78,13 +78,15 @@ export const AuthScreen = () => {
       end={{ x: 1, y: 1 }}
     >
       <SafeAreaView style={styles.container}>
-        <Image
-          source={require("../../assets/logo-book.png")}
-          resizeMode="contain"
-          style={styles.logo}
-        />
-        <View style={styles.faithForward}>
-          <Text style={styles.faithForwardText}>Faith Forward</Text>
+        <View style={styles.brandContainer}>
+          <Image
+            source={require("../../assets/logo-book.png")}
+            resizeMode="contain"
+            style={styles.logo}
+          />
+          <View style={styles.faithForward}>
+            <Text style={styles.faithForwardText}>Faith Forward</Text>
+          </View>
         </View>
         <KeyboardAvoidingView
           style={styles.content}
@@ -161,34 +163,66 @@ export const AuthScreen = () => {
 const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+  authButton: {
+    backgroundColor: "#1E90FF",
+    borderRadius: 10,
+    padding: 15,
+    width: width * 0.35,
   },
-  linearGradient: {
-    flex: 1,
+  authButtons: {
+    flexDirection: "row",
+    marginVertical: 5,
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
   },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  logo: {
-    width: width * 0.4,
-    flex: 1,
+  authButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: 16,
   },
   authCard: {
     paddingTop: 40,
     paddingBottom: 10,
     backgroundColor: "white",
   },
-  faithForward: {},
+  brandContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  content: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+  },
+  faithForward: {
+    marginBottom: 40,
+  },
   faithForwardText: {
     fontSize: 36,
     fontWeight: "bold",
     color: "#0A3D62",
     fontFamily: "Avenir",
   },
+  forgotPassword: {},
+  forgotPasswordButton: {
+    marginVertical: 10,
+  },
+  forgotPasswordButtonText: {
+    textAlign: "center",
+    fontStyle: "italic",
+    paddingTop: 20,
+    color: "#808080",
+  },
+  forgotPasswordView: {},
   input: {
     height: 50,
     width: width * 0.8,
@@ -200,49 +234,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "white",
   },
-  forgotPasswordView: {},
   inputs: {
     paddingBottom: 10,
   },
-  error: {
-    color: "red",
-    textAlign: "center",
-  },
-  forgotPassword: {},
-  authButtons: {
-    flexDirection: "row",
-    marginVertical: 5,
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-  },
-  authButton: {
-    backgroundColor: "#1E90FF",
-    borderRadius: 10,
-    padding: 15,
-    width: width * 0.35,
+  linearGradient: {
+    flex: 1,
   },
   logInButton: {
     backgroundColor: "white",
     borderWidth: 1,
     borderColor: "#1E90FF",
   },
-  authButtonText: {
-    color: "white",
-    textAlign: "center",
-    fontWeight: "600",
-    fontSize: 16,
-  },
   logInButtonText: {
     color: "#1E90FF",
   },
-  forgotPasswordButton: {
-    marginVertical: 10,
-  },
-  forgotPasswordButtonText: {
-    textAlign: "center",
-    fontStyle: "italic",
-    paddingTop: 20,
-    color: "#808080",
+  logo: {
+    width: width * 0.4,
+    flex: 1,
+    marginTop: 40,
   },
 });
 
