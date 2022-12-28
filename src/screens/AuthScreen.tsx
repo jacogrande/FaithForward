@@ -17,6 +17,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
 
 // TODO: Should create / auth user in auth and in Firestore
@@ -71,7 +72,6 @@ export const AuthScreen = () => {
   };
 
   // TODO: Auth components in card, popped-out
-  // TODO: Snackbar error
   return (
     <LinearGradient
       colors={["#5EB5D1", "#E6F5FA"]}
@@ -114,7 +114,6 @@ export const AuthScreen = () => {
               secureTextEntry
             />
           </View>
-          {!!error && <Text style={styles.error}>{error}</Text>}
           <View style={styles.actions}>
             <Pressable
               onPress={signUp}
@@ -142,6 +141,16 @@ export const AuthScreen = () => {
             </Pressable>
           </View>
         </KeyboardAvoidingView>
+        <Snackbar
+          visible={!!error}
+          onDismiss={() => setError("")}
+          action={{
+            label: "",
+            onPress: () => setError(""),
+          }}
+        >
+          {error}
+        </Snackbar>
       </SafeAreaView>
     </LinearGradient>
   );
