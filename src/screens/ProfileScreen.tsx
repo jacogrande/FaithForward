@@ -17,10 +17,8 @@ const ProfileScreen: React.FC = () => {
         <Text style={styles.heading}>Account Level</Text>
         <Text style={styles.text}>Free</Text>
       </View>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText} onPress={() => auth.signOut()}>
-          Sign Out
-        </Text>
+      <TouchableOpacity style={styles.button} onPress={() => auth.signOut()}>
+        <Text style={styles.buttonText}>Sign Out</Text>
         {/* <Button title="Sign Out" onPress={() => auth.signOut()} /> */}
       </TouchableOpacity>
     </View>
