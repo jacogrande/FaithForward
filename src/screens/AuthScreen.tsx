@@ -125,10 +125,12 @@ export const AuthScreen = () => {
             </Pressable>
             <Pressable
               onPress={signIn}
-              style={styles.authButton}
+              style={[styles.authButton, styles.logInButton]}
               testID="LogInButton"
             >
-              <Text style={styles.authButtonText}>Log In</Text>
+              <Text style={[styles.authButtonText, styles.logInButtonText]}>
+                Log In
+              </Text>
             </Pressable>
             <Pressable
               style={styles.forgotPasswordButton}
@@ -203,18 +205,25 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     width: width * 0.8,
   },
+  logInButton: {
+    backgroundColor: "white",
+    borderColor: "#E6F5FA",
+  },
   authButtonText: {
     color: "white",
     textAlign: "center",
     fontWeight: "600",
     fontSize: 16,
   },
+  logInButtonText: {
+    color: "#1E90FF",
+  },
   forgotPasswordButton: {
     marginVertical: 10,
   },
   forgotPasswordButtonText: {
     textAlign: "center",
-    color: "dark gray",
+    color: "#0A3D62",
   },
 });
 
