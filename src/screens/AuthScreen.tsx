@@ -1,13 +1,16 @@
+import { LinearGradient } from "expo-linear-gradient";
 import {
-  sendPasswordResetEmail,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import React, { useState } from "react";
 import {
-  Button,
+  Dimensions,
+  Image,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -15,7 +18,6 @@ import {
   View,
 } from "react-native";
 import { auth } from "../../firebase";
-import colors from "../styles/colors";
 
 // TODO: Should create / auth user in auth and in Firestore
 // TODO: Support forgot password flow
@@ -68,90 +70,151 @@ export const AuthScreen = () => {
     }
   };
 
+  // TODO: Auth components in card, popped-out
+  // TODO: Snackbar error
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.content}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Email"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          returnKeyType="next"
-          testID="EmailInput"
-          style={styles.input}
+    <LinearGradient
+      colors={["#5EB5D1", "#E6F5FA"]}
+      style={styles.linearGradient}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
+      <SafeAreaView style={styles.container}>
+        <Image
+          source={require("../../assets/logo-book.png")}
+          resizeMode="contain"
+          style={styles.logo}
         />
-        <TextInput
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Password"
-          returnKeyType="done"
-          autoCapitalize="none"
-          testID="PasswordInput"
-          style={styles.input}
-          secureTextEntry
-        />
-        {!!error && <Text style={styles.error}>{error}</Text>}
-        <View style={styles.actions}>
-          <Button title="Sign Up" onPress={signUp} testID="SignUpButton" />
-          <Button title="Sign In" onPress={signIn} testID="SignInButton" />
+        <View style={styles.faithForward}>
+          <Text style={styles.faithForwardText}>Faith Forward</Text>
         </View>
-        {/* TODO: Add "forgot password" flow */}
-        <View style={styles.actions}>
-          <Button title="Forgot Password" onPress={handlePasswordReset} />
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        <KeyboardAvoidingView
+          style={styles.content}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <View style={styles.inputs}>
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Email"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              returnKeyType="next"
+              testID="EmailInput"
+              style={styles.input}
+            />
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Password"
+              returnKeyType="done"
+              autoCapitalize="none"
+              testID="PasswordInput"
+              style={styles.input}
+              secureTextEntry
+            />
+          </View>
+          {!!error && <Text style={styles.error}>{error}</Text>}
+          <View style={styles.actions}>
+            <Pressable
+              onPress={signUp}
+              style={styles.authButton}
+              testID="SignUpButton"
+            >
+              <Text style={styles.authButtonText}>Sign Up</Text>
+            </Pressable>
+            <Pressable
+              onPress={signIn}
+              style={styles.authButton}
+              testID="LogInButton"
+            >
+              <Text style={styles.authButtonText}>Log In</Text>
+            </Pressable>
+            <Pressable
+              style={styles.forgotPasswordButton}
+              onPress={handlePasswordReset}
+            >
+              <Text style={styles.forgotPasswordButtonText}>
+                Forgot password?
+              </Text>
+            </Pressable>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
+
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.paper,
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
-  signUp: {
-    position: "absolute",
-    bottom: 36,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "baseline",
-  },
-  signUpText: {
-    fontSize: 18,
-    fontStyle: "italic",
-    color: "rgba(0,0,0,0.6)",
-  },
-  actions: {
-    flexDirection: "row",
-    marginTop: 10,
+  linearGradient: {
+    flex: 1,
   },
   content: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
   },
-  error: {
-    color: "#cc0000",
+  logo: {
+    width: width * 0.4,
+    flex: 1,
+  },
+  faithForward: {},
+  faithForwardText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#0A3D62",
+    fontFamily: "Avenir",
   },
   input: {
-    padding: 10,
+    height: 50,
+    width: width * 0.8,
+    borderColor: "gray",
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
-    height: 40,
-    width: "75%",
-    margin: 10,
+    marginHorizontal: 20,
+    marginVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: "white",
+  },
+  inputs: {},
+  error: {
+    color: "red",
+    textAlign: "center",
+  },
+  actions: {
+    flexDirection: "column",
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
+  actionButton: {
+    flex: 1,
+  },
+  forgotPassword: {},
+  authButton: {
+    backgroundColor: "#1E90FF",
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 5,
+    width: width * 0.8,
+  },
+  authButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  forgotPasswordButton: {
+    marginVertical: 10,
+  },
+  forgotPasswordButtonText: {
+    textAlign: "center",
+    color: "dark gray",
   },
 });
 
