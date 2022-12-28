@@ -46,6 +46,27 @@ const VerseContainer: React.FC<{ verse: any; isLoading: boolean }> = ({
     }
   }, [sharing]);
 
+  const formatVerse = () => {
+    // Split up the verse by quote (opening and closing quote), so that everything before a quote, the quote, and everything after are all elements
+    // Then, for each element, if it's a quote, replace it with a bunch of asterisks
+    const quotes: string[] = verse.response.split(/(".*?")/);
+    let formattedVerse: (string | JSX.Element)[] = [];
+    if (quotes.length >= 1) {
+      formattedVerse = quotes.map((quote, i) => {
+        if (i % 2 === 1) {
+          return (
+            <Text style={styles.highlight} key={quote}>
+              {quote}
+            </Text>
+          );
+        }
+        return quote;
+      });
+    }
+    if (formattedVerse.length > 0) return formattedVerse;
+    return verse.response;
+  };
+
   return (
     <View style={styles.verse}>
       <ScrollView style={{ paddingTop: 24, backgroundColor: colors.paper }}>
@@ -54,7 +75,7 @@ const VerseContainer: React.FC<{ verse: any; isLoading: boolean }> = ({
             <View
               style={{ alignItems: "center", backgroundColor: colors.paper }}
             >
-              <Text style={styles.response}>{verse.response}</Text>
+              <Text style={styles.response}>{formatVerse()}</Text>
             </View>
             <TouchableOpacity style={styles.button} onPress={share}>
               <Text style={styles.buttonText}>Share</Text>
@@ -66,7 +87,7 @@ const VerseContainer: React.FC<{ verse: any; isLoading: boolean }> = ({
               </Text>
               <Text style={styles.response}>
                 <Text style={styles.bold}>Faith Forward: </Text>
-                {verse.response}
+                {formatVerse()}
               </Text>
             </ViewShot>
           </View>
@@ -133,6 +154,11 @@ const styles = StyleSheet.create({
     zIndex: -2,
     alignItems: "flex-start",
     backgroundColor: colors.paper,
+  },
+  highlight: {
+    backgroundColor: "#fff3a8",
+    fontWeight: "600",
+    fontFamily: "Baskerville",
   },
 });
 

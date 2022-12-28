@@ -61,38 +61,11 @@ const HomeScreen: React.FC = () => {
     Keyboard.dismiss();
   };
 
-  // if (isLoading || verse) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <View style={styles.headerContainer}>
-  //         {verseInputComponent}
-  //         <View style={[styles.buttonRow, { justifyContent: "flex-end" }]}>
-  //           <Button title="Back" onPress={reset} />
-  //           <TouchableOpacity
-  //             onPress={submit}
-  //             style={[
-  //               styles.button,
-  //               {
-  //                 opacity: input && !isLoading ? 1 : 0.4,
-  //                 marginTop: 16,
-  //               },
-  //             ]}
-  //             disabled={!input || isLoading}
-  //           >
-  //             <Text style={styles.buttonText}>Submit</Text>
-  //           </TouchableOpacity>
-  //         </View>
-  //       </View>
-  //       <VerseContainer verse={verse} anim={anim} />
-  //     </View>
-  //   );
-  // }
-
   return (
     <ScrollView
       style={styles.scroller}
       contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="always"
+      keyboardShouldPersistTaps="handled"
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -125,7 +98,6 @@ const HomeScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   scroller: {
-    // height: "100%",
     backgroundColor: colors.paper,
     flex: 1,
   },
@@ -155,6 +127,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 48,
     fontWeight: "600",
+    // fontFamily: "Futur",
   },
   buttonRow: {
     flexDirection: "row",
