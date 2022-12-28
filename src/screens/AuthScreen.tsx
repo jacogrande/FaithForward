@@ -17,11 +17,10 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Snackbar } from "react-native-paper";
+import { Card, Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
 
 // TODO: Should create / auth user in auth and in Firestore
-// TODO: Support forgot password flow
 export const AuthScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,7 +70,6 @@ export const AuthScreen = () => {
     }
   };
 
-  // TODO: Auth components in card, popped-out
   return (
     <LinearGradient
       colors={["#5EB5D1", "#E6F5FA"]}
@@ -92,60 +90,64 @@ export const AuthScreen = () => {
           style={styles.content}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <View style={styles.inputs}>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Email"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              returnKeyType="next"
-              testID="EmailInput"
-              style={styles.input}
-            />
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Password"
-              returnKeyType="done"
-              autoCapitalize="none"
-              testID="PasswordInput"
-              style={styles.input}
-              secureTextEntry
-            />
-          </View>
-          <View style={styles.actions}>
-            <Pressable
-              onPress={signUp}
-              style={styles.authButton}
-              testID="SignUpButton"
-            >
-              <Text style={styles.authButtonText}>Sign Up</Text>
-            </Pressable>
-            <Pressable
-              onPress={signIn}
-              style={[styles.authButton, styles.logInButton]}
-              testID="LogInButton"
-            >
-              <Text style={[styles.authButtonText, styles.logInButtonText]}>
-                Log In
-              </Text>
-            </Pressable>
-            <Pressable
-              style={styles.forgotPasswordButton}
-              onPress={handlePasswordReset}
-            >
-              <Text style={styles.forgotPasswordButtonText}>
-                Forgot password?
-              </Text>
-            </Pressable>
-          </View>
+          <Card style={styles.authCard}>
+            <View style={styles.inputs}>
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                returnKeyType="next"
+                testID="EmailInput"
+                style={styles.input}
+              />
+              <TextInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Password"
+                returnKeyType="done"
+                autoCapitalize="none"
+                testID="PasswordInput"
+                style={styles.input}
+                secureTextEntry
+              />
+            </View>
+            <View style={styles.authButtons}>
+              <Pressable
+                onPress={signUp}
+                style={styles.authButton}
+                testID="SignUpButton"
+              >
+                <Text style={styles.authButtonText}>Sign Up</Text>
+              </Pressable>
+              <Pressable
+                onPress={signIn}
+                style={[styles.authButton, styles.logInButton]}
+                testID="LogInButton"
+              >
+                <Text style={[styles.authButtonText, styles.logInButtonText]}>
+                  Log In
+                </Text>
+              </Pressable>
+            </View>
+            <View style={styles.forgotPasswordView}>
+              <Pressable
+                style={styles.forgotPasswordButton}
+                onPress={handlePasswordReset}
+              >
+                <Text style={styles.forgotPasswordButtonText}>
+                  Forgot password?
+                </Text>
+              </Pressable>
+            </View>
+          </Card>
         </KeyboardAvoidingView>
         <Snackbar
           visible={!!error}
           onDismiss={() => setError("")}
           action={{
-            label: "",
+            label: "Dismiss",
             onPress: () => setError(""),
           }}
         >
@@ -175,9 +177,14 @@ const styles = StyleSheet.create({
     width: width * 0.4,
     flex: 1,
   },
+  authCard: {
+    paddingTop: 40,
+    paddingBottom: 10,
+    backgroundColor: "white",
+  },
   faithForward: {},
   faithForwardText: {
-    fontSize: 24,
+    fontSize: 36,
     fontWeight: "bold",
     color: "#0A3D62",
     fontFamily: "Avenir",
@@ -185,7 +192,7 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     width: width * 0.8,
-    borderColor: "gray",
+    borderColor: "#808080",
     borderRadius: 10,
     borderWidth: 1,
     marginHorizontal: 20,
@@ -193,30 +200,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "white",
   },
-  inputs: {},
+  forgotPasswordView: {},
+  inputs: {
+    paddingBottom: 10,
+  },
   error: {
     color: "red",
     textAlign: "center",
   },
-  actions: {
-    flexDirection: "column",
-    marginHorizontal: 20,
-    marginVertical: 10,
-  },
-  actionButton: {
-    flex: 1,
-  },
   forgotPassword: {},
+  authButtons: {
+    flexDirection: "row",
+    marginVertical: 5,
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+  },
   authButton: {
     backgroundColor: "#1E90FF",
     borderRadius: 10,
     padding: 15,
-    marginVertical: 5,
-    width: width * 0.8,
+    width: width * 0.35,
   },
   logInButton: {
     backgroundColor: "white",
-    borderColor: "#E6F5FA",
+    borderWidth: 1,
+    borderColor: "#1E90FF",
   },
   authButtonText: {
     color: "white",
@@ -232,7 +240,9 @@ const styles = StyleSheet.create({
   },
   forgotPasswordButtonText: {
     textAlign: "center",
-    color: "#0A3D62",
+    fontStyle: "italic",
+    paddingTop: 20,
+    color: "#808080",
   },
 });
 
