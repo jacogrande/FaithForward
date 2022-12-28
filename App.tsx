@@ -4,8 +4,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import React, { useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { auth } from "./firebase";
+import AuthScreen from "./src/screens/AuthScreen";
 import BaseScreen from "./src/screens/BaseScreen";
-import SignUpScreen from "./src/screens/SignUpScreen";
 import colors from "./src/styles/colors";
 
 const Stack = createStackNavigator();
@@ -44,7 +44,7 @@ export default function App() {
         ) : (
           <Stack.Screen
             name="Sign Up"
-            component={SignUpScreen}
+            component={AuthScreen}
             options={{
               header: () => null,
             }}
