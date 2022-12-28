@@ -196,6 +196,8 @@ const styles = StyleSheet.create({
   brandContainer: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
+    marginTop: 50,
   },
   container: {
     flex: 1,
@@ -256,9 +258,9 @@ const styles = StyleSheet.create({
     color: "#1E90FF",
   },
   logo: {
-    width: width * 0.4,
-    flex: 1,
-    marginTop: 40,
+    marginVertical: 10,
+    width: 200,
+    height: 200,
   },
 });
 
