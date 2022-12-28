@@ -18,6 +18,7 @@ const BaseNavigator: React.FC = () => {
           paddingTop: 8,
           paddingBottom: 16,
         },
+        tabBarActiveTintColor: colors.blue,
       }}
     >
       <Tab.Screen
