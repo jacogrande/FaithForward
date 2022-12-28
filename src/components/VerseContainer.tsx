@@ -47,8 +47,8 @@ const VerseContainer: React.FC<{ verse: any; isLoading: boolean }> = ({
   }, [sharing]);
 
   const formatVerse = () => {
-    // Split up the verse by quote (opening and closing quote), so that everything before a quote, the quote, and everything after are all elements
-    // Then, for each element, if it's a quote, replace it with a bunch of asterisks
+    // convert all quotation marks to double quotes
+    verse.response = verse.response.replace(/“|”/g, '"');
     const quotes: string[] = verse.response.split(/(".*?")/);
     let formattedVerse: (string | JSX.Element)[] = [];
     if (quotes.length >= 1) {
