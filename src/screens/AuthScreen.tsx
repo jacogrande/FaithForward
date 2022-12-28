@@ -11,11 +11,11 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -122,14 +122,14 @@ export const AuthScreen = () => {
                 />
               </View>
               <View style={styles.authButtons}>
-                <Pressable
+                <TouchableOpacity
                   onPress={signUp}
                   style={styles.authButton}
                   testID="SignUpButton"
                 >
                   <Text style={styles.authButtonText}>Sign Up</Text>
-                </Pressable>
-                <Pressable
+                </TouchableOpacity>
+                <TouchableOpacity
                   onPress={signIn}
                   style={[styles.authButton, styles.logInButton]}
                   testID="LogInButton"
@@ -137,17 +137,17 @@ export const AuthScreen = () => {
                   <Text style={[styles.authButtonText, styles.logInButtonText]}>
                     Log In
                   </Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
               <View style={styles.forgotPasswordView}>
-                <Pressable
+                <TouchableOpacity
                   style={styles.forgotPasswordButton}
                   onPress={handlePasswordReset}
                 >
                   <Text style={styles.forgotPasswordButtonText}>
                     Forgot password?
                   </Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </Card>
           </KeyboardAvoidingView>
