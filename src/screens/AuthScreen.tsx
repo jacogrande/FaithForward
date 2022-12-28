@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import {
   Dimensions,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -15,6 +16,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { Card, Snackbar } from "react-native-paper";
@@ -45,6 +47,7 @@ export const AuthScreen = () => {
 
   const signUp = async (): Promise<void> => {
     try {
+      Keyboard.dismiss();
       await createUserWithEmailAndPassword(auth, email, password);
       setError("");
     } catch (err) {
@@ -54,6 +57,7 @@ export const AuthScreen = () => {
 
   const signIn = async (): Promise<void> => {
     try {
+      Keyboard.dismiss();
       await signInWithEmailAndPassword(auth, email, password);
       setError("");
     } catch (err) {
@@ -63,6 +67,7 @@ export const AuthScreen = () => {
 
   const handlePasswordReset = async (): Promise<void> => {
     try {
+      Keyboard.dismiss();
       await sendPasswordResetEmail(auth, email);
       setError("");
     } catch (err) {
@@ -71,92 +76,94 @@ export const AuthScreen = () => {
   };
 
   return (
-    <LinearGradient
-      colors={["#5EB5D1", "#E6F5FA"]}
-      style={styles.linearGradient}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-    >
-      <SafeAreaView style={styles.container}>
-        <View style={styles.brandContainer}>
-          <Image
-            source={require("../../assets/logo-book.png")}
-            resizeMode="contain"
-            style={styles.logo}
-          />
-          <View style={styles.faithForward}>
-            <Text style={styles.faithForwardText}>Faith Forward</Text>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <LinearGradient
+        colors={["#5EB5D1", "#E6F5FA"]}
+        style={styles.linearGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.brandContainer}>
+            <Image
+              source={require("../../assets/logo-book.png")}
+              resizeMode="contain"
+              style={styles.logo}
+            />
+            <View style={styles.faithForward}>
+              <Text style={styles.faithForwardText}>Faith Forward</Text>
+            </View>
           </View>
-        </View>
-        <KeyboardAvoidingView
-          style={styles.content}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <Card style={styles.authCard}>
-            <View style={styles.inputs}>
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Email"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                returnKeyType="next"
-                testID="EmailInput"
-                style={styles.input}
-              />
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Password"
-                returnKeyType="done"
-                autoCapitalize="none"
-                testID="PasswordInput"
-                style={styles.input}
-                secureTextEntry
-              />
-            </View>
-            <View style={styles.authButtons}>
-              <Pressable
-                onPress={signUp}
-                style={styles.authButton}
-                testID="SignUpButton"
-              >
-                <Text style={styles.authButtonText}>Sign Up</Text>
-              </Pressable>
-              <Pressable
-                onPress={signIn}
-                style={[styles.authButton, styles.logInButton]}
-                testID="LogInButton"
-              >
-                <Text style={[styles.authButtonText, styles.logInButtonText]}>
-                  Log In
-                </Text>
-              </Pressable>
-            </View>
-            <View style={styles.forgotPasswordView}>
-              <Pressable
-                style={styles.forgotPasswordButton}
-                onPress={handlePasswordReset}
-              >
-                <Text style={styles.forgotPasswordButtonText}>
-                  Forgot password?
-                </Text>
-              </Pressable>
-            </View>
-          </Card>
-        </KeyboardAvoidingView>
-        <Snackbar
-          visible={!!error}
-          onDismiss={() => setError("")}
-          action={{
-            label: "Dismiss",
-            onPress: () => setError(""),
-          }}
-        >
-          {error}
-        </Snackbar>
-      </SafeAreaView>
-    </LinearGradient>
+          <KeyboardAvoidingView
+            style={styles.content}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <Card style={styles.authCard}>
+              <View style={styles.inputs}>
+                <TextInput
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  returnKeyType="next"
+                  testID="EmailInput"
+                  style={styles.input}
+                />
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Password"
+                  returnKeyType="done"
+                  autoCapitalize="none"
+                  testID="PasswordInput"
+                  style={styles.input}
+                  secureTextEntry
+                />
+              </View>
+              <View style={styles.authButtons}>
+                <Pressable
+                  onPress={signUp}
+                  style={styles.authButton}
+                  testID="SignUpButton"
+                >
+                  <Text style={styles.authButtonText}>Sign Up</Text>
+                </Pressable>
+                <Pressable
+                  onPress={signIn}
+                  style={[styles.authButton, styles.logInButton]}
+                  testID="LogInButton"
+                >
+                  <Text style={[styles.authButtonText, styles.logInButtonText]}>
+                    Log In
+                  </Text>
+                </Pressable>
+              </View>
+              <View style={styles.forgotPasswordView}>
+                <Pressable
+                  style={styles.forgotPasswordButton}
+                  onPress={handlePasswordReset}
+                >
+                  <Text style={styles.forgotPasswordButtonText}>
+                    Forgot password?
+                  </Text>
+                </Pressable>
+              </View>
+            </Card>
+          </KeyboardAvoidingView>
+          <Snackbar
+            visible={!!error}
+            onDismiss={() => setError("")}
+            action={{
+              label: "Dismiss",
+              onPress: () => setError(""),
+            }}
+          >
+            {error}
+          </Snackbar>
+        </SafeAreaView>
+      </LinearGradient>
+    </TouchableWithoutFeedback>
   );
 };
 
