@@ -169,6 +169,7 @@ export const AuthScreen = () => {
 
 const { width } = Dimensions.get("window");
 
+// TODO: Dynamically pad/size everything from device dimensions
 const styles = StyleSheet.create({
   authButton: {
     backgroundColor: "#1E90FF",
@@ -203,6 +204,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 40
   },
   content: {
     flex: 1,
@@ -259,8 +261,10 @@ const styles = StyleSheet.create({
   },
   logo: {
     marginVertical: 10,
-    width: 200,
-    height: 200,
+    width: width * 0.4,
+    height: width * 0.4,
+    /* width: 200, */
+    /* height: 200, */
   },
 });
 
