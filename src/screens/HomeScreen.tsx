@@ -62,20 +62,22 @@ const HomeScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView
-      style={styles.scroller}
-      contentContainerStyle={{ flexGrow: 1 }}
-      keyboardShouldPersistTaps="handled"
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+      <ScrollView
+        style={styles.scroller}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
           <View>
             <Text style={styles.header}>What is on your mind?</Text>
           </View>
+
           <KeywordManager />
+
           {inputComponent}
           <View style={styles.buttonRow}>
             <TouchableOpacity
@@ -91,8 +93,8 @@ const HomeScreen: React.FC = () => {
           </View>
           <VerseContainer verse={verse} isLoading={isLoading} />
         </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
