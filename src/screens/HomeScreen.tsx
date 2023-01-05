@@ -1,19 +1,17 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import {
-  Animated,
-  Button,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { auth } from "../../firebase";
 import KeywordManager from "../components/KeywordManager";
-import useInput from "../components/useInput";
 import VerseContainer from "../components/VerseContainer";
 import { useApi } from "../services/api";
 import useStore from "../Store";
@@ -21,12 +19,8 @@ import colors from "../styles/colors";
 
 const HomeScreen: React.FC = () => {
   const { promptStart, input, setInput } = useStore();
-  const [inputComponent, inputComponentValue, setInputComponentValue] =
-    useInput("", {
-      multiline: true,
-      setLinkedValue: setInput,
-    });
-  const [verseOpened, setVerseOpened] = React.useState<boolean>(false);
+  const inputRef = useRef<TextInput>(null);
+
   const {
     isLoading,
     data: verse,
@@ -48,10 +42,9 @@ const HomeScreen: React.FC = () => {
     if (promptStart) {
       let formattedPrompt = promptStart.split(".")[0] + " ";
       setInput(formattedPrompt);
-      setInputComponentValue(formattedPrompt);
+      if (inputRef.current) inputRef.current.focus();
     } else {
       setInput("");
-      setInputComponentValue("");
     }
   }, [promptStart]);
 
@@ -78,7 +71,16 @@ const HomeScreen: React.FC = () => {
 
           <KeywordManager />
 
-          {inputComponent}
+          <TextInput
+            ref={inputRef}
+            style={[styles.input]}
+            placeholder="Type your thoughts or choose a suggestion above"
+            placeholderTextColor="#999"
+            onChangeText={(text) => setInput(text)}
+            value={input}
+            // onBlur={handleBlur}
+            multiline
+          />
           <View style={styles.buttonRow}>
             <TouchableOpacity
               onPress={submit}
@@ -129,13 +131,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 48,
     fontWeight: "600",
-    // fontFamily: "Futur",
   },
   buttonRow: {
     flexDirection: "row",
     alignItems: "baseline",
     width: "80%",
     justifyContent: "flex-end",
+  },
+  input: {
+    height: 140,
+    backgroundColor: "rgba(0, 0, 0, 0.07)",
+    borderRadius: 4,
+    margin: 10,
+    padding: 12,
+    paddingTop: 12,
+    paddingBottom: 12,
+    width: "80%",
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#444",
   },
 });
 
