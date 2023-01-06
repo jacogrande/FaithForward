@@ -1,13 +1,13 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as React from "react";
+import { Dimensions } from "react-native";
 import colors from "../styles/colors";
 import HomeScreen from "./HomeScreen";
 import ProfileScreen from "./ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
-// TODO: Use proper icons for Home and Profile nav links
 const BaseNavigator: React.FC = () => {
   return (
     <Tab.Navigator
@@ -15,8 +15,9 @@ const BaseNavigator: React.FC = () => {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: colors.paper,
+          height: Dimensions.get("window").height * 0.08,
+          paddingBottom: 8,
           paddingTop: 8,
-          paddingBottom: 16,
         },
         tabBarActiveTintColor: colors.blue,
       }}
