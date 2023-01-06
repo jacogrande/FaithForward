@@ -1,6 +1,7 @@
 export default {
   blue: "#5eb5d1",
   lightBlue: "#e6f5fa",
+  red: "#ed6c61",
   sand: "#DAC78E",
   orange: "#f08c7d",
   paper: "#fefdf9",

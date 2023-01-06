@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 40
+    marginBottom: 40,
   },
   content: {
     flex: 1,

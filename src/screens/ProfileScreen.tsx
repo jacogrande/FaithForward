@@ -1,10 +1,13 @@
 import React from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { auth } from "../../firebase";
+import DeleteAccountModal from "../components/DeleteAccountModal";
 import colors from "../styles/colors";
 
 // TODO: Unstub account level
 const ProfileScreen: React.FC = () => {
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const closeModal = () => setIsModalVisible(false);
   return (
     <View style={styles.container}>
       <View style={styles.section}>
@@ -21,6 +24,15 @@ const ProfileScreen: React.FC = () => {
         <Text style={styles.buttonText}>Sign Out</Text>
         {/* <Button title="Sign Out" onPress={() => auth.signOut()} /> */}
       </TouchableOpacity>
+      <Button
+        color={colors.red}
+        onPress={() => setIsModalVisible(true)}
+        title="Delete Account"
+      />
+      <DeleteAccountModal
+        isModalVisible={isModalVisible}
+        onClose={closeModal}
+      />
     </View>
   );
 };
@@ -62,6 +74,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     marginTop: 12,
     alignItems: "center",
+    marginBottom: 24,
   },
 });
 
