@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Button,
   Linking,
   StyleSheet,
   Text,
@@ -31,6 +32,15 @@ const ProfileScreen: React.FC = () => {
       <TouchableOpacity style={styles.button} onPress={() => auth.signOut()}>
         <Text style={styles.buttonText}>Sign Out</Text>
       </TouchableOpacity>
+      <Button
+        color={colors.red}
+        onPress={() => setIsModalVisible(true)}
+        title="Delete Account"
+      />
+      <DeleteAccountModal
+        isModalVisible={isModalVisible}
+        onClose={closeModal}
+      />
       <Policies />
     </View>
   );
@@ -53,15 +63,6 @@ const Policies = () => {
       <TouchableOpacity onPress={goToTermsOfService}>
         <Text style={styles.policyLink}>Terms of Service</Text>
       </TouchableOpacity>
-      <Button
-        color={colors.red}
-        onPress={() => setIsModalVisible(true)}
-        title="Delete Account"
-      />
-      <DeleteAccountModal
-        isModalVisible={isModalVisible}
-        onClose={closeModal}
-      />
     </View>
   );
 };
