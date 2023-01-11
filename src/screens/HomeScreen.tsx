@@ -27,7 +27,7 @@ const HomeScreen: React.FC = () => {
     fetch,
     setResponseData: setVerse,
   } = useApi(
-    "https://us-central1-robo-jesus.cloudfunctions.net/getGpt3Response",
+    "https://us-central1-faith-forward-staging.cloudfunctions.net/getGpt3Response",
     {
       method: "POST",
       body: JSON.stringify({
