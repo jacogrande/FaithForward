@@ -8,7 +8,6 @@ export const useApi = (url: string, data?: RequestInit) => {
     setIsLoading(true);
     try {
       const response = await fetch(url, data);
-      console.log(response.status);
       if (response.status === 200) {
         setResponseData(await response.json());
       } else {
@@ -22,5 +21,5 @@ export const useApi = (url: string, data?: RequestInit) => {
     }
   };
 
-  return { isLoading, data: responseData, fetch: fetchData, setResponseData };
+  return { isLoading, data: responseData, fetchData, setResponseData };
 };

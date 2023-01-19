@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -13,9 +13,14 @@ import {
 import { auth } from "../../firebase";
 import KeywordManager from "../components/KeywordManager";
 import VerseContainer from "../components/VerseContainer";
-import { useApi } from "../services/api";
+import { useApi } from "../hooks/useApi";
 import useStore from "../Store";
 import colors from "../styles/colors";
+
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://us-central1-robo-jesus.cloudfunctions.net"
+    : "https://us-central1-faith-forward-staging.cloudfunctions.net";
 
 const HomeScreen: React.FC = () => {
   const { promptStart, input, setInput } = useStore();
@@ -24,21 +29,18 @@ const HomeScreen: React.FC = () => {
   const {
     isLoading,
     data: verse,
-    fetch,
+    fetchData: getDevotional,
     setResponseData: setVerse,
-  } = useApi(
-    "https://us-central1-robo-jesus.cloudfunctions.net/getGpt3Response",
-    {
-      method: "POST",
-      body: JSON.stringify({
-        userId: auth.currentUser?.uid,
-        prompt: input,
-      }),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  } = useApi(`${API_BASE_URL}/getGpt3Response`, {
+    method: "POST",
+    body: JSON.stringify({
+      userId: auth.currentUser?.uid,
+      prompt: input,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (promptStart) {
       let formattedPrompt = promptStart.split(".")[0] + " ";
       setInput(formattedPrompt);
@@ -49,7 +51,7 @@ const HomeScreen: React.FC = () => {
   }, [promptStart]);
 
   const submit = () => {
-    fetch();
+    getDevotional();
     setVerse(null);
     Keyboard.dismiss();
   };
@@ -78,7 +80,6 @@ const HomeScreen: React.FC = () => {
             placeholderTextColor="#999"
             onChangeText={(text) => setInput(text)}
             value={input}
-            // onBlur={handleBlur}
             multiline
           />
           <View style={styles.buttonRow}>
