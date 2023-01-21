@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Animated, ScrollView } from "react-native";
-import useStore from "../Store";
-import HeaderChip from "./HeaderChip";
+import React from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import useStore from "../store";
 import KeywordChip from "./KeywordChip";
 
 const prompts: string[] = [

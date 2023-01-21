@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
   ActivityIndicator,
-  Button,
-  TouchableOpacity,
+  ScrollView,
   Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import ViewShot from "react-native-view-shot";
-import useStore from "../Store";
+import useStore from "../store";
 import colors from "../styles/colors";
 
 const VerseContainer: React.FC<{ verse: any; isLoading: boolean }> = ({

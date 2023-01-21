@@ -10,11 +10,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
 import KeywordManager from "../components/KeywordManager";
 import VerseContainer from "../components/VerseContainer";
 import { useApi } from "../hooks/useApi";
-import useStore from "../Store";
+import useStore from "../store";
 import colors from "../styles/colors";
 
 const API_BASE_URL =
@@ -24,7 +25,10 @@ const API_BASE_URL =
 
 const HomeScreen: React.FC = () => {
   const { promptStart, input, setInput } = useStore();
+  const { error, setError } = useStore();
   const inputRef = useRef<TextInput>(null);
+
+  console.log("API_BASE_URL:", API_BASE_URL);
 
   const {
     isLoading,
@@ -97,6 +101,16 @@ const HomeScreen: React.FC = () => {
           <VerseContainer verse={verse} isLoading={isLoading} />
         </View>
       </ScrollView>
+      <Snackbar
+        visible={!!error}
+        onDismiss={() => setError(null)}
+        action={{
+          label: "Dismiss",
+          onPress: () => setError(null),
+        }}
+      >
+        {error}
+      </Snackbar>
     </KeyboardAvoidingView>
   );
 };
