@@ -28,8 +28,6 @@ const HomeScreen: React.FC = () => {
   const { error, setError } = useStore();
   const inputRef = useRef<TextInput>(null);
 
-  console.log("API_BASE_URL:", API_BASE_URL);
-
   const {
     isLoading,
     data: verse,

@@ -15,9 +15,9 @@ const BaseNavigator: React.FC = () => {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: colors.paper,
-          height: Dimensions.get("window").height * 0.08,
-          paddingBottom: 8,
-          paddingTop: 8,
+          height: Dimensions.get("window").height * 0.09,
+          paddingBottom: Dimensions.get("window").height * 0.02,
+          paddingTop: Dimensions.get("window").height * 0.015,
         },
         tabBarActiveTintColor: colors.blue,
       }}

@@ -9,10 +9,7 @@ export const useApi = (url: string, data?: RequestInit) => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      console.log("url:", url)
-      console.log("data:", data)
       const response = await fetch(url, data);
-      console.log("response:", response)
       if (response.status === 200) {
         setResponseData(await response.json());
       } else {
