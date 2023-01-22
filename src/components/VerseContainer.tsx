@@ -113,8 +113,6 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   verse: {
-    // paddingTop: 24,
-    // marginTop: 24,
     width: "100%",
     alignItems: "center",
     backgroundColor: colors.paper,

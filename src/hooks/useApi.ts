@@ -1,5 +1,6 @@
 import { useState } from "react";
-import useStore from '../store';
+import { FLAGGED_INPUT_RESPONSES } from '../constants';
+import useStore from "../store";
 
 export const useApi = (url: string, data?: RequestInit) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,7 +14,73 @@ export const useApi = (url: string, data?: RequestInit) => {
       if (response.status === 200) {
         setResponseData(await response.json());
       } else {
-        throw new Error("Error fetching data. Status code: " + response.status);
+        console.debug("non-200 status code returned");
+        const err = await response.json();
+        console.debug(err);
+
+        // If the user input was flagged, don't throw an error
+        // Instead, set the response data
+        // Handle the most serious flags first
+        if (!!err.moderationResponse) {
+          // Handle sexual/minors
+          if (err.moderationResponse.categories["sexual/minors"]) {
+            console.debug("flagged for sexual/minors");
+            setResponseData({
+              response: FLAGGED_INPUT_RESPONSES.SEXUAL_MINORS,
+            });
+            return;
+          }
+
+          // Handle self-harm
+          if (err.moderationResponse.categories["self-harm"]) {
+            console.debug("flagged for self-harm");
+            setResponseData({ response: FLAGGED_INPUT_RESPONSES.SELF_HARM });
+            return;
+          }
+
+          // Handle violence
+          if (err.moderationResponse.categories["violence"]) {
+            console.debug("flagged for violence");
+            setResponseData({ response: FLAGGED_INPUT_RESPONSES.VIOLENCE });
+            return;
+          }
+
+          // Handle violence/graphic
+          if (err.moderationResponse.categories["violence/graphic"]) {
+            console.debug("flagged for violence/graphic");
+            setResponseData({
+              response: FLAGGED_INPUT_RESPONSES.VIOLENCE_GRAPHIC,
+            });
+            return;
+          }
+
+          // Handle hate
+          if (err.moderationResponse.categories["hate"]) {
+            console.debug("flagged for hate");
+            setResponseData({ response: FLAGGED_INPUT_RESPONSES.HATE });
+            return;
+          }
+
+          // Handle hate/threatening
+          if (err.moderationResponse.categories["hate/threatening"]) {
+            console.debug("flagged for hate/threatening");
+            setResponseData({
+              response: FLAGGED_INPUT_RESPONSES.HATE_THREATENING,
+            });
+            return;
+          }
+
+          // Handle sexual
+          if (err.moderationResponse.categories["sexual"]) {
+            console.debug("flagged for sexual");
+            setResponseData({ response: FLAGGED_INPUT_RESPONSES.SEXUAL });
+            return;
+          }
+
+          throw new Error(
+            "Error fetching data. Status code: " + response.status
+          );
+        }
       }
     } catch (error: any) {
       console.error(error);
