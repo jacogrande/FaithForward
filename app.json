@@ -2,7 +2,7 @@
   "expo": {
     "name": "Faith Forward",
     "slug": "faith-forward",
-    "version": "1.0.5",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -20,7 +20,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.phaedrus.faithforward",
-      "buildNumber": "5"
+      "buildNumber": "6"
     },
     "android": {
       "adaptiveIcon": {
