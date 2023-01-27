@@ -10,14 +10,35 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import apiConfig from "../../apiConfig";
 import { Snackbar } from "react-native-paper";
+import apiConfig from "../../apiConfig";
 import { auth } from "../../firebase";
-import KeywordManager from "../components/KeywordManager";
 import VerseContainer from "../components/VerseContainer";
 import { useApi } from "../hooks/useApi";
 import useStore from "../Store";
 import colors from "../styles/colors";
+
+const PLACEHOLDERS = [
+  "I've been struggling with feelings of doubt and uncertainty in my faith recently, and I'm not sure how to handle it. I've been feeling like I don't have a strong connection to God, and I'm not sure if I'm doing something wrong or if this is just a normal part of the faith journey.",
+  "I've been going through a difficult time in my personal life, and I'm finding it hard to keep up with my spiritual practices. I'm feeling overwhelmed and disconnected, and I'm not sure how to get back on track. I would appreciate any advice you have on how to maintain my faith during difficult times.",
+  "I've been struggling with addiction for a long time, and I feel like I've hit rock bottom. I know that my faith is an important part of my recovery, but I'm not sure how to start incorporating it into my daily life.",
+  "I've been feeling a sense of disconnection from my local Christian community recently, and I'm not sure why. I've been attending church regularly, but I'm not feeling the same sense of belonging and connection that I used to.",
+  "I've been going through a difficult time in my marriage and I'm not sure how to navigate it.",
+  "I'm having trouble forgiving someone who has hurt me deeply and I'm not sure how to reconcile my faith with my feelings.",
+  "I've been struggling with doubts about the afterlife.",
+  "I'm not sure how to talk to my children about faith.",
+  "I'm going through a tough financial situation and I'm not sure how to trust in God's provision during this difficult time.",
+  "Is Santa real?",
+  "I'm having trouble forgiving someone who has hurt me deeply and I'm not sure how to reconcile my faith with my feelings. Can you help me understand how to forgive?",
+  "I'm having trouble sleeping and I'm not sure how to improve my sleep habits and get better rest.",
+  "I'm currently in a dilemma of whether to pursue a career in academics or industry and I am not sure which path aligns better with my long-term goals and interests.",
+  "I am having trouble dealing with the recent loss of a loved one and struggling to find closure, comfort and move forward with my life.",
+  "I am facing a difficult time in my marriage, my partner and I have been growing apart and I am not sure how to communicate effectively and find common ground.",
+  "I am struggling with my mental health and have been experiencing severe anxiety and depression for a while now, I am not sure how to seek help and manage it effectively.",
+  "I am currently in the process of planning a big event for my community, and it is taking a lot of time and energy to coordinate everything.",
+  "I am excited to have recently started a new job and am looking forward to learning and growing in this new role.",
+  "I have been working on a creative project and am making progress, but it is taking a lot of time and effort to bring it to fruition.",
+];
 
 const HomeScreen: React.FC = () => {
   const {
@@ -69,6 +90,10 @@ const HomeScreen: React.FC = () => {
     Keyboard.dismiss();
   };
 
+  const getRandomExample = () => {
+    setInput(PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)]);
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -84,12 +109,10 @@ const HomeScreen: React.FC = () => {
             <Text style={styles.header}>What is on your mind?</Text>
           </View>
 
-          <KeywordManager />
-
           <TextInput
             ref={inputRef}
             style={[styles.input]}
-            placeholder="Type your thoughts or choose a suggestion above"
+            placeholder="Type your question or describe your situation here..."
             placeholderTextColor="#999"
             onChangeText={(text) => setInput(text)}
             value={input}
@@ -105,6 +128,21 @@ const HomeScreen: React.FC = () => {
               disabled={!input || isLoading}
             >
               <Text style={styles.buttonText}>Get Guidance</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={{
+                alignItems: "center",
+                display: "flex",
+                justifyContent: "center",
+                marginTop: 18,
+                width: "100%",
+              }}
+              onPress={getRandomExample}
+              disabled={isLoading}
+            >
+              <Text style={[styles.buttonText, { color: "#555" }]}>Random</Text>
             </TouchableOpacity>
           </View>
           <VerseContainer isLoading={isLoading} />
@@ -163,7 +201,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   input: {
-    height: 140,
+    minHeight: 140,
     backgroundColor: "rgba(0, 0, 0, 0.07)",
     borderRadius: 4,
     margin: 10,
