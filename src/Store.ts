@@ -11,6 +11,8 @@ type Store = {
   setDevotional: (devotional: string) => void;
   promptId: string;
   setPromptId: (promptId: string) => void;
+  error: string | null;
+  setError: (error: string | null) => void;
 };
 
 const useStore = create<Store>((set) => ({
@@ -27,6 +29,8 @@ const useStore = create<Store>((set) => ({
     set((state) => ({ ...state, devotional })),
   promptId: "",
   setPromptId: (promptId: string) => set((state) => ({ ...state, promptId })),
+  error: null,
+  setError: (error: string | null) => set((state) => ({ ...state, error })),
 }));
 
 export default useStore;

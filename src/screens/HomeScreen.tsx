@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -11,18 +11,30 @@ import {
   View,
 } from "react-native";
 import apiConfig from "../../apiConfig";
+import { Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
 import KeywordManager from "../components/KeywordManager";
 import VerseContainer from "../components/VerseContainer";
-import { useApi } from "../services/api";
+import { useApi } from "../hooks/useApi";
 import useStore from "../Store";
 import colors from "../styles/colors";
 
 const HomeScreen: React.FC = () => {
-  const { promptStart, input, setInput, setDevotional, setPromptId } =
-    useStore();
+  const {
+    promptStart,
+    input,
+    setInput,
+    setDevotional,
+    setPromptId,
+    error,
+    setError,
+  } = useStore();
   const inputRef = useRef<TextInput>(null);
-  const { isLoading, data, fetch } = useApi<{
+  const {
+    isLoading,
+    data,
+    fetchData: getDevotional,
+  } = useApi<{
     response: string;
     promptId: string;
   }>(`${apiConfig.apiUrl}/getGpt3Response`, {
@@ -41,7 +53,7 @@ const HomeScreen: React.FC = () => {
     }
   }, [data]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (promptStart) {
       let formattedPrompt = promptStart.split(".")[0] + " ";
       setInput(formattedPrompt);
@@ -52,7 +64,7 @@ const HomeScreen: React.FC = () => {
   }, [promptStart]);
 
   const submit = () => {
-    fetch();
+    getDevotional();
     setDevotional("");
     Keyboard.dismiss();
   };
@@ -81,7 +93,6 @@ const HomeScreen: React.FC = () => {
             placeholderTextColor="#999"
             onChangeText={(text) => setInput(text)}
             value={input}
-            // onBlur={handleBlur}
             multiline
           />
           <View style={styles.buttonRow}>
@@ -99,6 +110,16 @@ const HomeScreen: React.FC = () => {
           <VerseContainer isLoading={isLoading} />
         </View>
       </ScrollView>
+      <Snackbar
+        visible={!!error}
+        onDismiss={() => setError(null)}
+        action={{
+          label: "Dismiss",
+          onPress: () => setError(null),
+        }}
+      >
+        {error}
+      </Snackbar>
     </KeyboardAvoidingView>
   );
 };

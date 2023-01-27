@@ -21,12 +21,12 @@ import {
 } from "react-native";
 import { Card, Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
+import useStore from "../Store";
 
-// TODO: Should create / auth user in auth and in Firestore
 export const AuthScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const { error, setError } = useStore();
 
   const handleError = (err: any): void => {
     console.error(err);

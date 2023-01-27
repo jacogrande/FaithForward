@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
   ActivityIndicator,
-  TouchableOpacity,
+  ScrollView,
   Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import ViewShot from "react-native-view-shot";
 import useStore from "../Store";
@@ -167,8 +167,6 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   verse: {
-    // paddingTop: 24,
-    // marginTop: 24,
     width: "100%",
     alignItems: "center",
     backgroundColor: colors.paper,
