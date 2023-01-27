@@ -21,7 +21,7 @@ import {
 } from "react-native";
 import { Card, Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
-import useStore from "../store";
+import useStore from "../Store";
 
 export const AuthScreen = () => {
   const [email, setEmail] = useState("");

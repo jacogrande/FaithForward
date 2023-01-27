@@ -10,30 +10,34 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import apiConfig from "../../apiConfig";
 import { Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
 import KeywordManager from "../components/KeywordManager";
 import VerseContainer from "../components/VerseContainer";
 import { useApi } from "../hooks/useApi";
-import useStore from "../store";
+import useStore from "../Store";
 import colors from "../styles/colors";
 
-const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://us-central1-robo-jesus.cloudfunctions.net"
-    : "https://us-central1-faith-forward-staging.cloudfunctions.net";
-
 const HomeScreen: React.FC = () => {
-  const { promptStart, input, setInput } = useStore();
-  const { error, setError } = useStore();
+  const {
+    promptStart,
+    input,
+    setInput,
+    setDevotional,
+    setPromptId,
+    error,
+    setError,
+  } = useStore();
   const inputRef = useRef<TextInput>(null);
-
   const {
     isLoading,
-    data: verse,
+    data,
     fetchData: getDevotional,
-    setResponseData: setVerse,
-  } = useApi(`${API_BASE_URL}/getGpt3Response`, {
+  } = useApi<{
+    response: string;
+    promptId: string;
+  }>(`${apiConfig.apiUrl}/getGpt3Response`, {
     method: "POST",
     body: JSON.stringify({
       userId: auth.currentUser?.uid,
@@ -41,6 +45,13 @@ const HomeScreen: React.FC = () => {
     }),
     headers: { "Content-Type": "application/json" },
   });
+
+  React.useEffect(() => {
+    if (data && data.response && data.promptId) {
+      setPromptId(data.promptId);
+      setDevotional(data.response);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (promptStart) {
@@ -54,7 +65,7 @@ const HomeScreen: React.FC = () => {
 
   const submit = () => {
     getDevotional();
-    setVerse(null);
+    setDevotional("");
     Keyboard.dismiss();
   };
 
@@ -96,7 +107,7 @@ const HomeScreen: React.FC = () => {
               <Text style={styles.buttonText}>Get Guidance</Text>
             </TouchableOpacity>
           </View>
-          <VerseContainer verse={verse} isLoading={isLoading} />
+          <VerseContainer isLoading={isLoading} />
         </View>
       </ScrollView>
       <Snackbar

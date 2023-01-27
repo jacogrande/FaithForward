@@ -2,10 +2,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { onAuthStateChanged } from "firebase/auth";
 import React, { useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { auth } from "./firebase";
 import AuthScreen from "./src/screens/AuthScreen";
-import BaseScreen from "./src/screens/BaseScreen";
+import Navigation from "./src/screens/Navigation";
 import colors from "./src/styles/colors";
 
 const Stack = createStackNavigator();
@@ -19,7 +19,11 @@ export default function App() {
   });
 
   if (loading) {
-    return <ActivityIndicator size="large" />;
+    return (
+      <View style={{ flex: 1 }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
@@ -36,7 +40,7 @@ export default function App() {
         {user ? (
           <Stack.Screen
             name="Faith Forward"
-            component={BaseScreen}
+            component={Navigation}
             options={{
               headerLeft: () => null,
             }}

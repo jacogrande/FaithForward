@@ -1,9 +1,9 @@
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as React from "react";
 import { Dimensions } from "react-native";
 import colors from "../styles/colors";
-import HomeScreen from "./HomeScreen";
+import HomeNavigator from "./HomeNavigator";
 import ProfileScreen from "./ProfileScreen";
 
 const Tab = createBottomTabNavigator();
@@ -16,18 +16,21 @@ const BaseNavigator: React.FC = () => {
         tabBarStyle: {
           backgroundColor: colors.paper,
           height: Dimensions.get("window").height * 0.09,
-          paddingBottom: Dimensions.get("window").height * 0.02,
-          paddingTop: Dimensions.get("window").height * 0.015,
+          paddingBottom: 24,
+          paddingTop: 4,
+        },
+        tabBarLabelStyle: {
+          fontWeight: "600",
         },
         tabBarActiveTintColor: colors.blue,
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Devotionals"
+        component={HomeNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="home" size={size} color={color} />
+            <Ionicons name="md-sunny" size={size} color={color} />
           ),
         }}
       />

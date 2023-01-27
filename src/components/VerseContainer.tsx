@@ -9,16 +9,51 @@ import {
   View,
 } from "react-native";
 import ViewShot from "react-native-view-shot";
-import useStore from "../store";
+import useStore from "../Store";
 import colors from "../styles/colors";
+import VerseActionModal from "./VerseActionModal";
 
-const VerseContainer: React.FC<{ verse: any; isLoading: boolean }> = ({
-  verse,
-  isLoading,
-}) => {
+const getVerseRef = (verse: string, fullResponse: string) => {
+  // insert spaces after each opening parenthesis and before each closing parenthesis
+  const match = new RegExp(
+    /(?:\b\d+ )?[a-z]+ ?\d+(?:(?::\d+)?(?: ?- ?(?:\d+ [a-z]+ )?\d+(?::\d+)?)?)?(?=\b)/i
+  );
+  // check the characters around the pressed verse to try and find the verse reference
+  const verseIndex = fullResponse.indexOf(verse);
+  const startIndex = verseIndex - 100;
+  const surroundingText = fullResponse.slice(
+    startIndex > 0 ? startIndex : 0,
+    verseIndex + verse.length + 50
+  );
+  const reference = surroundingText.match(match);
+  if (reference?.toString().toLowerCase().substring(0, 2) === "in") {
+    // cut the full response from the "in" to the end
+    const newResponse = fullResponse.slice(
+      fullResponse.indexOf(reference?.toString()) + 2,
+      fullResponse.length
+    );
+    // find the next verse reference
+    const newReference = newResponse.match(match);
+    // console.log(newReference);
+    return newReference?.toString();
+  }
+  return reference?.toString();
+};
+
+const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
+  let devotional = useStore((state) => state.devotional);
   const verseRef = useRef<ViewShot | null>(null);
-  const input = useStore((state) => state.input);
+  const { input, selectedVerse, setSelectedVerse } = useStore();
   const [sharing, setSharing] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const handleVersePress = (pressedVerse: string) => {
+    const verseRef = getVerseRef(pressedVerse, devotional);
+    setSelectedVerse(`${pressedVerse} (${verseRef})`);
+    setModalOpen(true);
+  };
+
+  const closeVerseModal = () => setModalOpen(false);
 
   const share = async () => {
     setSharing(true);
@@ -47,29 +82,43 @@ const VerseContainer: React.FC<{ verse: any; isLoading: boolean }> = ({
 
   const formatVerse = () => {
     // convert all quotation marks to double quotes
-    verse.response = verse.response.replace(/“|”/g, '"');
-    const quotes: string[] = verse.response.split(/(".*?")/);
+    devotional = devotional.replace(/“|”/g, '"');
+    // handle the edge case where the entire response is wrapped in quotes
+    if (devotional[0] === `"` && devotional[devotional.length - 1] === `"`) {
+      devotional = devotional.slice(1, devotional.length - 1);
+      devotional = devotional.replace(/'/g, '"');
+    }
+    const quotes: string[] = devotional.split(/(".*?")/);
     let formattedVerse: (string | JSX.Element)[] = [];
     if (quotes.length >= 1) {
       formattedVerse = quotes.map((quote, i) => {
-        if (i % 2 === 1) {
+        // non verse text
+        if (i % 2 === 0) return quote;
+        // style all biblical quotes
+        const verseRef = getVerseRef(quote, devotional);
+        if (verseRef)
           return (
-            <Text style={styles.highlight} key={quote}>
+            <Text
+              style={styles.highlight}
+              key={quote}
+              onPress={() => handleVersePress(quote)}
+              accessibilityHint="Tap to open the verse action menu."
+            >
               {quote}
             </Text>
           );
-        }
+        // return non biblical quotes normally
         return quote;
       });
     }
     if (formattedVerse.length > 0) return formattedVerse;
-    return verse.response;
+    return devotional;
   };
 
   return (
     <View style={styles.verse}>
       <ScrollView style={{ paddingTop: 24, backgroundColor: colors.paper }}>
-        {verse && verse.response && (
+        {devotional && (
           <View style={{ alignItems: "center" }}>
             <View
               style={{ alignItems: "center", backgroundColor: colors.paper }}
@@ -99,6 +148,11 @@ const VerseContainer: React.FC<{ verse: any; isLoading: boolean }> = ({
           />
         )}
       </ScrollView>
+      <VerseActionModal
+        isModalVisible={modalOpen}
+        verse={selectedVerse}
+        onClose={closeVerseModal}
+      />
     </View>
   );
 };
@@ -136,7 +190,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
     marginTop: 24,
-    paddingHorizontal: 36,
+    paddingHorizontal: "10%",
   },
 
   bold: {
