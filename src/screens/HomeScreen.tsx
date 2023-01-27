@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import apiConfig from "../../apiConfig";
 import { auth } from "../../firebase";
 import KeywordManager from "../components/KeywordManager";
 import VerseContainer from "../components/VerseContainer";
@@ -18,25 +19,27 @@ import useStore from "../Store";
 import colors from "../styles/colors";
 
 const HomeScreen: React.FC = () => {
-  const { promptStart, input, setInput } = useStore();
+  const { promptStart, input, setInput, setDevotional, setPromptId } =
+    useStore();
   const inputRef = useRef<TextInput>(null);
+  const { isLoading, data, fetch } = useApi<{
+    response: string;
+    promptId: string;
+  }>(`${apiConfig.apiUrl}/getGpt3Response`, {
+    method: "POST",
+    body: JSON.stringify({
+      userId: auth.currentUser?.uid,
+      prompt: input,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
 
-  const {
-    isLoading,
-    data: verse,
-    fetch,
-    setResponseData: setVerse,
-  } = useApi(
-    "https://us-central1-robo-jesus.cloudfunctions.net/getGpt3Response",
-    {
-      method: "POST",
-      body: JSON.stringify({
-        userId: auth.currentUser?.uid,
-        prompt: input,
-      }),
-      headers: { "Content-Type": "application/json" },
+  React.useEffect(() => {
+    if (data && data.response && data.promptId) {
+      setPromptId(data.promptId);
+      setDevotional(data.response);
     }
-  );
+  }, [data]);
 
   React.useEffect(() => {
     if (promptStart) {
@@ -50,7 +53,7 @@ const HomeScreen: React.FC = () => {
 
   const submit = () => {
     fetch();
-    setVerse(null);
+    setDevotional("");
     Keyboard.dismiss();
   };
 
@@ -93,7 +96,7 @@ const HomeScreen: React.FC = () => {
               <Text style={styles.buttonText}>Get Guidance</Text>
             </TouchableOpacity>
           </View>
-          <VerseContainer verse={verse} isLoading={isLoading} />
+          <VerseContainer isLoading={isLoading} />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
