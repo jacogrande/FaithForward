@@ -8,30 +8,31 @@ import {
 } from "react-native";
 import colors from "../styles/colors";
 import useStore from "../Store";
-import { useApi } from "../services/api";
 import apiConfig from "../../apiConfig";
 import { auth } from "../../firebase";
+import { useApi } from "../hooks/useApi";
 
 const VerseAnalysisScreen: React.FC = () => {
   const { input, selectedVerse, promptId } = useStore();
 
-  const { isLoading, data, fetch } = useApi<{ response: string }>(
-    `${apiConfig.apiUrl}/analyzeVerse`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        userId: auth.currentUser?.uid,
-        prompt: input,
-        promptId: promptId,
-        verse: selectedVerse,
-      }),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  const {
+    isLoading,
+    data,
+    fetchData: getExegesis,
+  } = useApi<{ response: string }>(`${apiConfig.apiUrl}/analyzeVerse`, {
+    method: "POST",
+    body: JSON.stringify({
+      userId: auth.currentUser?.uid,
+      prompt: input,
+      promptId: promptId,
+      verse: selectedVerse,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
 
   React.useEffect(() => {
     if (selectedVerse) {
-      fetch();
+      getExegesis();
     }
   }, [selectedVerse]);
 

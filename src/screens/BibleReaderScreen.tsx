@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import apiConfig from "../../apiConfig";
 import { auth } from "../../firebase";
-import { useApi } from "../services/api";
+import { useApi } from "../hooks/useApi";
 import useStore from "../Store";
 import colors from "../styles/colors";
 
@@ -27,22 +27,23 @@ const BibleReaderScreen: React.FC = () => {
   const selectedVerse = useStore((state) => state.selectedVerse);
   const promptId = useStore((state) => state.promptId);
 
-  const { isLoading, data, fetch } = useApi<{ verses: IVerse[] }>(
-    `${apiConfig.apiUrl}/getBiblePassage`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        verse: getVerseReference(selectedVerse),
-        promptId: promptId,
-        userId: auth.currentUser?.uid,
-      }),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  const {
+    isLoading,
+    data,
+    fetchData: getBibleChapter,
+  } = useApi<{ verses: IVerse[] }>(`${apiConfig.apiUrl}/getBiblePassage`, {
+    method: "POST",
+    body: JSON.stringify({
+      verse: getVerseReference(selectedVerse),
+      promptId: promptId,
+      userId: auth.currentUser?.uid,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
 
   React.useEffect(() => {
     if (selectedVerse) {
-      fetch();
+      getBibleChapter();
     }
   }, [selectedVerse]);
 
