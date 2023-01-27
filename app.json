@@ -4,7 +4,7 @@
     "slug": "faith-forward",
     "version": "2.0.0",
     "orientation": "portrait",
-    "icon": "./assets/FaithForwardIcon.png",
+    "icon": "./assets/icon-dark-blue.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -20,11 +20,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.phaedrus.faithforward",
-      "buildNumber": "7"
+      "buildNumber": "8"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/FaithForwardIcon.png",
+        "foregroundImage": "./assets/icon-dark-blue.png",
         "backgroundColor": "#FFFFFF"
       }
     },
