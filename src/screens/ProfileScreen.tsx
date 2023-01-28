@@ -1,3 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
 import React from "react";
 import {
   Button,
@@ -16,19 +19,15 @@ const PRIVACY_POLICY_URL =
 const TERMS_OF_SERVICE_URL =
   "https://www.github.com/jacogrande/FaithForward/blob/master/terms-of-service.md";
 
-// TODO: Unstub account level
-const ProfileScreen: React.FC = () => {
+const LoggedInProfile: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const closeModal = () => setIsModalVisible(false);
   return (
-    <View style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.header}>Profile</Text>
-        <Text style={styles.heading}>Email</Text>
-        <Text style={styles.text}>{auth.currentUser?.email}</Text>
-        <Text style={styles.heading}>Account Level</Text>
-        <Text style={styles.text}>Free</Text>
-      </View>
+    <View>
+      <Text style={styles.heading}>Email</Text>
+      <Text style={styles.text}>{auth.currentUser?.email}</Text>
+      <Text style={styles.heading}>Account Level</Text>
+      <Text style={styles.text}>Free</Text>
       <TouchableOpacity style={styles.button} onPress={() => auth.signOut()}>
         <Text style={styles.buttonText}>Sign Out</Text>
       </TouchableOpacity>
@@ -41,6 +40,48 @@ const ProfileScreen: React.FC = () => {
         isModalVisible={isModalVisible}
         onClose={closeModal}
       />
+    </View>
+  );
+};
+
+const AnonymousProfile: React.FC = () => {
+  const navigation = useNavigation<StackNavigationProp<{ "Sign Up": {} }>>();
+  return (
+    <View>
+      <Text style={styles.text}>You don't have an account yet.</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Sign Up", {})}
+      >
+        <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+// TODO: Unstub account level
+const ProfileScreen: React.FC = () => {
+  const [isAnonymous, setIsAnonymous] = React.useState(true);
+
+  onIdTokenChanged(auth, (user) => {
+    if (user?.isAnonymous) {
+      setIsAnonymous(true);
+    } else {
+      setIsAnonymous(false);
+    }
+  });
+
+  const getPageContents = () => {
+    if (isAnonymous) {
+      return <AnonymousProfile />;
+    } else {
+      return <LoggedInProfile />;
+    }
+  };
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Profile:</Text>
+      {getPageContents()}
       <Policies />
     </View>
   );
@@ -84,13 +125,9 @@ const styles = StyleSheet.create({
   policyLink: {
     fontSize: 12,
   },
-  section: {
-    marginBottom: 16,
-    marginTop: 8,
-  },
   header: {
     fontSize: 28,
-    marginBottom: 16,
+    marginBottom: 24,
     fontWeight: "bold",
   },
   heading: {
@@ -111,7 +148,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.blue,
     borderRadius: 4,
     paddingVertical: 18,
-    marginTop: 12,
+    marginTop: 24,
     alignItems: "center",
     marginBottom: 24,
   },

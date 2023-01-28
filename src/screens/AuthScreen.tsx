@@ -1,8 +1,12 @@
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  createUserWithEmailAndPassword,
+  EmailAuthProvider,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  linkWithCredential,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import React, { useState } from "react";
 import {
@@ -19,14 +23,19 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { Card, Snackbar } from "react-native-paper";
+import { Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
 import useStore from "../Store";
+import colors from "../styles/colors";
 
 export const AuthScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { error, setError } = useStore();
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const navigation =
+    useNavigation<StackNavigationProp<{ "Faith Forward": undefined }>>();
 
   const handleError = (err: any): void => {
     console.error(err);
@@ -47,21 +56,37 @@ export const AuthScreen = () => {
 
   const signUp = async (): Promise<void> => {
     try {
+      setLoading(true);
       Keyboard.dismiss();
-      await createUserWithEmailAndPassword(auth, email, password);
+      if (!auth.currentUser)
+        throw new Error("No current user session to link credentials to");
+      if (auth.currentUser.isAnonymous) {
+        var credential = EmailAuthProvider.credential(email, password);
+        await linkWithCredential(auth.currentUser, credential);
+        auth.currentUser?.reload();
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+      }
       setError("");
+      navigation.navigate("Faith Forward");
     } catch (err) {
       handleError(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const signIn = async (): Promise<void> => {
     try {
+      setLoading(true);
       Keyboard.dismiss();
       await signInWithEmailAndPassword(auth, email, password);
       setError("");
+      navigation.navigate("Faith Forward");
     } catch (err) {
       handleError(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,8 +102,9 @@ export const AuthScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      {/* I could not for the life of me color the entire screen without using this. */}
       <LinearGradient
-        colors={["#5EB5D1", "#E6F5FA"]}
+        colors={[colors.paper, colors.paper]}
         style={styles.linearGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -86,7 +112,7 @@ export const AuthScreen = () => {
         <SafeAreaView style={styles.container}>
           <View style={styles.brandContainer}>
             <Image
-              source={require("../../assets/logo-book.png")}
+              source={require("../../assets/church.png")}
               resizeMode="contain"
               style={styles.logo}
             />
@@ -98,7 +124,7 @@ export const AuthScreen = () => {
             style={styles.content}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <Card style={styles.authCard}>
+            <View style={styles.authCard}>
               <View style={styles.inputs}>
                 <TextInput
                   value={email}
@@ -124,15 +150,21 @@ export const AuthScreen = () => {
               <View style={styles.authButtons}>
                 <TouchableOpacity
                   onPress={signUp}
-                  style={styles.authButton}
+                  style={[styles.authButton, { opacity: loading ? 0.5 : 1 }]}
                   testID="SignUpButton"
+                  disabled={loading}
                 >
                   <Text style={styles.authButtonText}>Sign Up</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={signIn}
-                  style={[styles.authButton, styles.logInButton]}
+                  style={[
+                    styles.authButton,
+                    styles.logInButton,
+                    { opacity: loading ? 0.5 : 1 },
+                  ]}
                   testID="LogInButton"
+                  disabled={loading}
                 >
                   <Text style={[styles.authButtonText, styles.logInButtonText]}>
                     Log In
@@ -141,15 +173,19 @@ export const AuthScreen = () => {
               </View>
               <View style={styles.forgotPasswordView}>
                 <TouchableOpacity
-                  style={styles.forgotPasswordButton}
+                  style={[
+                    styles.forgotPasswordButton,
+                    { opacity: loading ? 0.5 : 1 },
+                  ]}
                   onPress={handlePasswordReset}
+                  disabled={loading}
                 >
                   <Text style={styles.forgotPasswordButtonText}>
                     Forgot password?
                   </Text>
                 </TouchableOpacity>
               </View>
-            </Card>
+            </View>
           </KeyboardAvoidingView>
           <Snackbar
             visible={!!error}
@@ -167,12 +203,12 @@ export const AuthScreen = () => {
   );
 };
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 // TODO: Dynamically pad/size everything from device dimensions
 const styles = StyleSheet.create({
   authButton: {
-    backgroundColor: "#1E90FF",
+    backgroundColor: colors.blue,
     borderRadius: 10,
     padding: 15,
     width: width * 0.35,
@@ -190,9 +226,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   authCard: {
-    paddingTop: 40,
-    paddingBottom: 10,
-    backgroundColor: "white",
+    paddingTop: 24,
+    paddingBottom: 12,
+    backgroundColor: colors.paper,
   },
   brandContainer: {
     flex: 1,
@@ -205,10 +241,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 40,
+    backgroundColor: colors.paper,
   },
   content: {
     flex: 1,
     justifyContent: "center",
+    // minHeight: height,
   },
   error: {
     color: "red",
@@ -219,9 +257,8 @@ const styles = StyleSheet.create({
   },
   faithForwardText: {
     fontSize: 36,
-    fontWeight: "bold",
-    color: "#0A3D62",
-    fontFamily: "Avenir",
+    fontWeight: "600",
+    // fontFamily: "Avenir",
   },
   forgotPassword: {},
   forgotPasswordButton: {
@@ -254,15 +291,15 @@ const styles = StyleSheet.create({
   logInButton: {
     backgroundColor: "white",
     borderWidth: 1,
-    borderColor: "#1E90FF",
+    borderColor: colors.blue,
   },
   logInButtonText: {
-    color: "#1E90FF",
+    color: colors.blue,
   },
   logo: {
     marginVertical: 10,
-    width: width * 0.4,
-    height: width * 0.4,
+    width: width * 0.7,
+    height: width * 0.7,
     /* width: 200, */
     /* height: 200, */
   },
