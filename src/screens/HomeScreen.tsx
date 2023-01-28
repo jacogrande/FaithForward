@@ -142,7 +142,11 @@ const HomeScreen: React.FC = () => {
               onPress={getRandomExample}
               disabled={isLoading}
             >
-              <Text style={[styles.buttonText, { color: "#555" }]}>Random</Text>
+              <Text
+                style={[styles.buttonText, { color: "#444", marginTop: 12 }]}
+              >
+                Random
+              </Text>
             </TouchableOpacity>
           </View>
           <VerseContainer isLoading={isLoading} />
