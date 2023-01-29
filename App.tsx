@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { auth } from "./firebase";
 import AuthScreen from "./src/screens/AuthScreen";
+import { BackButton } from "./src/screens/HomeNavigator";
 import Navigation from "./src/screens/Navigation";
 import colors from "./src/styles/colors";
 
@@ -15,6 +16,7 @@ export default function App() {
   const [loadingAutoSignIn, setLoadingAutoSignIn] = useState(false);
 
   onAuthStateChanged(auth, (user) => {
+    // console.log(user);
     setUser(user);
     setLoading(false);
   });
@@ -47,27 +49,25 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Faith Forward"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: colors.paper,
-          },
-          header: () => null,
-        }}
-      >
+      <Stack.Navigator initialRouteName="Faith Forward">
         <Stack.Screen
           name="Faith Forward"
           component={Navigation}
           options={{
-            headerLeft: () => null,
+            header: () => null,
           }}
         />
         <Stack.Screen
           name="Sign Up"
           component={AuthScreen}
           options={{
-            header: () => null,
+            headerTitle: "",
+            headerStyle: {
+              backgroundColor: colors.paper,
+              shadowColor: "transparent",
+              height: 0,
+            },
+            headerLeft: BackButton,
           }}
         />
       </Stack.Navigator>
