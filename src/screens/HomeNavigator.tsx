@@ -11,7 +11,7 @@ import VerseAnalysisScreen from "./VerseAnalysisScreen";
 
 const Stack = createStackNavigator();
 
-const BackButton = () => {
+export const BackButton = () => {
   const navigation = useNavigation();
   return (
     <View
