@@ -38,6 +38,18 @@ const PLACEHOLDERS = [
   "I am currently in the process of planning a big event for my community, and it is taking a lot of time and energy to coordinate everything.",
   "I am excited to have recently started a new job and am looking forward to learning and growing in this new role.",
   "I have been working on a creative project and am making progress, but it is taking a lot of time and effort to bring it to fruition.",
+  "I have been feeling uncertain about my faith lately and I am struggling with feeling like I have a strong connection with God. I am also facing some challenges in my personal life and I feel lost on how to handle them. I was hoping to get your guidance and advice on how I can find peace and clarity in these areas.",
+  "Struggling with temptation and seeking guidance on staying strong.",
+  "Experiencing doubt and searching for ways to strengthen my belief.",
+  "I've been feeling overwhelmed lately with my job and family responsibilities. I need help finding balance and peace in my life.",
+  "I'm having a hard time trusting people, even those closest to me. Can you offer some guidance on how to build and maintain trust?",
+  "I've been feeling unsure about my future and direction in life. Can you share some wisdom on how to discern God's will for me?",
+  "I'm feeling sad because my best friend moved away. What can I do to feel better?",
+  "I'm having trouble sharing with my siblings. How can I learn to be more kind and generous?",
+  "I'm scared about starting a new school. What can I do to feel more confident?",
+  "I'm having trouble controlling my anger. How can I learn to stay calm in difficult situations?",
+  "I'm not sure what I want to be when I grow up. How can I figure out what I'm good at and what I love?",
+  "I'm feeling burned out at work and I need to take a break, but I can't afford to quit my job. I'm thinking of taking a sabbatical but I don't know how to make that happen.",
 ];
 
 const HomeScreen: React.FC = () => {
@@ -70,7 +82,11 @@ const HomeScreen: React.FC = () => {
   React.useEffect(() => {
     if (data && data.response && data.promptId) {
       setPromptId(data.promptId);
-      setDevotional(data.response);
+
+      // Use regex to remove any leading or trailing text that is like a formal letter
+      const response = data.response.replace(/(^.*?,\n\n)|(\n.*?,\n.*$)/g, "");
+
+      setDevotional(response);
     }
   }, [data]);
 
