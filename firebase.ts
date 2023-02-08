@@ -1,6 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { addDoc, collection, doc, getFirestore } from "firebase/firestore";
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 
 const firebaseProdConfig = {
   apiKey: "AIzaSyDgj0UDgTub38VuhVjUFIe9Sc5U_ODJK1c",
@@ -45,4 +54,37 @@ export const createPrompt = async (newPrompt: PromptPayload) => {
     createdAt: new Date(),
   });
   return promptRef;
+};
+
+// Add expo push token to user document
+// user.pushTokens shoud be an array of strings representing push tokens
+// NOTE: How do we handle anonymous users?
+//       We could create a new user document for them, but then we'd have to
+//       handle the case where they sign in with an existing account.
+//       We could also just not support push notifications for anonymous users.
+//       For now, we'll just not support push notifications for anonymous users.
+// TODO: Add push notification support for anonymous users
+export const addPushToken = async (pushToken: string) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  // Check if the current user is using anonymous login
+  if (auth.currentUser.isAnonymous) {
+    console.warn("Anonymous users cannot add push tokens");
+    return;
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const userSnapshot = await getDoc(userRef);
+
+  if (!userSnapshot.exists()) {
+    await setDoc(userRef, {
+      pushTokens: arrayUnion(pushToken),
+    });
+  } else {
+    await updateDoc(userRef, {
+      pushTokens: arrayUnion(pushToken),
+    });
+  }
 };

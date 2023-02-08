@@ -89,3 +89,8 @@ export const PLACEHOLDERS = [
 ];
 
 export const PROJECT_ID = "f0e47dc4-652b-438e-a726-e4db36dec0cb";
+
+export const PRIVACY_POLICY_URL =
+  "https://www.github.com/jacogrande/FaithForward/blob/master/privacy-policy.md";
+export const TERMS_OF_SERVICE_URL =
+  "https://www.github.com/jacogrande/FaithForward/blob/master/terms-of-service.md";

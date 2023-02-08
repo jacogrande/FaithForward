@@ -5,7 +5,7 @@ import * as Notifications from "expo-notifications";
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { auth } from "./firebase";
+import { addPushToken, auth } from "./firebase";
 import { PROJECT_ID } from "./src/constants";
 import AuthScreen from "./src/screens/AuthScreen";
 import { BackButton } from "./src/screens/HomeNavigator";
@@ -65,9 +65,8 @@ export default function App() {
   console.log("notification: ", notification);
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then(
-      (token) => setExpoPushToken(token)
-      // TODO: set the token on the user document in Firestore
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
     );
 
     notificationListener.current =
@@ -89,6 +88,13 @@ export default function App() {
       );
     };
   }, []);
+
+  // Call addPushToken when we have both a user and an expoPushToken
+  useEffect(() => {
+    if (user && expoPushToken) {
+      addPushToken(expoPushToken);
+    }
+  }, [user, expoPushToken]);
 
   onAuthStateChanged(auth, (user) => {
     setUser(user);

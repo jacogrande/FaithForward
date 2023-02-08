@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { onAuthStateChanged, onIdTokenChanged } from "firebase/auth";
+import { onIdTokenChanged } from "firebase/auth";
 import React from "react";
 import {
   Button,
@@ -12,13 +12,10 @@ import {
 } from "react-native";
 import { auth } from "../../firebase";
 import DeleteAccountModal from "../components/DeleteAccountModal";
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from "../constants";
 import colors from "../styles/colors";
 
-const PRIVACY_POLICY_URL =
-  "https://www.github.com/jacogrande/FaithForward/blob/master/privacy-policy.md";
-const TERMS_OF_SERVICE_URL =
-  "https://www.github.com/jacogrande/FaithForward/blob/master/terms-of-service.md";
-
+// TODO: Add toggle for push notifications
 const LoggedInProfile: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const closeModal = () => setIsModalVisible(false);

@@ -17,6 +17,7 @@ export const useApi = <T>(url: string, data?: RequestInit) => {
         console.debug("non-200 status code returned");
         const err = await response.json();
         console.debug(err);
+        setError(err.error);
 
         // If the user input was flagged, don't throw an error
         // Instead, set the response data
@@ -88,7 +89,7 @@ export const useApi = <T>(url: string, data?: RequestInit) => {
       }
     } catch (error: any) {
       console.error(error);
-      setError(error.message);
+      setError(error);
       setResponseData(error);
     } finally {
       setIsLoading(false);
