@@ -1,15 +1,16 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
-import React, { useEffect, useState, useRef } from "react";
-import { ActivityIndicator, View, Platform } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, View } from "react-native";
 import { auth } from "./firebase";
+import { PROJECT_ID } from "./src/constants";
 import AuthScreen from "./src/screens/AuthScreen";
 import { BackButton } from "./src/screens/HomeNavigator";
 import Navigation from "./src/screens/Navigation";
 import colors from "./src/styles/colors";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
 
 const Stack = createStackNavigator();
 
@@ -40,7 +41,7 @@ const registerForPushNotificationsAsync = async () => {
     console.log("getting token...");
     token = (
       await Notifications.getExpoPushTokenAsync({
-        projectId: "f0e47dc4-652b-438e-a726-e4db36dec0cb",
+        projectId: PROJECT_ID,
       })
     ).data;
     console.log("token:", token);
