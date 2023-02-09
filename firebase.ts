@@ -2,8 +2,10 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
   addDoc,
+  arrayRemove,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getFirestore,
@@ -56,35 +58,45 @@ export const createPrompt = async (newPrompt: PromptPayload) => {
   return promptRef;
 };
 
-// Add expo push token to user document
-// user.pushTokens shoud be an array of strings representing push tokens
-// NOTE: How do we handle anonymous users?
-//       We could create a new user document for them, but then we'd have to
-//       handle the case where they sign in with an existing account.
-//       We could also just not support push notifications for anonymous users.
-//       For now, we'll just not support push notifications for anonymous users.
-// TODO: Add push notification support for anonymous users
 export const addPushToken = async (pushToken: string) => {
+  console.log("Adding push token:", pushToken);
   if (!auth.currentUser) {
     throw new Error("Not logged in");
   }
 
-  // Check if the current user is using anonymous login
-  if (auth.currentUser.isAnonymous) {
-    console.warn("Anonymous users cannot add push tokens");
-    return;
+  // Create push token in pushTokens collection if it does not already exist
+  const pushTokenRef = doc(db, "pushTokens", pushToken);
+  const pushTokenDoc = await getDoc(pushTokenRef);
+  if (!pushTokenDoc.exists()) {
+    console.log("Creating push token...");
+    await setDoc(doc(db, "pushTokens", pushToken), {
+      token: pushToken,
+      userId: auth.currentUser.uid,
+      createdAt: new Date(),
+    });
   }
 
+  // Add push token to user document
   const userRef = doc(db, "users", auth.currentUser.uid);
-  const userSnapshot = await getDoc(userRef);
+  console.log("Adding push token to user document...");
+  await updateDoc(userRef, {
+    pushTokens: arrayUnion(pushToken),
+  });
+};
 
-  if (!userSnapshot.exists()) {
-    await setDoc(userRef, {
-      pushTokens: arrayUnion(pushToken),
-    });
-  } else {
-    await updateDoc(userRef, {
-      pushTokens: arrayUnion(pushToken),
-    });
+// Delete a push token
+export const deletePushToken = async (pushToken: string) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
   }
+
+  // Remove push token reference from user document
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  await updateDoc(userRef, {
+    pushTokens: arrayRemove(pushToken),
+  });
+
+  // Remove push token from pushTokens collection
+  const pushTokenRef = doc(db, "pushTokens", pushToken);
+  await deleteDoc(pushTokenRef);
 };
