@@ -16,7 +16,6 @@ import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from "../constants";
 import colors from "../styles/colors";
 
 // TODO: Add toggle for push notifications
-// TODO: Delete user push tokens on account deletion
 const LoggedInProfile: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const closeModal = () => setIsModalVisible(false);
@@ -76,9 +75,10 @@ const ProfileScreen: React.FC = () => {
       return <LoggedInProfile />;
     }
   };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Profile:</Text>
+      <Text style={styles.header}>Profile</Text>
       {getPageContents()}
       <Policies />
     </View>

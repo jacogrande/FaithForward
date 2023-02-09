@@ -10,6 +10,7 @@ import { PROJECT_ID } from "./src/constants";
 import AuthScreen from "./src/screens/AuthScreen";
 import { BackButton } from "./src/screens/HomeNavigator";
 import Navigation from "./src/screens/Navigation";
+import useStore from "./src/Store";
 import colors from "./src/styles/colors";
 
 const Stack = createStackNavigator();
@@ -51,14 +52,16 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [loadingAutoSignIn, setLoadingAutoSignIn] = useState(false);
-  const [expoPushToken, setExpoPushToken] = useState<any>("");
   const [notification, setNotification] = useState<any>(false);
+  const { pushToken, setPushToken } = useStore();
   const notificationListener = useRef();
   const responseListener = useRef();
 
+  console.log("notification", notification);
+
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
+      setPushToken(token || null)
     );
 
     notificationListener.current =
@@ -81,12 +84,12 @@ export default function App() {
     };
   }, []);
 
-  // Call addPushToken when we have both a user and an expoPushToken
+  // Call addPushToken when we have both a user and an pushToken
   useEffect(() => {
-    if (user && expoPushToken) {
-      addPushToken(expoPushToken);
+    if (user && pushToken) {
+      addPushToken(pushToken);
     }
-  }, [user, expoPushToken]);
+  }, [user, pushToken]);
 
   onAuthStateChanged(auth, (user) => {
     setUser(user);

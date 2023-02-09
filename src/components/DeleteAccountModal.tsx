@@ -5,20 +5,20 @@ import {
 } from "firebase/auth";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  Button,
-  Modal,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  Platform,
-  TextInput,
   Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Snackbar } from "react-native-paper";
-import { auth } from "../../firebase";
+import { auth, deletePushToken } from "../../firebase";
+import useStore from "../Store";
 import colors from "../styles/colors";
 
 interface DeleteAccountModalProps {
@@ -27,8 +27,9 @@ interface DeleteAccountModalProps {
 }
 
 const DeleteAccountModal: React.FC<DeleteAccountModalProps> = (props) => {
-  const [password, setPassword] = React.useState<string>("");
-  const [error, setError] = React.useState<string | null>(null);
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const { pushToken } = useStore();
 
   const signIn = async (): Promise<boolean> => {
     try {
@@ -54,6 +55,9 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = (props) => {
 
     try {
       await deleteUser(auth.currentUser);
+      if (!!pushToken) {
+        await deletePushToken(pushToken);
+      }
     } catch (err) {
       setError("Error deleting account. Please try again later.");
     }
