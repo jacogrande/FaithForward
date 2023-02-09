@@ -1,11 +1,12 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as Device from "expo-device";
+import * as Localization from "expo-localization";
 import * as Notifications from "expo-notifications";
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { addPushToken, auth } from "./firebase";
+import { auth, syncPushToken } from "./firebase";
 import { PROJECT_ID } from "./src/constants";
 import AuthScreen from "./src/screens/AuthScreen";
 import { BackButton } from "./src/screens/HomeNavigator";
@@ -87,7 +88,7 @@ export default function App() {
   // Call addPushToken when we have both a user and an pushToken
   useEffect(() => {
     if (user && pushToken) {
-      addPushToken(pushToken);
+      syncPushToken(pushToken, Localization.getCalendars()[0].timeZone);
     }
   }, [user, pushToken]);
 

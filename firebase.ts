@@ -58,23 +58,37 @@ export const createPrompt = async (newPrompt: PromptPayload) => {
   return promptRef;
 };
 
-export const addPushToken = async (pushToken: string) => {
-  console.log("Adding push token:", pushToken);
+export const syncPushToken = async (
+  pushToken: string,
+  timeZone: string | null
+) => {
+  console.log("Syncing push token:", pushToken);
   if (!auth.currentUser) {
     throw new Error("Not logged in");
   }
 
-  // Create push token in pushTokens collection if it does not already exist
-  const pushTokenRef = doc(db, "pushTokens", pushToken);
-  const pushTokenDoc = await getDoc(pushTokenRef);
-  if (!pushTokenDoc.exists()) {
-    console.log("Creating push token...");
-    await setDoc(doc(db, "pushTokens", pushToken), {
-      token: pushToken,
-      userId: auth.currentUser.uid,
-      createdAt: new Date(),
-    });
+  // Sync push token in pushTokens collection
+  console.log("Syncing push token...");
+
+  let pushTokenData: any = {
+    token: pushToken,
+    userId: auth.currentUser.uid,
+    createdAt: new Date(),
+  };
+
+  // If the push token has a timezone but the current device isn't supplying one
+  // Don't overwrite what we have with null
+  // TODO: Figure out a heuristic for handling push notifications for null timezones
+  if (timeZone) {
+    pushTokenData = {
+      ...pushTokenData,
+      timeZone,
+    };
   }
+
+  await setDoc(doc(db, "pushTokens", pushToken), pushTokenData, {
+    merge: true,
+  });
 
   // Add push token to user document
   const userRef = doc(db, "users", auth.currentUser.uid);
