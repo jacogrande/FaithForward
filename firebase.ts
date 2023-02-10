@@ -73,17 +73,38 @@ export const syncPushToken = async (
   let pushTokenData: any = {
     token: pushToken,
     userId: auth.currentUser.uid,
-    createdAt: new Date(),
   };
 
-  // If the push token has a timezone but the current device isn't supplying one
-  // Don't overwrite what we have with null
-  // TODO: Figure out a heuristic for handling push notifications for null timezones
-  if (timeZone) {
+  const nineAM = new Date();
+  nineAM.setHours(9);
+  nineAM.setMinutes(0);
+  nineAM.setSeconds(0);
+  nineAM.setMilliseconds(0);
+
+  // If document doesn't exist, add createdAt to the data
+  const pushTokenDoc = doc(db, "pushTokens", pushToken);
+  const pushTokenDocSnapshot = await getDoc(pushTokenDoc);
+  if (!pushTokenDocSnapshot.exists()) {
+    const aYearAgo = new Date();
+    aYearAgo.setFullYear(aYearAgo.getFullYear() - 1);
+
     pushTokenData = {
       ...pushTokenData,
       timeZone,
+      nextNotificationTime: nineAM.toISOString(),
+      lastNotificationTime: aYearAgo.toISOString(),
+      createdAt: new Date(),
     };
+  } else {
+    // If document exists, only update timeZone and nextNotification time if timeZone is different
+    const pushTokenDataFromDb = pushTokenDocSnapshot.data();
+    if (pushTokenDataFromDb?.timeZone !== timeZone) {
+      pushTokenData = {
+        ...pushTokenData,
+        timeZone,
+        nextNotificationTime: nineAM.toISOString(),
+      }
+    }
   }
 
   await setDoc(doc(db, "pushTokens", pushToken), pushTokenData, {
