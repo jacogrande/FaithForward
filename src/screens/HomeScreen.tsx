@@ -161,7 +161,7 @@ const HomeScreen: React.FC = () => {
               <Text
                 style={[styles.buttonText, { color: "#444", marginTop: 12 }]}
               >
-                Random
+                Get an example
               </Text>
             </TouchableOpacity>
           </View>
