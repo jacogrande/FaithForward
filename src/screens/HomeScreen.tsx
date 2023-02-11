@@ -14,43 +14,10 @@ import { Snackbar } from "react-native-paper";
 import apiConfig from "../../apiConfig";
 import { auth } from "../../firebase";
 import VerseContainer from "../components/VerseContainer";
+import { PLACEHOLDERS } from "../constants";
 import { useApi } from "../hooks/useApi";
 import useStore from "../Store";
 import colors from "../styles/colors";
-
-const PLACEHOLDERS = [
-  "I've been struggling with feelings of doubt and uncertainty in my faith recently, and I'm not sure how to handle it. I've been feeling like I don't have a strong connection to God, and I'm not sure if I'm doing something wrong or if this is just a normal part of the faith journey.",
-  "I've been going through a difficult time in my personal life, and I'm finding it hard to keep up with my spiritual practices. I'm feeling overwhelmed and disconnected, and I'm not sure how to get back on track. I would appreciate any advice you have on how to maintain my faith during difficult times.",
-  "I've been struggling with addiction for a long time, and I feel like I've hit rock bottom. I know that my faith is an important part of my recovery, but I'm not sure how to start incorporating it into my daily life.",
-  "I've been feeling a sense of disconnection from my local Christian community recently, and I'm not sure why. I've been attending church regularly, but I'm not feeling the same sense of belonging and connection that I used to.",
-  "I've been going through a difficult time in my marriage and I'm not sure how to navigate it.",
-  "I'm having trouble forgiving someone who has hurt me deeply and I'm not sure how to reconcile my faith with my feelings.",
-  "I've been struggling with doubts about the afterlife.",
-  "I'm not sure how to talk to my children about faith.",
-  "I'm going through a tough financial situation and I'm not sure how to trust in God's provision during this difficult time.",
-  "Is Santa real?",
-  "I'm having trouble forgiving someone who has hurt me deeply and I'm not sure how to reconcile my faith with my feelings. Can you help me understand how to forgive?",
-  "I'm having trouble sleeping and I'm not sure how to improve my sleep habits and get better rest.",
-  "I'm currently in a dilemma of whether to pursue a career in academics or industry and I am not sure which path aligns better with my long-term goals and interests.",
-  "I am having trouble dealing with the recent loss of a loved one and struggling to find closure, comfort and move forward with my life.",
-  "I am facing a difficult time in my marriage, my partner and I have been growing apart and I am not sure how to communicate effectively and find common ground.",
-  "I am struggling with my mental health and have been experiencing severe anxiety and depression for a while now, I am not sure how to seek help and manage it effectively.",
-  "I am currently in the process of planning a big event for my community, and it is taking a lot of time and energy to coordinate everything.",
-  "I am excited to have recently started a new job and am looking forward to learning and growing in this new role.",
-  "I have been working on a creative project and am making progress, but it is taking a lot of time and effort to bring it to fruition.",
-  "I have been feeling uncertain about my faith lately and I am struggling with feeling like I have a strong connection with God. I am also facing some challenges in my personal life and I feel lost on how to handle them. I was hoping to get your guidance and advice on how I can find peace and clarity in these areas.",
-  "Struggling with temptation and seeking guidance on staying strong.",
-  "Experiencing doubt and searching for ways to strengthen my belief.",
-  "I've been feeling overwhelmed lately with my job and family responsibilities. I need help finding balance and peace in my life.",
-  "I'm having a hard time trusting people, even those closest to me. Can you offer some guidance on how to build and maintain trust?",
-  "I've been feeling unsure about my future and direction in life. Can you share some wisdom on how to discern God's will for me?",
-  "I'm feeling sad because my best friend moved away. What can I do to feel better?",
-  "I'm having trouble sharing with my siblings. How can I learn to be more kind and generous?",
-  "I'm scared about starting a new school. What can I do to feel more confident?",
-  "I'm having trouble controlling my anger. How can I learn to stay calm in difficult situations?",
-  "I'm not sure what I want to be when I grow up. How can I figure out what I'm good at and what I love?",
-  "I'm feeling burned out at work and I need to take a break, but I can't afford to quit my job. I'm thinking of taking a sabbatical but I don't know how to make that happen.",
-];
 
 const HomeScreen: React.FC = () => {
   const {
@@ -79,7 +46,7 @@ const HomeScreen: React.FC = () => {
     headers: { "Content-Type": "application/json" },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data && data.response && data.promptId) {
       setPromptId(data.promptId);
 

@@ -1,6 +1,17 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { addDoc, collection, doc, getFirestore } from "firebase/firestore";
+import {
+  addDoc,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 
 const firebaseProdConfig = {
   apiKey: "AIzaSyDgj0UDgTub38VuhVjUFIe9Sc5U_ODJK1c",
@@ -45,4 +56,82 @@ export const createPrompt = async (newPrompt: PromptPayload) => {
     createdAt: new Date(),
   });
   return promptRef;
+};
+
+export const syncPushToken = async (
+  pushToken: string,
+  timeZone: string | null
+) => {
+  console.log("Syncing push token:", pushToken);
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  // Sync push token in pushTokens collection
+  console.log("Syncing push token...");
+
+  let pushTokenData: any = {
+    token: pushToken,
+    userId: auth.currentUser.uid,
+  };
+
+  const nineAM = new Date();
+  nineAM.setHours(9);
+  nineAM.setMinutes(0);
+  nineAM.setSeconds(0);
+  nineAM.setMilliseconds(0);
+
+  // If document doesn't exist, add createdAt to the data
+  const pushTokenDoc = doc(db, "pushTokens", pushToken);
+  const pushTokenDocSnapshot = await getDoc(pushTokenDoc);
+  if (!pushTokenDocSnapshot.exists()) {
+    const aYearAgo = new Date();
+    aYearAgo.setFullYear(aYearAgo.getFullYear() - 1);
+
+    pushTokenData = {
+      ...pushTokenData,
+      timeZone,
+      nextNotificationTime: nineAM.toISOString(),
+      lastNotificationTime: aYearAgo.toISOString(),
+      createdAt: new Date(),
+    };
+  } else {
+    // If document exists, only update timeZone and nextNotification time if timeZone is different
+    const pushTokenDataFromDb = pushTokenDocSnapshot.data();
+    if (pushTokenDataFromDb?.timeZone !== timeZone) {
+      pushTokenData = {
+        ...pushTokenData,
+        timeZone,
+        nextNotificationTime: nineAM.toISOString(),
+      }
+    }
+  }
+
+  await setDoc(doc(db, "pushTokens", pushToken), pushTokenData, {
+    merge: true,
+  });
+
+  // Add push token to user document
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  console.log("Adding push token to user document...");
+  await updateDoc(userRef, {
+    pushTokens: arrayUnion(pushToken),
+  });
+};
+
+// Delete a push token
+export const deletePushToken = async (pushToken: string) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  // Remove push token reference from user document
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  await updateDoc(userRef, {
+    pushTokens: arrayRemove(pushToken),
+  });
+
+  // Remove push token from pushTokens collection
+  const pushTokenRef = doc(db, "pushTokens", pushToken);
+  await deleteDoc(pushTokenRef);
 };

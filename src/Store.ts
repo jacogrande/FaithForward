@@ -13,6 +13,8 @@ type Store = {
   setPromptId: (promptId: string) => void;
   error: string | null;
   setError: (error: string | null) => void;
+  pushToken: string | null;
+  setPushToken: (pushToken: string | null) => void;
 };
 
 const useStore = create<Store>((set) => ({
@@ -31,6 +33,9 @@ const useStore = create<Store>((set) => ({
   setPromptId: (promptId: string) => set((state) => ({ ...state, promptId })),
   error: null,
   setError: (error: string | null) => set((state) => ({ ...state, error })),
+  pushToken: null,
+  setPushToken: (pushToken: string | null) =>
+    set((state) => ({ ...state, pushToken })),
 }));
 
 export default useStore;
