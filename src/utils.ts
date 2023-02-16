@@ -25,3 +25,13 @@ export const formatDate = (date: Date | Timestamp): string => {
     day: "numeric",
   });
 };
+
+// Format time
+export const formatTime = (date: Date | Timestamp): string => {
+  const d = ensureDate(date);
+  return d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+};

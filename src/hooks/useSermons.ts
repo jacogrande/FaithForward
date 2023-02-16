@@ -1,4 +1,4 @@
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { TSermon } from "../../types";
@@ -15,7 +15,10 @@ export const useSermons = () => {
     console.log("Fetching sermons...");
     try {
       let ss: TSermon[] = [];
-      const sermonsQuery = query(collection(db, "sermons"));
+      const sermonsQuery = query(
+        collection(db, "sermons"),
+        orderBy("createdAt", "desc")
+      );
       const snapshot = await getDocs(sermonsQuery);
       if (snapshot.empty) {
         console.log("No sermons found.");

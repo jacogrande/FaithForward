@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -16,11 +17,10 @@ import { useSermons } from "../hooks/useSermons";
 import colors from "../styles/colors";
 import { formatDate } from "../utils";
 
-// TODO: Style this puppy
 export default function SermonsScreen() {
   const { sermons, loading } = useSermons();
   const [sound, setSound] = useState<any>();
-  const [playingFilename, setPlayingFilename] = useState<string | null>(null);
+  const [playingSermon, setPlayingSermon] = useState<TSermon | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
@@ -28,17 +28,17 @@ export default function SermonsScreen() {
       ? () => {
           console.log("Unloading sound...");
           sound.unloadAsync();
-          setPlayingFilename(null);
+          setPlayingSermon(null);
           setIsPlaying(false);
         }
       : undefined;
   }, [sound]);
 
   useEffect(() => {
-    if (playingFilename) {
+    if (!!playingSermon) {
       playSound();
     }
-  }, [playingFilename]);
+  }, [JSON.stringify(playingSermon)]);
 
   async function pauseSound() {
     console.log("Pausing sound...");
@@ -56,7 +56,7 @@ export default function SermonsScreen() {
         await sound.unloadAsync();
       }
       setSound(null);
-      setPlayingFilename(null);
+      setPlayingSermon(null);
       setIsPlaying(false);
     }
   }
@@ -67,13 +67,13 @@ export default function SermonsScreen() {
       console.log("Sound is loaded, resuming...");
       sound.playAsync();
     } else {
-      if (!playingFilename) {
+      if (!playingSermon) {
         console.error("Cannot play sound, no filename is set");
         return;
       }
 
       console.log("Sound is not loaded, loading...");
-      const sermon = ref(storage, playingFilename);
+      const sermon = ref(storage, playingSermon.filename);
       const uri = await getDownloadURL(sermon);
       const { sound: playbackObject } = await Audio.Sound.createAsync(
         { uri },
@@ -85,29 +85,38 @@ export default function SermonsScreen() {
   }
 
   async function startPlayingSermon(sermon: TSermon) {
-    setPlayingFilename(sermon.filename);
+    if (playingSermon?.id === sermon.id) {
+      playSound();
+    } else {
+      await stopSound();
+      setPlayingSermon(sermon);
+    }
   }
 
   return (
     <SafeAreaView style={styles.superContainer}>
       <View style={styles.container}>
         <Text style={styles.title}>Sermons</Text>
-        <View style={styles.sermonsContainer}>
+        <ScrollView style={styles.sermonsContainer}>
           {loading ? (
             <ActivityIndicator />
           ) : (
             sermons.map((sermon) => (
-              <TouchableOpacity
-                key={sermon.id}
-                onPress={() => startPlayingSermon(sermon)}
-              >
-                <Sermon sermon={sermon} key={sermon.id} />
-              </TouchableOpacity>
+              <View key={sermon.id} style={styles.sermonTouchable}>
+                <Sermon sermon={sermon} />
+                <TouchableOpacity
+                  onPress={() => startPlayingSermon(sermon)}
+                  style={[styles.button]}
+                >
+                  <Text style={styles.buttonText}>Play</Text>
+                </TouchableOpacity>
+              </View>
             ))
           )}
-        </View>
+        </ScrollView>
         {!!sound ? (
           <AudioControls
+            title={playingSermon?.title || ""}
             playingAudio={isPlaying}
             onPlay={playSound}
             onPause={pauseSound}
@@ -120,6 +129,7 @@ export default function SermonsScreen() {
 }
 
 interface AudioControlsProps {
+  title: string;
   playingAudio: boolean;
   onPlay: () => void;
   onPause: () => void;
@@ -127,24 +137,25 @@ interface AudioControlsProps {
 }
 
 function AudioControls(props: AudioControlsProps) {
-  const { playingAudio, onPlay, onPause, onStop } = props;
+  const { title, playingAudio, onPlay, onPause, onStop } = props;
 
   return (
-    <View style={styles.buttonContainer}>
-      <>
+    <View style={styles.audioControlContainer}>
+      <Text style={styles.playingSermonText}>{title}</Text>
+      <View style={styles.audioControlButtons}>
         {playingAudio ? (
-          <TouchableOpacity style={styles.button} onPress={onPause}>
+          <TouchableOpacity onPress={onPause}>
             <FontAwesome5 name="pause" size={24} color={colors.blue} />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.button} onPress={onPlay}>
+          <TouchableOpacity onPress={onPlay}>
             <FontAwesome5 name="play" size={24} color={colors.blue} />
           </TouchableOpacity>
         )}
-        <TouchableOpacity style={styles.button} onPress={onStop}>
+        <TouchableOpacity onPress={onStop}>
           <FontAwesome5 name="stop" size={24} color={colors.blue} />
         </TouchableOpacity>
-      </>
+      </View>
     </View>
   );
 }
@@ -174,13 +185,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sermonsContainer: {
-    verticalAlign: "middle",
     backgroundColor: "#fff",
     padding: 24,
   },
-  sermonContainer: {
+  sermonTouchable: {
+    borderTopColor: colors.lightBlue,
+    borderTopWidth: 2,
     marginVertical: 10,
+    padding: 10,
   },
+  sermonContainer: {},
   title: {
     fontSize: 28,
     fontWeight: "bold",
@@ -198,16 +212,50 @@ const styles = StyleSheet.create({
   },
   sermonDate: {
     fontSize: 14,
-    paddingTop: 10,
+    paddingVertical: 10,
   },
-  buttonContainer: {
+  audioControlContainer: {
     position: "absolute",
     bottom: 0,
     flexDirection: "row",
     justifyContent: "space-evenly",
+    alignItems: "center",
     width: "100%",
-    padding: 30,
-    backgroundColor: colors.darkPaper,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    backgroundColor: colors.lightBlue,
+    zIndex: 10,
+    opacity: 1,
+    borderTopColor: colors.blue,
+    borderTopWidth: 1,
   },
-  button: {},
+  audioControlButtons: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    width: "50%",
+  },
+  button: {
+    backgroundColor: colors.blue,
+    borderRadius: 4,
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    width: "100%",
+    marginTop: 12,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  playingSermonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    alignSelf: "center",
+    verticalAlign: "middle",
+    color: "#333",
+    width: "50%",
+  },
 });
