@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   FlatList,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -131,8 +130,10 @@ export default function SermonsScreen() {
 
   return (
     <SafeAreaView style={styles.superContainer}>
-      <ScrollView style={styles.container}>
-        <Text style={styles.title}>Sermons</Text>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Sermons</Text>
+        </View>
         {loading ? (
           <ActivityIndicator />
         ) : (
@@ -161,6 +162,7 @@ export default function SermonsScreen() {
               </View>
             )}
             ListEmptyComponent={<Text>No sermons to display.</Text>}
+            ListFooterComponent={<View style={{ height: 100 }} />}
           />
         )}
         {!!sound ? (
@@ -172,7 +174,7 @@ export default function SermonsScreen() {
             onStop={stopSound}
           />
         ) : null}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -237,34 +239,38 @@ const styles = StyleSheet.create({
   sermonsContainer: {
     backgroundColor: "#fff",
     padding: 24,
-    paddingBottom: 100
   },
   sermonSection: {
-    borderTopColor: colors.lightBlue,
-    borderTopWidth: 2,
-    marginVertical: 10,
-    padding: 10,
+    borderBottomColor: colors.lightBlue,
+    borderBottomWidth: 2,
+    marginBottom: 10,
+    paddingVertical: 20,
   },
   sermonContainer: {},
+  header: {
+    marginTop: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    borderBottomColor: colors.lightBlue,
+    borderBottomWidth: 2,
+  },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    marginTop: 24,
-    paddingHorizontal: 24,
   },
   sermonTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    paddingTop: 10,
+    paddingBottom: 10,
   },
   sermonDescription: {
     fontSize: 16,
-    paddingTop: 10,
+    paddingBottom: 10,
   },
   sermonSpeaker: {
     fontSize: 14,
-    paddingVertical: 10,
     fontStyle: "italic",
+    paddingVertical: 10,
   },
   audioControlContainer: {
     position: "absolute",
