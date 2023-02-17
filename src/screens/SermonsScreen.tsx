@@ -4,6 +4,7 @@ import { getDownloadURL, ref } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  FlatList,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -15,7 +16,6 @@ import { storage } from "../../firebase";
 import { TSermon } from "../../types";
 import { useSermons } from "../hooks/useSermons";
 import colors from "../styles/colors";
-import { formatDate } from "../utils";
 
 export default function SermonsScreen() {
   const { sermons, loading } = useSermons();
@@ -71,16 +71,21 @@ export default function SermonsScreen() {
         );
       }
     } else {
+      // TODO: Refactor play/pause handlers into these
       if (playbackStatus.isPlaying) {
         console.log("Playing...");
       } else {
         console.log("Paused...");
       }
 
+      // TODO: Properly handle buffering state
       if (playbackStatus.isBuffering) {
         console.log("Buffering...");
       }
 
+      // TODO: Figure out why we have to manually setSound etc
+      //       stopSound doesn't do the trick because sound is null
+      //       but playingSermon isn't? Weird
       if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
         console.log("Finished playing");
         setSound(null);
@@ -128,12 +133,15 @@ export default function SermonsScreen() {
     <SafeAreaView style={styles.superContainer}>
       <ScrollView style={styles.container}>
         <Text style={styles.title}>Sermons</Text>
-        <View style={styles.sermonsContainer}>
-          {loading ? (
-            <ActivityIndicator />
-          ) : (
-            sermons.map((sermon) => (
-              <View key={sermon.id} style={styles.sermonTouchable}>
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <FlatList
+            style={styles.sermonsContainer}
+            data={sermons}
+            keyExtractor={(sermon: TSermon) => sermon.id}
+            renderItem={({ item: sermon }: { item: TSermon }) => (
+              <View style={styles.sermonSection}>
                 <Sermon sermon={sermon} />
                 <TouchableOpacity
                   onPress={() => startPlayingSermon(sermon)}
@@ -151,9 +159,10 @@ export default function SermonsScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
-            ))
-          )}
-        </View>
+            )}
+            ListEmptyComponent={<Text>No sermons to display.</Text>}
+          />
+        )}
         {!!sound ? (
           <AudioControls
             title={playingSermon?.title || ""}
@@ -228,8 +237,9 @@ const styles = StyleSheet.create({
   sermonsContainer: {
     backgroundColor: "#fff",
     padding: 24,
+    paddingBottom: 100
   },
-  sermonTouchable: {
+  sermonSection: {
     borderTopColor: colors.lightBlue,
     borderTopWidth: 2,
     marginVertical: 10,
