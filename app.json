@@ -20,7 +20,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.phaedrus.faithforward",
-      "buildNumber": "13"
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ]
+      },
+      "buildNumber": "14"
     },
     "android": {
       "adaptiveIcon": {
