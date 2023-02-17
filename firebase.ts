@@ -12,6 +12,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseProdConfig = {
   apiKey: "AIzaSyDgj0UDgTub38VuhVjUFIe9Sc5U_ODJK1c",
@@ -39,6 +40,7 @@ const firebaseConfig =
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const storage = getStorage(app);
 
 export interface PromptPayload {
   userInput: string;
@@ -103,7 +105,7 @@ export const syncPushToken = async (
         ...pushTokenData,
         timeZone,
         nextNotificationTime: nineAM.toISOString(),
-      }
+      };
     }
   }
 
