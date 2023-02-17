@@ -23,6 +23,13 @@ export default function SermonsScreen() {
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
+    Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+      staysActiveInBackground: true,
+    });
+  }, []);
+
+  useEffect(() => {
     return sound
       ? () => {
           console.log("Unloading sound...");
