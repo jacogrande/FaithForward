@@ -64,14 +64,11 @@ export const syncPushToken = async (
   pushToken: string,
   timeZone: string | null
 ) => {
-  console.log("Syncing push token:", pushToken);
   if (!auth.currentUser) {
     throw new Error("Not logged in");
   }
 
   // Sync push token in pushTokens collection
-  console.log("Syncing push token...");
-
   let pushTokenData: any = {
     token: pushToken,
     userId: auth.currentUser.uid,
@@ -115,7 +112,6 @@ export const syncPushToken = async (
 
   // Add push token to user document
   const userRef = doc(db, "users", auth.currentUser.uid);
-  console.log("Adding push token to user document...");
   await updateDoc(userRef, {
     pushTokens: arrayUnion(pushToken),
   });

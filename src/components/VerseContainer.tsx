@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   ScrollView,
   Share,
   StyleSheet,
@@ -34,7 +33,6 @@ const getVerseRef = (verse: string, fullResponse: string) => {
     );
     // find the next verse reference
     const newReference = newResponse.match(match);
-    // console.log(newReference);
     return newReference?.toString();
   }
   return reference?.toString();
