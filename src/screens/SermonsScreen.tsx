@@ -72,21 +72,17 @@ export default function SermonsScreen() {
       }
     } else {
       if (playbackStatus.isPlaying) {
-        // TODO: Update your UI for the playing state
         console.log("Playing...");
       } else {
-        // TODO: Update your UI for the paused state
         console.log("Paused...");
       }
 
       if (playbackStatus.isBuffering) {
-        // TODO: Update your UI for the buffering state
         console.log("Buffering...");
       }
 
       if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
         console.log("Finished playing");
-        // The player has just finished playing and will stop
         setSound(null);
         setPlayingSermon(null);
         setIsPlaying(false);
@@ -130,9 +126,9 @@ export default function SermonsScreen() {
 
   return (
     <SafeAreaView style={styles.superContainer}>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <Text style={styles.title}>Sermons</Text>
-        <ScrollView style={styles.sermonsContainer}>
+        <View style={styles.sermonsContainer}>
           {loading ? (
             <ActivityIndicator />
           ) : (
@@ -157,7 +153,7 @@ export default function SermonsScreen() {
               </View>
             ))
           )}
-        </ScrollView>
+        </View>
         {!!sound ? (
           <AudioControls
             title={playingSermon?.title || ""}
@@ -167,7 +163,7 @@ export default function SermonsScreen() {
             onStop={stopSound}
           />
         ) : null}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -216,7 +212,7 @@ function Sermon(props: SermonProps) {
     <View style={styles.sermonContainer}>
       <Text style={styles.sermonTitle}>{sermon.title}</Text>
       <Text style={styles.sermonDescription}>{sermon.description}</Text>
-      <Text style={styles.sermonDate}>{formatDate(sermon.createdAt)}</Text>
+      <Text style={styles.sermonSpeaker}>with {sermon.speaker}</Text>
     </View>
   );
 }
@@ -255,9 +251,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingTop: 10,
   },
-  sermonDate: {
+  sermonSpeaker: {
     fontSize: 14,
     paddingVertical: 10,
+    fontStyle: "italic",
   },
   audioControlContainer: {
     position: "absolute",
