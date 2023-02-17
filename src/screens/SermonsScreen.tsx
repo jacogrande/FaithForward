@@ -37,6 +37,8 @@ export default function SermonsScreen() {
   useEffect(() => {
     if (!!playingSermon) {
       playSound();
+    } else {
+      stopSound();
     }
   }, [JSON.stringify(playingSermon)]);
 
@@ -49,7 +51,6 @@ export default function SermonsScreen() {
   }
 
   async function stopSound(): Promise<void> {
-    console.log("Stopping sound...");
     if (sound) {
       if (sound.getStatusAsync().isLoaded) {
         await sound.stopAsync();
@@ -60,6 +61,38 @@ export default function SermonsScreen() {
       setIsPlaying(false);
     }
   }
+
+  const onPlaybackStatusUpdate = (playbackStatus: any) => {
+    if (!playbackStatus.isLoaded) {
+      // Update your UI for the unloaded state
+      if (playbackStatus.error) {
+        console.error(
+          `Encountered a fatal error during playback: ${playbackStatus.error}`
+        );
+      }
+    } else {
+      if (playbackStatus.isPlaying) {
+        // TODO: Update your UI for the playing state
+        console.log("Playing...");
+      } else {
+        // TODO: Update your UI for the paused state
+        console.log("Paused...");
+      }
+
+      if (playbackStatus.isBuffering) {
+        // TODO: Update your UI for the buffering state
+        console.log("Buffering...");
+      }
+
+      if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
+        console.log("Finished playing");
+        // The player has just finished playing and will stop
+        setSound(null);
+        setPlayingSermon(null);
+        setIsPlaying(false);
+      }
+    }
+  };
 
   async function playSound(): Promise<void> {
     console.log("Playing sound...");
@@ -80,6 +113,8 @@ export default function SermonsScreen() {
         { shouldPlay: true }
       );
       setSound(playbackObject);
+      // Call stopSound when audio finishes playing
+      playbackObject.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
     }
     setIsPlaying(true);
   }
@@ -106,9 +141,18 @@ export default function SermonsScreen() {
                 <Sermon sermon={sermon} />
                 <TouchableOpacity
                   onPress={() => startPlayingSermon(sermon)}
-                  style={[styles.button]}
+                  style={[
+                    styles.button,
+                    playingSermon?.id === sermon.id ? styles.buttonActive : {},
+                  ]}
                 >
-                  <Text style={styles.buttonText}>Play</Text>
+                  <Text style={[styles.buttonText]}>
+                    {playingSermon?.id === sermon.id && !!sound
+                      ? "Playing"
+                      : playingSermon?.id === sermon.id && !sound
+                      ? "Loading..."
+                      : "Play"}
+                  </Text>
                 </TouchableOpacity>
               </View>
             ))
@@ -139,6 +183,7 @@ interface AudioControlsProps {
 function AudioControls(props: AudioControlsProps) {
   const { title, playingAudio, onPlay, onPause, onStop } = props;
 
+  // TODO: Truncate and scroll long titles
   return (
     <View style={styles.audioControlContainer}>
       <Text style={styles.playingSermonText}>{title}</Text>
@@ -257,5 +302,8 @@ const styles = StyleSheet.create({
     verticalAlign: "middle",
     color: "#333",
     width: "50%",
+  },
+  buttonActive: {
+    backgroundColor: colors.orange,
   },
 });
