@@ -11,6 +11,7 @@ import {
 import ViewShot from "react-native-view-shot";
 import useStore from "../Store";
 import colors from "../styles/colors";
+import LoadingScreen from "./LoadingScreen";
 import VerseActionModal from "./VerseActionModal";
 
 const getVerseRef = (verse: string, fullResponse: string) => {
@@ -140,13 +141,7 @@ const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
             </ViewShot>
           </View>
         )}
-        {isLoading && (
-          <ActivityIndicator
-            color={colors.blue}
-            size={"large"}
-            style={{ marginTop: 48 }}
-          />
-        )}
+        {isLoading && <LoadingScreen />}
       </ScrollView>
       <VerseActionModal
         isModalVisible={modalOpen}
