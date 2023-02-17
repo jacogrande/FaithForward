@@ -4,7 +4,6 @@ import { db } from "../../firebase";
 import { TSermon } from "../../types";
 import useStore from "../Store";
 
-// TODO: Sort by createdAt
 export const useSermons = () => {
   const [sermons, setSermons] = useState<TSermon[]>([]);
   const [loading, setLoading] = useState(true);

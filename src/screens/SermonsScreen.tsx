@@ -1,5 +1,5 @@
 import { FontAwesome5 } from "@expo/vector-icons";
-import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from "expo-av";
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { getDownloadURL, ref } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import {
@@ -84,14 +84,14 @@ export default function SermonsScreen() {
     } else {
       // TODO: Refactor play/pause handlers into these
       if (playbackStatus.isPlaying) {
-        console.log("Playing...");
+        //console.log("Playing...");
       } else {
-        console.log("Paused...");
+        //console.log("Paused...");
       }
 
       // TODO: Properly handle buffering state
       if (playbackStatus.isBuffering) {
-        console.log("Buffering...");
+        //console.log("Buffering...");
       }
 
       // TODO: Figure out why we have to manually setSound etc
@@ -147,7 +147,9 @@ export default function SermonsScreen() {
           <Text style={styles.title}>Sermons</Text>
         </View>
         {loading ? (
-          <ActivityIndicator />
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator />
+          </View>
         ) : (
           <FlatList
             style={styles.sermonsContainer}
@@ -330,5 +332,10 @@ const styles = StyleSheet.create({
   },
   buttonActive: {
     backgroundColor: colors.orange,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
