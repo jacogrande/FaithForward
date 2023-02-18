@@ -7,5 +7,6 @@ export type TSermon = {
   description: string;
   createdAt: Date | Timestamp;
   speaker: string;
+  duration: number;
 };
 
