@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -18,7 +19,7 @@ import { useSermons } from "../hooks/useSermons";
 import colors from "../styles/colors";
 
 export default function SermonsScreen() {
-  const { sermons, loading } = useSermons();
+  const { sermons, loading, refreshing, setRefreshing } = useSermons();
   const [sound, setSound] = useState<any>();
   const [playingSermon, setPlayingSermon] = useState<TSermon | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -178,6 +179,12 @@ export default function SermonsScreen() {
             )}
             ListEmptyComponent={<Text>No sermons to display.</Text>}
             ListFooterComponent={<View style={{ height: 100 }} />}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => setRefreshing(true)}
+              />
+            }
           />
         )}
         {!!sound ? (
