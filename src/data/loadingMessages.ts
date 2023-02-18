@@ -24,6 +24,16 @@ export const loadingMessages = [
   "Tuning harps",
   "Fighting the temptation to close the app",
   "Practicing the patience of Job",
+  "Climbing the mountain of faith",
+  "Walking through the valley of shadows",
+  "Planting seeds of hope",
+  "Nurturing the fruits of the spirit",
+  "Lighting the way with the lamp of faith",
+  "Striving for righteousness",
+  "Sowing the seeds of love and kindness",
+  "Refining gold in the furnace of affliction",
+  "Rising on eagle's wings",
+  "Holding on to the anchor of hope"
 ];
 
 export const getRandomMessage = () => {

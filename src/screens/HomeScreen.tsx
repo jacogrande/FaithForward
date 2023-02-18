@@ -13,6 +13,7 @@ import {
 import { Snackbar } from "react-native-paper";
 import apiConfig from "../../apiConfig";
 import { auth } from "../../firebase";
+import { Container } from "../components/Container";
 import VerseContainer from "../components/VerseContainer";
 import { PLACEHOLDERS } from "../constants";
 import { useApi } from "../hooks/useApi";
@@ -49,11 +50,7 @@ const HomeScreen: React.FC = () => {
   useEffect(() => {
     if (data && data.response && data.promptId) {
       setPromptId(data.promptId);
-
-      // Use regex to remove any leading or trailing text that is like a formal letter
-      const response = data.response.replace(/(^.*?,\n\n)|(\n.*?,\n.*$)/g, "");
-
-      setDevotional(response);
+      setDevotional(data.response);
     }
   }, [data]);
 
@@ -78,74 +75,76 @@ const HomeScreen: React.FC = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
-    >
-      <ScrollView
-        style={styles.scroller}
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
+    <Container>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
-        <View style={styles.container}>
-          <View>
-            <Text style={styles.header}>What is on your mind?</Text>
-          </View>
+        <ScrollView
+          style={styles.scroller}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.container}>
+            <View>
+              <Text style={styles.header}>What is on your mind?</Text>
+            </View>
 
-          <TextInput
-            ref={inputRef}
-            style={[styles.input]}
-            placeholder="Type your question or describe your situation here..."
-            placeholderTextColor="#999"
-            onChangeText={(text) => setInput(text)}
-            value={input}
-            multiline
-          />
-          <View style={styles.buttonRow}>
-            <TouchableOpacity
-              onPress={submit}
-              style={[
-                styles.button,
-                { opacity: input && !isLoading ? 1 : 0.4 },
-              ]}
-              disabled={!input || isLoading}
-            >
-              <Text style={styles.buttonText}>Get Guidance</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity
-              style={{
-                alignItems: "center",
-                display: "flex",
-                justifyContent: "center",
-                marginTop: 18,
-                width: "100%",
-              }}
-              onPress={getRandomExample}
-              disabled={isLoading}
-            >
-              <Text
-                style={[styles.buttonText, { color: "#444", marginTop: 12 }]}
+            <TextInput
+              ref={inputRef}
+              style={[styles.input]}
+              placeholder="Type your question or describe your situation here..."
+              placeholderTextColor="#999"
+              onChangeText={(text) => setInput(text)}
+              value={input}
+              multiline
+            />
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                onPress={submit}
+                style={[
+                  styles.button,
+                  { opacity: input && !isLoading ? 1 : 0.4 },
+                ]}
+                disabled={!input || isLoading}
               >
-                Get an example
-              </Text>
-            </TouchableOpacity>
+                <Text style={styles.buttonText}>Get Guidance</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: 18,
+                  width: "100%",
+                }}
+                onPress={getRandomExample}
+                disabled={isLoading}
+              >
+                <Text
+                  style={[styles.buttonText, { color: "#444", marginTop: 12 }]}
+                >
+                  Get an example
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <VerseContainer isLoading={isLoading} />
           </View>
-          <VerseContainer isLoading={isLoading} />
-        </View>
-      </ScrollView>
-      <Snackbar
-        visible={!!error}
-        onDismiss={() => setError(null)}
-        action={{
-          label: "Dismiss",
-          onPress: () => setError(null),
-        }}
-      >
-        {error}
-      </Snackbar>
-    </KeyboardAvoidingView>
+        </ScrollView>
+        <Snackbar
+          visible={!!error}
+          onDismiss={() => setError(null)}
+          action={{
+            label: "Dismiss",
+            onPress: () => setError(null),
+          }}
+        >
+          {error}
+        </Snackbar>
+      </KeyboardAvoidingView>
+    </Container>
   );
 };
 
