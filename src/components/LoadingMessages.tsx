@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { ActivityIndicator, Text, View, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import {
   getRandomMessage,
   initialLoadingMessage,
 } from "../data/loadingMessages";
 import colors from "../styles/colors";
 
-const LoadingScreen = () => {
+const LoadingMessages = () => {
   const [ellipsis, setEllipsis] = useState("   ");
   const [counter, setCounter] = useState(0);
   const [message, setMessage] = useState(initialLoadingMessage);
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoadingScreen;
+export default LoadingMessages;
