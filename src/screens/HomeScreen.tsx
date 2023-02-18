@@ -18,6 +18,7 @@ import { PLACEHOLDERS } from "../constants";
 import { useApi } from "../hooks/useApi";
 import useStore from "../Store";
 import colors from "../styles/colors";
+import * as StoreReview from "expo-store-review";
 
 const HomeScreen: React.FC = () => {
   const {
@@ -66,6 +67,20 @@ const HomeScreen: React.FC = () => {
       setInput("");
     }
   }, [promptStart]);
+
+  // TODO: Add proper handling for review requests
+  /* useEffect(() => { */
+  /*   const requestReview = async () => { */
+  /*     console.log("Checking if we can request review..."); */
+  /*     if (await StoreReview.hasAction()) { */
+  /*       console.log("We can request review!"); */
+  /*       StoreReview.requestReview(); */
+  /*       console.log("StoreReview.storeUrl():", StoreReview.storeUrl()); */
+  /*     } */
+  /*   }; */
+  /**/
+  /*   requestReview(); */
+  /* }, []); */
 
   const submit = () => {
     getDevotional();
