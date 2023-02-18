@@ -1,6 +1,7 @@
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { getDownloadURL, ref } from "firebase/storage";
+import humanizeDuration from "humanize-duration";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -226,15 +227,15 @@ function AudioControls(props: AudioControlsProps) {
   );
 }
 
+// Duration is a float in seconds
 const formatDuration = (duration: number | null): string => {
   // Duration is either a float in seconds, or null
   if (duration === null) {
-    return "Time"
+    return "Time";
   }
-  const minutes = Math.floor(duration / 60);
-  const seconds = Math.floor(duration % 60);
-  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-}
+
+  return humanizeDuration(duration * 1000, { round: true, units: ["m"] });
+};
 
 interface SermonProps {
   sermon: TSermon;
@@ -247,7 +248,9 @@ function Sermon(props: SermonProps) {
     <View style={styles.sermonContainer}>
       <Text style={styles.sermonTitle}>{sermon.title}</Text>
       <Text style={styles.sermonDescription}>{sermon.description}</Text>
-      <Text style={styles.sermonSpeaker}>{formatDuration(sermon.duration || null)} with {sermon.speaker}</Text>
+      <Text style={styles.sermonSpeaker}>
+        {formatDuration(sermon.duration || null)} with {sermon.speaker}
+      </Text>
     </View>
   );
 }
