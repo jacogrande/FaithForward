@@ -4,9 +4,17 @@ import { db } from "../../firebase";
 import { TSermon } from "../../types";
 import useStore from "../Store";
 
-export const useSermons = () => {
+type Signature = {
+  sermons: TSermon[];
+  loading: boolean;
+  refreshing: boolean;
+  setRefreshing: (refreshing: boolean) => void;
+};
+
+export const useSermons = (): Signature => {
   const [sermons, setSermons] = useState<TSermon[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const { setError } = useStore();
 
   // Fetch sermons from Firestore
@@ -31,12 +39,15 @@ export const useSermons = () => {
       setError(error.toString());
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchSermons();
-  }, []);
+    if (loading || refreshing) {
+      fetchSermons();
+    }
+  }, [refreshing]);
 
-  return { sermons, loading };
+  return { sermons, loading, refreshing, setRefreshing };
 };
