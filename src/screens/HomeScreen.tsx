@@ -248,19 +248,11 @@ function DevotionalCard({ devotional }: { devotional: TTradDevo }) {
   return (
     <View
       style={{
-        backgroundColor: "#fff",
         borderRadius: 12,
-        padding: 16,
-        marginBottom: 20,
-        width: "100%",
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 5,
+        paddingVertical: 24,
+        paddingHorizontal: 4,
+        borderBottomColor: colors.lightBlue,
+        borderBottomWidth: 2,
       }}
     >
       <TouchableOpacity onPress={handleToggleExpanded}>
@@ -289,6 +281,9 @@ function DevotionalCard({ devotional }: { devotional: TTradDevo }) {
               borderTopWidth: 1,
               paddingTop: 12,
               marginBottom: 12,
+              // TODO: Make section more visually distinct
+              // TODO: Support verse highlighting and clickthrough actions here
+              // TODO: Only have a single devo expanded at a time
             }}
           >
             <Text style={{ fontSize: 16, lineHeight: 24 }}>
