@@ -152,6 +152,21 @@ function PersonalizedDevotional() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
+          <View style={{ marginBottom: 20, alignItems: "center" }}>
+            <Text
+              style={{
+                color: colors.black,
+                fontSize: 18,
+                fontWeight: "500",
+                paddingVertical: 10,
+              }}
+            >
+              Ask a question
+            </Text>
+            <Text style={{ color: colors.black, fontSize: 16 }}>
+              Receive a tailored devotional just for you
+            </Text>
+          </View>
           <TextInput
             ref={inputRef}
             style={[styles.input]}
@@ -198,7 +213,7 @@ function TraditionalDevotional() {
   }
 
   return (
-    <View>
+    <View style={{ paddingHorizontal: 20 }}>
       <FlatList
         data={tradDevos}
         renderItem={({ item }) => <DevotionalCard devotional={item} />}
@@ -294,10 +309,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.paper,
+    justifyContent: "center",
     alignItems: "center",
     paddingVertical: 50,
-    /* paddingTop: 124, */
-    /* paddingBottom: 48, */
   },
   button: {
     backgroundColor: colors.blue,
@@ -321,7 +335,7 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: "row",
     alignItems: "baseline",
-    width: "80%",
+    width: "87%",
     justifyContent: "flex-end",
   },
   input: {
@@ -329,10 +343,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.07)",
     borderRadius: 4,
     margin: 10,
-    padding: 12,
+    padding: 10,
     paddingTop: 12,
     paddingBottom: 12,
-    width: "80%",
+    width: "87%",
     fontSize: 16,
     fontWeight: "500",
     color: "#444",
