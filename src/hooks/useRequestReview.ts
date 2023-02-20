@@ -1,6 +1,7 @@
 import * as StoreReview from "expo-store-review";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
+import { ensureDate } from "../utils";
 
 type Signature = {
   requestReview: () => void;
@@ -27,16 +28,34 @@ export const useRequestReview = (): Signature => {
         return;
       }
 
-      // Increment requestCheckCount in user doc
-      const requestCheckCount = user.requestCheckCount || 0;
+      // Check lastReviewRequestCheck in user doc
+      const lastReviewRequestCheck = user.lastReviewRequestCheck;
+      if (lastReviewRequestCheck) {
+        const lastReviewRequestCheckDate = ensureDate(lastReviewRequestCheck);
+        const now = new Date();
+        const diff = now.getTime() - lastReviewRequestCheckDate.getTime();
+        const diffDays = Math.floor(diff / (1000 * 3600 * 24));
+        if (diffDays < 1) {
+          console.log(
+            "User has already been checked for review request today."
+          );
+          return;
+        }
+      }
+
+      // Increment reviewRequestCheckCount in user doc and update lastReviewRequestCheck
+      const reviewRequestCheckCount = user.reviewRequestCheckCount || 0;
       await setDoc(
         userRef,
-        { requestCheckCount: requestCheckCount + 1 },
+        {
+          lastReviewRequestCheck: new Date(),
+          reviewRequestCheckCount: reviewRequestCheckCount + 1,
+        },
         { merge: true }
       );
 
       // Check if this is at least the third time the user has triggered a review request check
-      if (requestCheckCount < 2) {
+      if (reviewRequestCheckCount < 2) {
         console.log(
           "This is not at least the third time the user has triggered a review request check."
         );
@@ -62,10 +81,10 @@ const hasBeenRequestedInLast30Days = async (user: any): Promise<boolean> => {
   // Check if user has already been asked to review in the last 30 days
   const lastReviewRequest = user.lastReviewRequest;
   if (lastReviewRequest) {
-    const lastReviewRequestDate = new Date(lastReviewRequest);
+    const lastReviewRequestDate = ensureDate(lastReviewRequest);
     const now = new Date();
     const diff = now.getTime() - lastReviewRequestDate.getTime();
-    const diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+    const diffDays = Math.floor(diff / (1000 * 3600 * 24));
     if (diffDays < 30) {
       console.log("User has already been asked to review in the last 30 days.");
       return true;
