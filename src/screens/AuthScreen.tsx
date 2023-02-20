@@ -2,11 +2,11 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { LinearGradient } from "expo-linear-gradient";
 import {
+  createUserWithEmailAndPassword,
   EmailAuthProvider,
+  linkWithCredential,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  linkWithCredential,
-  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import React, { useState } from "react";
 import {
@@ -32,7 +32,7 @@ export const AuthScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { error, setError } = useStore();
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigation =
     useNavigation<StackNavigationProp<{ "Faith Forward": undefined }>>();

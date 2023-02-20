@@ -21,10 +21,10 @@ import { TTradDevo } from "../../types";
 import { Container } from "../components/Container";
 import VerseContainer from "../components/VerseContainer";
 import { useApi } from "../hooks/useApi";
+import { useRequestReview } from "../hooks/useRequestReview";
 import { useTradDevos } from "../hooks/useTradDevos";
 import useStore from "../Store";
 import colors from "../styles/colors";
-import * as StoreReview from "expo-store-review";
 import { formatDate } from "../utils";
 
 const HomeScreen: React.FC = () => {
@@ -119,12 +119,23 @@ function PersonalizedDevotional() {
     }),
     headers: { "Content-Type": "application/json" },
   });
+  const { requestReview } = useRequestReview();
 
   useEffect(() => {
+    let requestReviewTimeout: any;
+
     if (data && data.response && data.promptId) {
       setPromptId(data.promptId);
       setDevotional(data.response);
+      requestReviewTimeout = setTimeout(() => {
+        requestReview();
+      }, 10000);
     }
+
+    // Call requestReview ten seconds after data comes back
+    return () => {
+      clearTimeout(requestReviewTimeout);
+    };
   }, [data]);
 
   useEffect(() => {
@@ -136,20 +147,6 @@ function PersonalizedDevotional() {
       setInput("");
     }
   }, [promptStart]);
-
-  // TODO: Add proper handling for review requests
-  /* useEffect(() => { */
-  /*   const requestReview = async () => { */
-  /*     console.log("Checking if we can request review..."); */
-  /*     if (await StoreReview.hasAction()) { */
-  /*       console.log("We can request review!"); */
-  /*       StoreReview.requestReview(); */
-  /*       console.log("StoreReview.storeUrl():", StoreReview.storeUrl()); */
-  /*     } */
-  /*   }; */
-  /**/
-  /*   requestReview(); */
-  /* }, []); */
 
   const submit = () => {
     getDevotional();
