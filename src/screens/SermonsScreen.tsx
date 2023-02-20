@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  SafeAreaView,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,13 +14,14 @@ import {
 } from "react-native";
 import { storage } from "../../firebase";
 import { TSermon } from "../../types";
+import { Container } from "../components/Container";
 import { useSermons } from "../hooks/useSermons";
 import colors from "../styles/colors";
 
 // TODO: Properly refresh sermons when new ones are added
 //       Maybe with react-query?
 export default function SermonsScreen() {
-  const { sermons, loading } = useSermons();
+  const { sermons, loading, refreshing, setRefreshing } = useSermons();
   const [sound, setSound] = useState<any>();
   const [playingSermon, setPlayingSermon] = useState<TSermon | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -144,55 +145,56 @@ export default function SermonsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.superContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Sermons</Text>
+    <Container>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator />
         </View>
-        {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator />
-          </View>
-        ) : (
-          <FlatList
-            style={styles.sermonsContainer}
-            data={sermons}
-            keyExtractor={(sermon: TSermon) => sermon.id}
-            renderItem={({ item: sermon }: { item: TSermon }) => (
-              <View style={styles.sermonSection}>
-                <Sermon sermon={sermon} />
-                <TouchableOpacity
-                  onPress={() => startPlayingSermon(sermon)}
-                  style={[
-                    styles.button,
-                    playingSermon?.id === sermon.id ? styles.buttonActive : {},
-                  ]}
-                >
-                  <Text style={[styles.buttonText]}>
-                    {playingSermon?.id === sermon.id && !!sound
-                      ? "Playing"
-                      : playingSermon?.id === sermon.id && !sound
-                      ? "Loading..."
-                      : "Play"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-            ListEmptyComponent={<Text>No sermons to display.</Text>}
-            ListFooterComponent={<View style={{ height: 100 }} />}
-          />
-        )}
-        {!!sound ? (
-          <AudioControls
-            title={playingSermon?.title || ""}
-            playingAudio={isPlaying}
-            onPlay={playSound}
-            onPause={pauseSound}
-            onStop={stopSound}
-          />
-        ) : null}
-      </View>
-    </SafeAreaView>
+      ) : (
+        <FlatList
+          style={styles.sermonsContainer}
+          data={sermons}
+          keyExtractor={(sermon: TSermon) => sermon.id}
+          renderItem={({ item: sermon }: { item: TSermon }) => (
+            <View style={styles.sermonSection}>
+              <Sermon sermon={sermon} />
+              <TouchableOpacity
+                onPress={() => startPlayingSermon(sermon)}
+                style={[
+                  styles.button,
+                  playingSermon?.id === sermon.id ? styles.buttonActive : {},
+                ]}
+              >
+                <Text style={[styles.buttonText]}>
+                  {playingSermon?.id === sermon.id && !!sound
+                    ? "Playing"
+                    : playingSermon?.id === sermon.id && !sound
+                    ? "Loading..."
+                    : "Play"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          ListEmptyComponent={<Text>No sermons to display.</Text>}
+          ListFooterComponent={<View style={{ height: 100 }} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => setRefreshing(true)}
+            />
+          }
+        />
+      )}
+      {!!sound ? (
+        <AudioControls
+          title={playingSermon?.title || ""}
+          playingAudio={isPlaying}
+          onPlay={playSound}
+          onPause={pauseSound}
+          onStop={stopSound}
+        />
+      ) : null}
+    </Container>
   );
 }
 
@@ -247,7 +249,7 @@ function Sermon(props: SermonProps) {
   const { sermon } = props;
 
   return (
-    <View style={styles.sermonContainer}>
+    <View>
       <Text style={styles.sermonTitle}>{sermon.title}</Text>
       <Text style={styles.sermonDescription}>{sermon.description}</Text>
       <Text style={styles.sermonSpeaker}>
@@ -258,13 +260,6 @@ function Sermon(props: SermonProps) {
 }
 
 const styles = StyleSheet.create({
-  superContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  container: {
-    flex: 1,
-  },
   sermonsContainer: {
     backgroundColor: "#fff",
     padding: 24,
@@ -272,20 +267,7 @@ const styles = StyleSheet.create({
   sermonSection: {
     borderBottomColor: colors.lightBlue,
     borderBottomWidth: 2,
-    marginBottom: 10,
-    paddingVertical: 20,
-  },
-  sermonContainer: {},
-  header: {
-    marginTop: 24,
-    paddingHorizontal: 24,
-    paddingBottom: 24,
-    borderBottomColor: colors.lightBlue,
-    borderBottomWidth: 2,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
+    paddingVertical: 24,
   },
   sermonTitle: {
     fontSize: 18,

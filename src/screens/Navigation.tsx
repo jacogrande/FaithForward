@@ -1,11 +1,11 @@
-import { FontAwesome, Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as React from "react";
 import { Dimensions } from "react-native";
 import colors from "../styles/colors";
 import HomeNavigator from "./HomeNavigator";
 import ProfileScreen from "./ProfileScreen";
-import SermonsScreen from './SermonsScreen';
+import SermonsScreen from "./SermonsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -13,7 +13,6 @@ const BaseNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false,
         tabBarStyle: {
           backgroundColor: colors.paper,
           height: Dimensions.get("window").height * 0.09,

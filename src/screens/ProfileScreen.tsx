@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { auth } from "../../firebase";
+import { Container } from "../components/Container";
 import DeleteAccountModal from "../components/DeleteAccountModal";
 import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from "../constants";
 import colors from "../styles/colors";
@@ -77,11 +78,12 @@ const ProfileScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Profile</Text>
-      {getPageContents()}
-      <Policies />
-    </View>
+    <Container>
+      <View style={styles.container}>
+        {getPageContents()}
+        <Policies />
+      </View>
+    </Container>
   );
 };
 
@@ -110,9 +112,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    textAlign: "left",
-    backgroundColor: colors.paper,
-    paddingTop: 80,
   },
   policies: {
     flex: 1,

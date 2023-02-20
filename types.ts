@@ -10,3 +10,10 @@ export type TSermon = {
   duration: number;
 };
 
+export type TTradDevo = {
+  id: string;
+  title: string;
+  input: string;
+  response: string;
+  createdAt: Date | Timestamp;
+}

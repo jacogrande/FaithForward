@@ -7,4 +7,5 @@ export default {
   paper: "#fefdf9",
   lightPaper: "rgba(255, 255, 255, 0.7)",
   darkPaper: "rgba(0, 0, 0, 0.05)",
+  black: "#222",
 };
