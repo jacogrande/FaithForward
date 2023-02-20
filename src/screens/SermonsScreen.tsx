@@ -19,8 +19,6 @@ import { useRequestReview } from "../hooks/useRequestReview";
 import { useSermons } from "../hooks/useSermons";
 import colors from "../styles/colors";
 
-// TODO: Properly refresh sermons when new ones are added
-//       Maybe with react-query?
 export default function SermonsScreen() {
   const { sermons, loading, refreshing, setRefreshing } = useSermons();
   const [sound, setSound] = useState<any>();
