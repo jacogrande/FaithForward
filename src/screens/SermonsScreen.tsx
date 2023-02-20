@@ -15,6 +15,7 @@ import {
 import { storage } from "../../firebase";
 import { TSermon } from "../../types";
 import { Container } from "../components/Container";
+import { useRequestReview } from "../hooks/useRequestReview";
 import { useSermons } from "../hooks/useSermons";
 import colors from "../styles/colors";
 
@@ -23,6 +24,7 @@ export default function SermonsScreen() {
   const [sound, setSound] = useState<any>();
   const [playingSermon, setPlayingSermon] = useState<TSermon | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const { requestReview } = useRequestReview();
 
   useEffect(() => {
     Audio.setAudioModeAsync({
@@ -104,6 +106,7 @@ export default function SermonsScreen() {
         setSound(null);
         setPlayingSermon(null);
         setIsPlaying(false);
+        requestReview();
       }
     }
   };

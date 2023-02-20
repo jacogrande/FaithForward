@@ -21,6 +21,7 @@ import { TTradDevo } from "../../types";
 import { Container } from "../components/Container";
 import VerseContainer from "../components/VerseContainer";
 import { useApi } from "../hooks/useApi";
+import { useRequestReview } from "../hooks/useRequestReview";
 import { useTradDevos } from "../hooks/useTradDevos";
 import useStore from "../Store";
 import colors from "../styles/colors";
@@ -118,12 +119,23 @@ function PersonalizedDevotional() {
     }),
     headers: { "Content-Type": "application/json" },
   });
+  const { requestReview } = useRequestReview();
 
   useEffect(() => {
+    let requestReviewTimeout: any;
+
     if (data && data.response && data.promptId) {
       setPromptId(data.promptId);
       setDevotional(data.response);
+      requestReviewTimeout = setTimeout(() => {
+        requestReview();
+      }, 10000);
     }
+
+    // Call requestReview ten seconds after data comes back
+    return () => {
+      clearTimeout(requestReviewTimeout);
+    };
   }, [data]);
 
   useEffect(() => {
@@ -135,6 +147,7 @@ function PersonalizedDevotional() {
       setInput("");
     }
   }, [promptStart]);
+
   const submit = () => {
     getDevotional();
     setDevotional("");
