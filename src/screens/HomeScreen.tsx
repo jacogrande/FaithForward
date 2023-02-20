@@ -209,16 +209,20 @@ function TraditionalDevotional() {
   const { tradDevos, loading, refreshing, setRefreshing } = useTradDevos();
 
   if (loading) {
-    return <ActivityIndicator />;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
   }
 
   return (
-    <View style={{ paddingHorizontal: 20 }}>
+    <View>
       <FlatList
         data={tradDevos}
         renderItem={({ item }) => <DevotionalCard devotional={item} />}
         keyExtractor={(item) => item.id}
-        style={{ width: "100%" }}
+        style={{ width: "100%", paddingHorizontal: 20 }}
         ListEmptyComponent={() => (
           <View style={{ alignItems: "center", marginTop: 24 }}>
             <Text style={{ fontSize: 18, color: "#999" }}>
