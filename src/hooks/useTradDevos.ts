@@ -1,4 +1,4 @@
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { TTradDevo } from "../../types";
@@ -22,7 +22,10 @@ export const useTradDevos = (): Signature => {
     console.log("Fetching tradDevos...");
     try {
       let devos: TTradDevo[] = [];
-      const tradDevosQuery = query(collection(db, "devotionals"));
+      const tradDevosQuery = query(
+        collection(db, "devotionals"),
+        orderBy("createdAt", "desc")
+      );
       const snapshot = await getDocs(tradDevosQuery);
       if (snapshot.empty) {
         console.log("No tradDevos found.");
