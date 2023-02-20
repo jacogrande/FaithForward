@@ -189,10 +189,10 @@ export const AuthScreen = () => {
           </KeyboardAvoidingView>
           <Snackbar
             visible={!!error}
-            onDismiss={() => setError("")}
+            onDismiss={() => setError(null)}
             action={{
               label: "Dismiss",
-              onPress: () => setError(""),
+              onPress: () => setError(null),
             }}
           >
             {error}
@@ -203,7 +203,7 @@ export const AuthScreen = () => {
   );
 };
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 // TODO: Dynamically pad/size everything from device dimensions
 const styles = StyleSheet.create({

@@ -116,10 +116,10 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = (props) => {
       </View>
       <Snackbar
         visible={Boolean(error)}
-        onDismiss={() => setError("")}
+        onDismiss={() => setError(null)}
         action={{
           label: "Dismiss",
-          onPress: () => setError(""),
+          onPress: () => setError(null),
         }}
       >
         {error}
