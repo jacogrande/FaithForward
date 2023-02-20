@@ -7,6 +7,16 @@ type Signature = {
   requestReview: () => void;
 };
 
+// Use this hook if you want to add a trigger to request a review from a user
+// All the checks for whether or not we actually want to request the review at that point are in here
+// No matter how the review request is triggered, we only actually request the review if:
+// - The user has been checked for a review request at least 3 times
+// - The user has not been asked to review in the last 30 days
+// - The user has not been checked for a review request today
+// - The user is signed in
+// Also note that Apple has its own set of checks, which should mean that review requests are limited to three per year
+// NOTE: This implementation assumes that the Apple check will prevent us from requesting a review if one has already been given
+//       If this is not the case, we will need to add a check for whether or not a review has already been given
 export const useRequestReview = (): Signature => {
   const requestReview = async () => {
     if (await StoreReview.hasAction()) {
