@@ -1,7 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
+import { Snackbar } from "react-native-paper";
+import * as MailComposer from "expo-mail-composer";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { onIdTokenChanged } from "firebase/auth";
-import React from "react";
+import React, { useState } from "react";
+import useStore from "../Store";
 import {
   Button,
   Linking,
@@ -18,7 +21,7 @@ import colors from "../styles/colors";
 
 // TODO: Add toggle for push notifications
 const LoggedInProfile: React.FC = () => {
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const closeModal = () => setIsModalVisible(false);
   return (
     <View>
@@ -59,7 +62,8 @@ const AnonymousProfile: React.FC = () => {
 
 // TODO: Unstub account level
 const ProfileScreen: React.FC = () => {
-  const [isAnonymous, setIsAnonymous] = React.useState(true);
+  const [isAnonymous, setIsAnonymous] = useState(true);
+  const { error, setError } = useStore();
 
   onIdTokenChanged(auth, (user) => {
     if (user?.isAnonymous) {
@@ -77,12 +81,43 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  // TODO: Autopopulate email body with device and user info
+  const contactSupport = async () => {
+    try {
+      await MailComposer.composeAsync({
+        recipients: ["hello.faith.forward@gmail.com"],
+        subject: "Feedback for Faith Forward",
+        body: "Hi Faith Forward Team,",
+      });
+    } catch (err: any) {
+      console.error(err);
+      if (err.message.includes("Mail services are not available")) {
+        setError("Please sign in to your Mail app.");
+      } else {
+        setError(err.message);
+      }
+    }
+  };
+
   return (
     <Container>
       <View style={styles.container}>
         {getPageContents()}
+        <TouchableOpacity style={styles.button} onPress={contactSupport}>
+          <Text style={styles.buttonText}>Submit Feedback</Text>
+        </TouchableOpacity>
         <Policies />
       </View>
+      <Snackbar
+        visible={Boolean(error)}
+        onDismiss={() => setError(null)}
+        action={{
+          label: "Dismiss",
+          onPress: () => setError(null),
+        }}
+      >
+        {error}
+      </Snackbar>
     </Container>
   );
 };
