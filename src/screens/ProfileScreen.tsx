@@ -1,10 +1,9 @@
+import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { Snackbar } from "react-native-paper";
-import * as MailComposer from "expo-mail-composer";
 import { StackNavigationProp } from "@react-navigation/stack";
+import * as MailComposer from "expo-mail-composer";
 import { onIdTokenChanged } from "firebase/auth";
 import React, { useState } from "react";
-import useStore from "../Store";
 import {
   Button,
   Linking,
@@ -13,10 +12,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
 import { Container } from "../components/Container";
 import DeleteAccountModal from "../components/DeleteAccountModal";
 import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from "../constants";
+import useStore from "../Store";
 import colors from "../styles/colors";
 
 // TODO: Add toggle for push notifications
@@ -81,31 +82,10 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
-  // TODO: Autopopulate email body with device and user info
-  const contactSupport = async () => {
-    try {
-      await MailComposer.composeAsync({
-        recipients: ["hello.faith.forward@gmail.com"],
-        subject: "Feedback for Faith Forward",
-        body: "Hi Faith Forward Team,",
-      });
-    } catch (err: any) {
-      console.error(err);
-      if (err.message.includes("Mail services are not available")) {
-        setError("Please sign in to your Mail app.");
-      } else {
-        setError(err.message);
-      }
-    }
-  };
-
   return (
     <Container>
       <View style={styles.container}>
         {getPageContents()}
-        <TouchableOpacity style={styles.button} onPress={contactSupport}>
-          <Text style={styles.buttonText}>Submit Feedback</Text>
-        </TouchableOpacity>
         <Policies />
       </View>
       <Snackbar
@@ -123,6 +103,8 @@ const ProfileScreen: React.FC = () => {
 };
 
 const Policies = () => {
+  const { setError } = useStore();
+
   const goToPrivacyPolicy = () => {
     Linking.openURL(PRIVACY_POLICY_URL);
   };
@@ -131,12 +113,59 @@ const Policies = () => {
     Linking.openURL(TERMS_OF_SERVICE_URL);
   };
 
+  const contactSupport = async () => {
+    try {
+      await MailComposer.composeAsync({
+        recipients: ["hello.faith.forward@gmail.com"],
+        subject: "Support ticket for Faith Forward",
+        body: "",
+      });
+    } catch (err: any) {
+      console.error(err);
+      if (err.message.includes("Mail services are not available")) {
+        setError("Please sign in to your Mail app.");
+      } else {
+        setError(err.message);
+      }
+    }
+  };
+
   return (
     <View style={styles.policies}>
-      <TouchableOpacity onPress={goToPrivacyPolicy}>
+      <TouchableOpacity
+        style={styles.policyLinkContainer}
+        onPress={contactSupport}
+      >
+        <FontAwesome5
+          name="envelope"
+          size={20}
+          color={colors.black}
+          style={styles.policyIcon}
+        />
+        <Text style={styles.policyLink}>Contact Support</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.policyLinkContainer}
+        onPress={goToPrivacyPolicy}
+      >
+        <FontAwesome5
+          name="lock"
+          size={20}
+          color={colors.black}
+          style={styles.policyIcon}
+        />
         <Text style={styles.policyLink}>Privacy Policy</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={goToTermsOfService}>
+      <TouchableOpacity
+        style={styles.policyLinkContainer}
+        onPress={goToTermsOfService}
+      >
+        <FontAwesome5
+          name="file-alt"
+          size={20}
+          color={colors.black}
+          style={styles.policyIcon}
+        />
         <Text style={styles.policyLink}>Terms of Service</Text>
       </TouchableOpacity>
     </View>
@@ -150,12 +179,21 @@ const styles = StyleSheet.create({
   },
   policies: {
     flex: 1,
+    justifyContent: "flex-end",
+  },
+  policyLinkContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "flex-end",
+    alignItems: "center",
+    marginBottom: 14,
+  },
+  policyIcon: {
+    width: 24,
+    textAlign: "center"
   },
   policyLink: {
-    fontSize: 12,
+    fontSize: 14,
+    marginLeft: 8,
+    color: colors.black,
   },
   header: {
     fontSize: 28,
