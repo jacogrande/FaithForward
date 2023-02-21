@@ -10,12 +10,15 @@ type Signature = {
   loading: boolean;
   refreshing: boolean;
   setRefreshing: (refreshing: boolean) => void;
+  quietlyRefreshing: boolean;
+  setQuietlyRefreshing: (quietlyRefreshing: boolean) => void;
 };
 
 export const useSermons = (): Signature => {
   const [sermons, setSermons] = useState<TSermon[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [quietlyRefreshing, setQuietlyRefreshing] = useState(false);
   const { setError } = useStore();
 
   // Fetch sermons from Firestore
@@ -34,7 +37,7 @@ export const useSermons = (): Signature => {
       snapshot.forEach((snap: any) => {
         ss.push({
           id: snap.id,
-          ...snap.data()
+          ...snap.data(),
         });
       });
       setSermons(ss);
@@ -44,14 +47,22 @@ export const useSermons = (): Signature => {
     } finally {
       setLoading(false);
       setRefreshing(false);
+      setQuietlyRefreshing(false);
     }
   };
 
   useEffect(() => {
-    if (loading || refreshing) {
+    if (loading || refreshing || quietlyRefreshing) {
       fetchSermons();
     }
-  }, [refreshing]);
+  }, [refreshing, quietlyRefreshing]);
 
-  return { sermons, loading, refreshing, setRefreshing };
+  return {
+    sermons,
+    loading,
+    refreshing,
+    setRefreshing,
+    quietlyRefreshing,
+    setQuietlyRefreshing,
+  };
 };

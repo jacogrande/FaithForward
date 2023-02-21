@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { getDownloadURL, ref } from "firebase/storage";
 import humanizeDuration from "humanize-duration";
@@ -15,8 +15,8 @@ import {
 import {
   auth,
   favoriteSermon,
-  unfavoriteSermon,
   storage,
+  unfavoriteSermon,
 } from "../../firebase";
 import { TSermon } from "../../types";
 import { Container } from "../components/Container";
@@ -24,12 +24,29 @@ import { useRequestReview } from "../hooks/useRequestReview";
 import { useSermons } from "../hooks/useSermons";
 import colors from "../styles/colors";
 
+function initOptimisticFaves(sermons: TSermon[]): string[] {
+  // Return an array of sermon IDs that are favoritedBy the current user
+  return sermons
+    .filter((sermon) =>
+      sermon.favoritedBy?.includes(auth.currentUser?.uid || "")
+    )
+    .map((sermon) => sermon.id);
+}
+
 export default function SermonsScreen() {
-  const { sermons, loading, refreshing, setRefreshing } = useSermons();
+  const { sermons, loading, refreshing, setRefreshing, setQuietlyRefreshing } =
+    useSermons();
   const [sound, setSound] = useState<any>();
   const [playingSermon, setPlayingSermon] = useState<TSermon | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
+    initOptimisticFaves(sermons)
+  );
   const { requestReview } = useRequestReview();
+
+  useEffect(() => {
+    setOptimisticFaves(initOptimisticFaves(sermons));
+  }, [JSON.stringify(sermons)]);
 
   useEffect(() => {
     Audio.setAudioModeAsync({
@@ -151,13 +168,15 @@ export default function SermonsScreen() {
   }
 
   async function handleFavoritingSermon(sermon: TSermon) {
-    await favoriteSermon(sermon)
-    setRefreshing(true)
+    setOptimisticFaves([...optimisticFaves, sermon.id]);
+    await favoriteSermon(sermon);
+    setQuietlyRefreshing(true);
   }
 
   async function handleUnfavoritingSermon(sermon: TSermon) {
-    await unfavoriteSermon(sermon)
-    setRefreshing(true)
+    setOptimisticFaves(optimisticFaves.filter((id) => id !== sermon.id));
+    await unfavoriteSermon(sermon);
+    setQuietlyRefreshing(true);
   }
 
   return (
@@ -190,7 +209,7 @@ export default function SermonsScreen() {
                       : "Play"}
                   </Text>
                 </TouchableOpacity>
-                {sermon.favoritedBy?.includes(auth.currentUser?.uid || "") ? (
+                {optimisticFaves.includes(sermon.id) ? (
                   <TouchableOpacity
                     onPress={() => handleUnfavoritingSermon(sermon)}
                     style={[
