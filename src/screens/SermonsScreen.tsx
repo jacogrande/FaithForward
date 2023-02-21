@@ -1,4 +1,4 @@
-import { FontAwesome5 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { getDownloadURL, ref } from "firebase/storage";
 import humanizeDuration from "humanize-duration";
@@ -12,7 +12,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { storage } from "../../firebase";
+import {
+  auth,
+  favoriteSermon,
+  unfavoriteSermon,
+  storage,
+} from "../../firebase";
 import { TSermon } from "../../types";
 import { Container } from "../components/Container";
 import { useRequestReview } from "../hooks/useRequestReview";
@@ -145,6 +150,16 @@ export default function SermonsScreen() {
     }
   }
 
+  async function handleFavoritingSermon(sermon: TSermon) {
+    await favoriteSermon(sermon)
+    setRefreshing(true)
+  }
+
+  async function handleUnfavoritingSermon(sermon: TSermon) {
+    await unfavoriteSermon(sermon)
+    setRefreshing(true)
+  }
+
   return (
     <Container>
       {loading ? (
@@ -159,21 +174,56 @@ export default function SermonsScreen() {
           renderItem={({ item: sermon }: { item: TSermon }) => (
             <View style={styles.sermonSection}>
               <Sermon sermon={sermon} />
-              <TouchableOpacity
-                onPress={() => startPlayingSermon(sermon)}
-                style={[
-                  styles.button,
-                  playingSermon?.id === sermon.id ? styles.buttonActive : {},
-                ]}
-              >
-                <Text style={[styles.buttonText]}>
-                  {playingSermon?.id === sermon.id && !!sound
-                    ? "Playing"
-                    : playingSermon?.id === sermon.id && !sound
-                    ? "Loading..."
-                    : "Play"}
-                </Text>
-              </TouchableOpacity>
+              <View style={styles.actionButtons}>
+                <TouchableOpacity
+                  onPress={() => startPlayingSermon(sermon)}
+                  style={[
+                    styles.button,
+                    playingSermon?.id === sermon.id ? styles.buttonActive : {},
+                  ]}
+                >
+                  <Text style={[styles.buttonText]}>
+                    {playingSermon?.id === sermon.id && !!sound
+                      ? "Playing"
+                      : playingSermon?.id === sermon.id && !sound
+                      ? "Loading..."
+                      : "Play"}
+                  </Text>
+                </TouchableOpacity>
+                {sermon.favoritedBy?.includes(auth.currentUser?.uid || "") ? (
+                  <TouchableOpacity
+                    onPress={() => handleUnfavoritingSermon(sermon)}
+                    style={[
+                      {
+                        width: "20%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: 12,
+                      },
+                    ]}
+                  >
+                    <Ionicons name="heart-sharp" size={24} color={colors.red} />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => handleFavoritingSermon(sermon)}
+                    style={[
+                      {
+                        width: "20%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: 12,
+                      },
+                    ]}
+                  >
+                    <Ionicons
+                      name="heart-outline"
+                      size={24}
+                      color={colors.red}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
           )}
           ListEmptyComponent={<Text>No sermons to display.</Text>}
@@ -310,7 +360,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 20,
     paddingVertical: 18,
-    width: "100%",
+    width: "80%",
     marginTop: 12,
     alignItems: "center",
   },
@@ -335,5 +385,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  actionButtons: {
+    flexDirection: "row",
   },
 });

@@ -8,6 +8,7 @@ export type TSermon = {
   createdAt: Date | Timestamp;
   speaker: string;
   duration: number;
+  favoritedBy: string[];
 };
 
 export type TTradDevo = {

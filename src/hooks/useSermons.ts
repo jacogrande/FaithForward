@@ -4,6 +4,7 @@ import { db } from "../../firebase";
 import { TSermon } from "../../types";
 import useStore from "../Store";
 
+// TODO: Add silent refresh handling
 type Signature = {
   sermons: TSermon[];
   loading: boolean;
@@ -31,7 +32,10 @@ export const useSermons = (): Signature => {
         console.log("No sermons found.");
       }
       snapshot.forEach((snap: any) => {
-        ss.push({ id: snap.id, ...snap.data() });
+        ss.push({
+          id: snap.id,
+          ...snap.data()
+        });
       });
       setSermons(ss);
     } catch (error: any) {
