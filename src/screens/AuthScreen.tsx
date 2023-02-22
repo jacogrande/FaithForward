@@ -100,6 +100,7 @@ export const AuthScreen = () => {
     }
   };
 
+  // TODO: Refactor to Container, delegate error Snackbar handling to Container
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       {/* I could not for the life of me color the entire screen without using this. */}

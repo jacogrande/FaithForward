@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Snackbar } from "react-native-paper";
 import { auth } from "../../firebase";
 import { Container } from "../components/Container";
 import DeleteAccountModal from "../components/DeleteAccountModal";
@@ -64,7 +63,6 @@ const AnonymousProfile: React.FC = () => {
 // TODO: Unstub account level
 const ProfileScreen: React.FC = () => {
   const [isAnonymous, setIsAnonymous] = useState(true);
-  const { error, setError } = useStore();
 
   onIdTokenChanged(auth, (user) => {
     if (user?.isAnonymous) {
@@ -88,16 +86,6 @@ const ProfileScreen: React.FC = () => {
         {getPageContents()}
         <Policies />
       </View>
-      <Snackbar
-        visible={Boolean(error)}
-        onDismiss={() => setError(null)}
-        action={{
-          label: "Dismiss",
-          onPress: () => setError(null),
-        }}
-      >
-        {error}
-      </Snackbar>
     </Container>
   );
 };

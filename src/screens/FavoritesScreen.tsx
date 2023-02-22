@@ -8,7 +8,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { Snackbar } from "react-native-paper";
 import { auth, unfavoriteSermon } from "../../firebase";
 import { TSermon } from "../../types";
 import { Container } from "../components/Container";
@@ -31,7 +30,7 @@ export default function FavoritesScreen() {
   const { stopSound, playSound } = useAudio();
   const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
   const [favoriteSermons, setFavoriteSermons] = useState<TSermon[]>([]);
-  const { error, setError } = useStore();
+  const { setError } = useStore();
 
   onIdTokenChanged(auth, (user) => {
     if (user?.isAnonymous) {
@@ -115,16 +114,6 @@ export default function FavoritesScreen() {
           </View>
         )}
       </View>
-      <Snackbar
-        visible={Boolean(error)}
-        onDismiss={() => setError(null)}
-        action={{
-          label: "Dismiss",
-          onPress: () => setError(null),
-        }}
-      >
-        {error}
-      </Snackbar>
     </Container>
   );
 }
