@@ -1,6 +1,5 @@
 import { AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
-import { getDownloadURL, ref } from "firebase/storage";
+import { Audio } from "expo-av";
 import humanizeDuration from "humanize-duration";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,16 +11,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  auth,
-  favoriteSermon,
-  storage,
-  unfavoriteSermon,
-} from "../../firebase";
+import { auth, favoriteSermon, unfavoriteSermon } from "../../firebase";
 import { TSermon } from "../../types";
 import { Container } from "../components/Container";
-import { useRequestReview } from "../hooks/useRequestReview";
+import { useAudio } from "../hooks/useAudio";
 import { useSermons } from "../hooks/useSermons";
+import { useAudioStore } from "../Store";
 import colors from "../styles/colors";
 
 function initOptimisticFaves(sermons: TSermon[]): string[] {
@@ -36,134 +31,23 @@ function initOptimisticFaves(sermons: TSermon[]): string[] {
 export default function SermonsScreen() {
   const { sermons, loading, refreshing, setRefreshing, setQuietlyRefreshing } =
     useSermons();
-  const [sound, setSound] = useState<any>();
-  const [playingSermon, setPlayingSermon] = useState<TSermon | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(sermons)
   );
-  const { requestReview } = useRequestReview();
+  const { stopSound, pauseSound, playSound } = useAudio();
+  const { sound, playingAudioObject, setPlayingAudioObject, isPlaying } =
+    useAudioStore();
 
   useEffect(() => {
     setOptimisticFaves(initOptimisticFaves(sermons));
   }, [JSON.stringify(sermons)]);
 
-  useEffect(() => {
-    Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: true,
-      interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-      shouldDuckAndroid: true,
-      interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-      playThroughEarpieceAndroid: false,
-      allowsRecordingIOS: false,
-    });
-  }, []);
-
-  useEffect(() => {
-    return sound
-      ? () => {
-          console.log("Unloading sound...");
-          sound.unloadAsync();
-          setPlayingSermon(null);
-          setIsPlaying(false);
-        }
-      : undefined;
-  }, [sound]);
-
-  useEffect(() => {
-    if (!!playingSermon) {
-      playSound();
-    } else {
-      stopSound();
-    }
-  }, [JSON.stringify(playingSermon)]);
-
-  async function pauseSound() {
-    console.log("Pausing sound...");
-    if (sound) {
-      await sound.pauseAsync();
-      setIsPlaying(false);
-    }
-  }
-
-  async function stopSound(): Promise<void> {
-    if (sound) {
-      if (sound.getStatusAsync().isLoaded) {
-        await sound.stopAsync();
-        await sound.unloadAsync();
-      }
-      setSound(null);
-      setPlayingSermon(null);
-      setIsPlaying(false);
-    }
-  }
-
-  const onPlaybackStatusUpdate = (playbackStatus: any) => {
-    if (!playbackStatus.isLoaded) {
-      // Update your UI for the unloaded state
-      if (playbackStatus.error) {
-        console.error(
-          `Encountered a fatal error during playback: ${playbackStatus.error}`
-        );
-      }
-    } else {
-      // TODO: Refactor play/pause handlers into these
-      if (playbackStatus.isPlaying) {
-        //console.log("Playing...");
-      } else {
-        //console.log("Paused...");
-      }
-
-      // TODO: Properly handle buffering state
-      if (playbackStatus.isBuffering) {
-        //console.log("Buffering...");
-      }
-
-      // TODO: Figure out why we have to manually setSound etc
-      //       stopSound doesn't do the trick because sound is null
-      //       but playingSermon isn't? Weird
-      if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
-        console.log("Finished playing");
-        setSound(null);
-        setPlayingSermon(null);
-        setIsPlaying(false);
-        requestReview();
-      }
-    }
-  };
-
-  async function playSound(): Promise<void> {
-    console.log("Playing sound...");
-    if (sound) {
-      console.log("Sound is loaded, resuming...");
-      sound.playAsync();
-    } else {
-      if (!playingSermon) {
-        console.error("Cannot play sound, no filename is set");
-        return;
-      }
-
-      console.log("Sound is not loaded, loading...");
-      const sermon = ref(storage, playingSermon.filename);
-      const uri = await getDownloadURL(sermon);
-      const { sound: playbackObject } = await Audio.Sound.createAsync(
-        { uri },
-        { shouldPlay: true }
-      );
-      setSound(playbackObject);
-      // Call stopSound when audio finishes playing
-      playbackObject.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
-    }
-    setIsPlaying(true);
-  }
-
   async function startPlayingSermon(sermon: TSermon) {
-    if (playingSermon?.id === sermon.id) {
+    if (playingAudioObject?.id === sermon.id) {
       playSound();
     } else {
       await stopSound();
-      setPlayingSermon(sermon);
+      setPlayingAudioObject(sermon);
     }
   }
 
@@ -191,56 +75,15 @@ export default function SermonsScreen() {
           data={sermons}
           keyExtractor={(sermon: TSermon) => sermon.id}
           renderItem={({ item: sermon }: { item: TSermon }) => (
-            <View style={styles.sermonSection}>
-              <Sermon sermon={sermon} />
-              <View style={styles.actionButtons}>
-                <Text style={styles.sermonSpeaker}>
-                  {formatDuration(sermon.duration || null)} with{" "}
-                  {sermon.speaker}
-                </Text>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <View style={{ marginRight: 20 }}>
-                    {playingSermon?.id === sermon.id && !!sound ? (
-                      <SermonPauseButton />
-                    ) : playingSermon?.id === sermon.id && !sound ? (
-                      <ActivityIndicator size={20} color={colors.blue} />
-                    ) : (
-                      <SermonPlayButton
-                        onPress={() => startPlayingSermon(sermon)}
-                      />
-                    )}
-                  </View>
-                  {optimisticFaves.includes(sermon.id) ? (
-                    <TouchableOpacity
-                      onPress={() => handleUnfavoritingSermon(sermon)}
-                    >
-                      <Ionicons
-                        name="heart-sharp"
-                        size={24}
-                        color={colors.red}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() => handleFavoritingSermon(sermon)}
-                    >
-                      <Ionicons
-                        name="heart-outline"
-                        size={24}
-                        color={colors.red}
-                      />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              </View>
-            </View>
+            <Sermon
+              sermon={sermon}
+              faves={optimisticFaves}
+              sound={sound}
+              playingSermonId={playingAudioObject?.id || null}
+              startPlayingSermon={startPlayingSermon}
+              handleFavoritingSermon={handleFavoritingSermon}
+              handleUnfavoritingSermon={handleUnfavoritingSermon}
+            />
           )}
           ListEmptyComponent={<Text>No sermons to display.</Text>}
           ListFooterComponent={<View style={{ height: 100 }} />}
@@ -254,7 +97,7 @@ export default function SermonsScreen() {
       )}
       {!!sound ? (
         <AudioControls
-          title={playingSermon?.title || ""}
+          title={playingAudioObject?.title || ""}
           playingAudio={isPlaying}
           onPlay={playSound}
           onPause={pauseSound}
@@ -276,9 +119,7 @@ function SermonPlayButton(props: { onPress: () => void }) {
 }
 
 function SermonPauseButton() {
-  return (
-    <AntDesign name="sound" size={28} color={colors.blue} />
-  )
+  return <AntDesign name="sound" size={28} color={colors.blue} />;
 }
 
 interface AudioControlsProps {
@@ -326,15 +167,63 @@ const formatDuration = (duration: number | null): string => {
 
 interface SermonProps {
   sermon: TSermon;
+  playingSermonId: string | null;
+  faves: string[];
+  sound: Audio.Sound | null;
+  startPlayingSermon: (sermon: TSermon) => void;
+  handleFavoritingSermon: (sermon: TSermon) => void;
+  handleUnfavoritingSermon: (sermon: TSermon) => void;
 }
 
 function Sermon(props: SermonProps) {
-  const { sermon } = props;
+  const {
+    sound,
+    faves,
+    sermon,
+    playingSermonId,
+    startPlayingSermon,
+    handleFavoritingSermon,
+    handleUnfavoritingSermon,
+  } = props;
 
   return (
-    <View>
-      <Text style={styles.sermonTitle}>{sermon.title}</Text>
-      <Text style={styles.sermonDescription}>{sermon.description}</Text>
+    <View style={styles.sermonSection}>
+      <View>
+        <Text style={styles.sermonTitle}>{sermon.title}</Text>
+        <Text style={styles.sermonDescription}>{sermon.description}</Text>
+      </View>
+      <View style={styles.actionButtons}>
+        <Text style={styles.sermonSpeaker}>
+          {formatDuration(sermon.duration || null)} with {sermon.speaker}
+        </Text>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}
+        >
+          <View style={{ marginRight: 20 }}>
+            {playingSermonId === sermon.id && !!sound ? (
+              <SermonPauseButton />
+            ) : playingSermonId === sermon.id && !sound ? (
+              <ActivityIndicator size={20} color={colors.blue} />
+            ) : (
+              <SermonPlayButton onPress={() => startPlayingSermon(sermon)} />
+            )}
+          </View>
+          {faves.includes(sermon.id) ? (
+            <TouchableOpacity onPress={() => handleUnfavoritingSermon(sermon)}>
+              <Ionicons name="heart-sharp" size={24} color={colors.red} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => handleFavoritingSermon(sermon)}>
+              <Ionicons name="heart-outline" size={24} color={colors.red} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
     </View>
   );
 }
@@ -362,7 +251,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: "italic",
     marginTop: 12,
-    /* paddingVertical: 10, */
   },
   audioControlContainer: {
     position: "absolute",
@@ -390,7 +278,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 20,
     paddingVertical: 18,
-    /* width: "50%", */
     marginTop: 12,
     alignItems: "center",
   },

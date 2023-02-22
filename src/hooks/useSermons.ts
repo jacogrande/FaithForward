@@ -4,7 +4,6 @@ import { db } from "../../firebase";
 import { TSermon } from "../../types";
 import useStore from "../Store";
 
-// TODO: Add silent refresh handling
 type Signature = {
   sermons: TSermon[];
   loading: boolean;

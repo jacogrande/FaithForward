@@ -18,3 +18,9 @@ export type TTradDevo = {
   response: string;
   createdAt: Date | Timestamp;
 }
+
+export interface PlayableAudioObject {
+  id: string;
+  filename: string;
+  title: string;
+}
