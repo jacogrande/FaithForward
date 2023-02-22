@@ -1,4 +1,4 @@
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { getDownloadURL, ref } from "firebase/storage";
 import humanizeDuration from "humanize-duration";
@@ -194,54 +194,51 @@ export default function SermonsScreen() {
             <View style={styles.sermonSection}>
               <Sermon sermon={sermon} />
               <View style={styles.actionButtons}>
-                <TouchableOpacity
-                  onPress={() => startPlayingSermon(sermon)}
-                  style={[
-                    styles.button,
-                    playingSermon?.id === sermon.id ? styles.buttonActive : {},
-                  ]}
+                <Text style={styles.sermonSpeaker}>
+                  {formatDuration(sermon.duration || null)} with{" "}
+                  {sermon.speaker}
+                </Text>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}
                 >
-                  <Text style={[styles.buttonText]}>
-                    {playingSermon?.id === sermon.id && !!sound
-                      ? "Playing"
-                      : playingSermon?.id === sermon.id && !sound
-                      ? "Loading..."
-                      : "Play"}
-                  </Text>
-                </TouchableOpacity>
-                {optimisticFaves.includes(sermon.id) ? (
-                  <TouchableOpacity
-                    onPress={() => handleUnfavoritingSermon(sermon)}
-                    style={[
-                      {
-                        width: "20%",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: 12,
-                      },
-                    ]}
-                  >
-                    <Ionicons name="heart-sharp" size={24} color={colors.red} />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => handleFavoritingSermon(sermon)}
-                    style={[
-                      {
-                        width: "20%",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: 12,
-                      },
-                    ]}
-                  >
-                    <Ionicons
-                      name="heart-outline"
-                      size={24}
-                      color={colors.red}
-                    />
-                  </TouchableOpacity>
-                )}
+                  <View style={{ marginRight: 20 }}>
+                    {playingSermon?.id === sermon.id && !!sound ? (
+                      <SermonPauseButton />
+                    ) : playingSermon?.id === sermon.id && !sound ? (
+                      <ActivityIndicator size={20} color={colors.blue} />
+                    ) : (
+                      <SermonPlayButton
+                        onPress={() => startPlayingSermon(sermon)}
+                      />
+                    )}
+                  </View>
+                  {optimisticFaves.includes(sermon.id) ? (
+                    <TouchableOpacity
+                      onPress={() => handleUnfavoritingSermon(sermon)}
+                    >
+                      <Ionicons
+                        name="heart-sharp"
+                        size={24}
+                        color={colors.red}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => handleFavoritingSermon(sermon)}
+                    >
+                      <Ionicons
+                        name="heart-outline"
+                        size={24}
+                        color={colors.red}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             </View>
           )}
@@ -268,6 +265,22 @@ export default function SermonsScreen() {
   );
 }
 
+function SermonPlayButton(props: { onPress: () => void }) {
+  const { onPress } = props;
+
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <FontAwesome5 name="play" size={20} color={colors.blue} />
+    </TouchableOpacity>
+  );
+}
+
+function SermonPauseButton() {
+  return (
+    <AntDesign name="sound" size={28} color={colors.blue} />
+  )
+}
+
 interface AudioControlsProps {
   title: string;
   playingAudio: boolean;
@@ -285,15 +298,15 @@ function AudioControls(props: AudioControlsProps) {
       <Text style={styles.playingSermonText}>{title}</Text>
       <View style={styles.audioControlButtons}>
         {playingAudio ? (
-          <TouchableOpacity onPress={onPause}>
+          <TouchableOpacity style={{ marginRight: 25 }} onPress={onPause}>
             <FontAwesome5 name="pause" size={24} color={colors.blue} />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={onPlay}>
+          <TouchableOpacity style={{ marginRight: 25 }} onPress={onPlay}>
             <FontAwesome5 name="play" size={24} color={colors.blue} />
           </TouchableOpacity>
         )}
-        <TouchableOpacity onPress={onStop}>
+        <TouchableOpacity style={{ marginRight: 15 }} onPress={onStop}>
           <FontAwesome5 name="stop" size={24} color={colors.blue} />
         </TouchableOpacity>
       </View>
@@ -322,9 +335,6 @@ function Sermon(props: SermonProps) {
     <View>
       <Text style={styles.sermonTitle}>{sermon.title}</Text>
       <Text style={styles.sermonDescription}>{sermon.description}</Text>
-      <Text style={styles.sermonSpeaker}>
-        {formatDuration(sermon.duration || null)} with {sermon.speaker}
-      </Text>
     </View>
   );
 }
@@ -351,7 +361,8 @@ const styles = StyleSheet.create({
   sermonSpeaker: {
     fontSize: 14,
     fontStyle: "italic",
-    paddingVertical: 10,
+    marginTop: 12,
+    /* paddingVertical: 10, */
   },
   audioControlContainer: {
     position: "absolute",
@@ -370,7 +381,7 @@ const styles = StyleSheet.create({
   },
   audioControlButtons: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "flex-end",
     alignItems: "center",
     width: "50%",
   },
@@ -379,7 +390,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 20,
     paddingVertical: 18,
-    width: "80%",
+    /* width: "50%", */
     marginTop: 12,
     alignItems: "center",
   },
@@ -407,5 +418,6 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     flexDirection: "row",
+    alignItems: "center",
   },
 });
