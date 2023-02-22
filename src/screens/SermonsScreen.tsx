@@ -16,7 +16,7 @@ import { TSermon } from "../../types";
 import { Container } from "../components/Container";
 import { useAudio } from "../hooks/useAudio";
 import { useSermons } from "../hooks/useSermons";
-import { useAudioStore } from "../Store";
+import useStore, { useAudioStore } from "../Store";
 import colors from "../styles/colors";
 
 function initOptimisticFaves(sermons: TSermon[]): string[] {
@@ -34,33 +34,56 @@ export default function SermonsScreen() {
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(sermons)
   );
-  const { stopSound, pauseSound, playSound } = useAudio();
-  const { sound, playingAudioObject, setPlayingAudioObject, isPlaying } =
-    useAudioStore();
+  const { stopSound, playSound } = useAudio();
+  const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
+  const { setError } = useStore();
 
   useEffect(() => {
     setOptimisticFaves(initOptimisticFaves(sermons));
   }, [JSON.stringify(sermons)]);
 
   async function startPlayingSermon(sermon: TSermon) {
-    if (playingAudioObject?.id === sermon.id) {
-      playSound();
-    } else {
-      await stopSound();
-      setPlayingAudioObject(sermon);
+    console.log(
+      "playingAudioObject?.id === sermon.id:",
+      playingAudioObject?.id === sermon.id
+    );
+    try {
+      if (playingAudioObject?.id === sermon.id) {
+        await playSound(null);
+      } else {
+        await stopSound();
+        setPlayingAudioObject(sermon);
+        await playSound(sermon.filename);
+      }
+    } catch (err: any) {
+      console.warn("Error playing sermon:");
+      console.error(err);
+      setError(err.message);
     }
   }
 
   async function handleFavoritingSermon(sermon: TSermon) {
-    setOptimisticFaves([...optimisticFaves, sermon.id]);
-    await favoriteSermon(sermon);
-    setQuietlyRefreshing(true);
+    try {
+      setOptimisticFaves([...optimisticFaves, sermon.id]);
+      await favoriteSermon(sermon);
+      setQuietlyRefreshing(true);
+    } catch (err: any) {
+      console.warn("Error favoriting sermon:");
+      console.error(err);
+      setError(err.message);
+    }
   }
 
   async function handleUnfavoritingSermon(sermon: TSermon) {
-    setOptimisticFaves(optimisticFaves.filter((id) => id !== sermon.id));
-    await unfavoriteSermon(sermon);
-    setQuietlyRefreshing(true);
+    try {
+      setOptimisticFaves(optimisticFaves.filter((id) => id !== sermon.id));
+      await unfavoriteSermon(sermon);
+      setQuietlyRefreshing(true);
+    } catch (err: any) {
+      console.warn("Error unfavoriting sermon:");
+      console.error(err);
+      setError(err.message);
+    }
   }
 
   return (
@@ -95,15 +118,6 @@ export default function SermonsScreen() {
           }
         />
       )}
-      {!!sound ? (
-        <AudioControls
-          title={playingAudioObject?.title || ""}
-          playingAudio={isPlaying}
-          onPlay={playSound}
-          onPause={pauseSound}
-          onStop={stopSound}
-        />
-      ) : null}
     </Container>
   );
 }
@@ -120,39 +134,6 @@ function SermonPlayButton(props: { onPress: () => void }) {
 
 function SermonPauseButton() {
   return <AntDesign name="sound" size={28} color={colors.blue} />;
-}
-
-interface AudioControlsProps {
-  title: string;
-  playingAudio: boolean;
-  onPlay: () => void;
-  onPause: () => void;
-  onStop: () => void;
-}
-
-function AudioControls(props: AudioControlsProps) {
-  const { title, playingAudio, onPlay, onPause, onStop } = props;
-
-  // TODO: Truncate and scroll long titles
-  return (
-    <View style={styles.audioControlContainer}>
-      <Text style={styles.playingSermonText}>{title}</Text>
-      <View style={styles.audioControlButtons}>
-        {playingAudio ? (
-          <TouchableOpacity style={{ marginRight: 25 }} onPress={onPause}>
-            <FontAwesome5 name="pause" size={24} color={colors.blue} />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={{ marginRight: 25 }} onPress={onPlay}>
-            <FontAwesome5 name="play" size={24} color={colors.blue} />
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity style={{ marginRight: 15 }} onPress={onStop}>
-          <FontAwesome5 name="stop" size={24} color={colors.blue} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
 }
 
 // Duration is a float in seconds

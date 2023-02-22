@@ -3,22 +3,18 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { useEffect } from "react";
 import { storage } from "../../firebase";
 import { useRequestReview } from "../hooks/useRequestReview";
-import { useAudioStore } from "../Store";
+import useStore, { useAudioStore } from "../Store";
 
 type Signature = {
   stopSound: () => Promise<void>;
   pauseSound: () => Promise<void>;
-  playSound: () => Promise<void>;
+  playSound: (fileToPlay: string | null) => Promise<void>;
 };
 
 export function useAudio(): Signature {
-  const {
-    sound,
-    setSound,
-    playingAudioObject,
-    setPlayingAudioObject,
-    setIsPlaying,
-  } = useAudioStore();
+  const { sound, setSound, setPlayingAudioObject, setIsPlaying } =
+    useAudioStore();
+  const { setError } = useStore();
   const { requestReview } = useRequestReview();
 
   // Initialize audio mode
@@ -46,33 +42,36 @@ export function useAudio(): Signature {
       : undefined;
   }, [sound]);
 
-  // Whenever the audio to be played is set, play it
-  useEffect(() => {
-    if (!!playingAudioObject) {
-      playSound();
-    } else {
-      stopSound();
-    }
-  }, [JSON.stringify(playingAudioObject)]);
-
   async function pauseSound() {
     console.log("Pausing sound...");
-    if (sound) {
-      await sound.pauseAsync();
-      setIsPlaying(false);
+    try {
+      if (sound) {
+        await sound.pauseAsync();
+      }
+    } catch (err: any) {
+      console.warn("Error pausing sound:");
+      console.error(err);
+      setError(err.message);
     }
   }
 
   async function stopSound(): Promise<void> {
-    if (sound) {
-      const soundStatus = await sound.getStatusAsync();
-      if (soundStatus.isLoaded) {
-        await sound.stopAsync();
-        await sound.unloadAsync();
+    console.log("Stopping sound...");
+    try {
+      if (sound) {
+        const soundStatus = await sound.getStatusAsync();
+        if (soundStatus.isLoaded) {
+          await sound.stopAsync();
+          await sound.unloadAsync();
+        }
+        setSound(null);
+        setPlayingAudioObject(null);
+        setIsPlaying(false);
       }
-      setSound(null);
-      setPlayingAudioObject(null);
-      setIsPlaying(false);
+    } catch (err: any) {
+      console.warn("Error stopping sound:");
+      console.error(err);
+      setError(err.message);
     }
   }
 
@@ -85,11 +84,10 @@ export function useAudio(): Signature {
         );
       }
     } else {
-      // TODO: Refactor play/pause handlers into these
       if (playbackStatus.isPlaying) {
-        //console.log("Playing...");
+        setIsPlaying(true);
       } else {
-        //console.log("Paused...");
+        setIsPlaying(false);
       }
 
       // TODO: Properly handle buffering state
@@ -110,29 +108,39 @@ export function useAudio(): Signature {
     }
   };
 
-  async function playSound(): Promise<void> {
+  async function playSound(fileToPlay: string | null = null): Promise<void> {
     console.log("Playing sound...");
-    if (sound) {
-      console.log("Sound is loaded, resuming...");
-      sound.playAsync();
-    } else {
-      if (!playingAudioObject) {
-        console.error("Cannot play sound, no filename is set");
+    try {
+      if (sound && fileToPlay !== null) {
+        console.error("Cannot play sound, another sound is already playing");
         return;
       }
 
-      console.log("Sound is not loaded, loading...");
-      const filename = ref(storage, playingAudioObject.filename);
-      const uri = await getDownloadURL(filename);
-      const { sound: playbackObject } = await Audio.Sound.createAsync(
-        { uri },
-        { shouldPlay: true }
-      );
-      setSound(playbackObject);
-      // Call stopSound when audio finishes playing
-      playbackObject.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+      if (sound && fileToPlay === null) {
+        console.log("Sound is loaded, resuming...");
+        sound.playAsync();
+      } else {
+        if (!fileToPlay) {
+          console.error("Cannot play sound, no filename is set");
+          return;
+        }
+
+        console.log("Sound is not loaded, loading...");
+        const filename = ref(storage, fileToPlay);
+        const uri = await getDownloadURL(filename);
+        const { sound: playbackObject } = await Audio.Sound.createAsync(
+          { uri },
+          { shouldPlay: true }
+        );
+        setSound(playbackObject);
+        // Call stopSound when audio finishes playing
+        playbackObject.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+      }
+    } catch (err: any) {
+      console.warn("Error playing sound:");
+      console.error(err);
+      setError(err.message);
     }
-    setIsPlaying(true);
   }
 
   return { stopSound, pauseSound, playSound };
