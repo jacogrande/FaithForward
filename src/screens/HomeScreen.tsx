@@ -154,6 +154,7 @@ function PersonalizedDevotional() {
     Keyboard.dismiss();
   };
 
+  // TODO: Refactor to use Container, delegate Snackbar error handling to Container
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

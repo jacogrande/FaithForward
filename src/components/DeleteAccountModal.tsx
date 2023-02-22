@@ -69,6 +69,7 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = (props) => {
     props.onClose();
   };
 
+  // TODO: Refactor to use Container, delegate Snackbar error handling to Container
   return (
     <Modal
       visible={props.isModalVisible}

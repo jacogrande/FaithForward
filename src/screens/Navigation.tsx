@@ -4,7 +4,7 @@ import * as React from "react";
 import { Dimensions } from "react-native";
 import colors from "../styles/colors";
 import HomeNavigator from "./HomeNavigator";
-import ProfileScreen from "./ProfileScreen";
+import ProfileNavigator from "./ProfileNavigator";
 import SermonsScreen from "./SermonsScreen";
 
 const Tab = createBottomTabNavigator();
@@ -45,7 +45,7 @@ const BaseNavigator: React.FC = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="user" size={size} color={color} />

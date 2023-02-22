@@ -1,4 +1,6 @@
+import { Audio } from "expo-av";
 import { create } from "zustand";
+import { PlayableAudioObject } from "./types";
 
 type Store = {
   input: string;
@@ -39,3 +41,26 @@ const useStore = create<Store>((set) => ({
 }));
 
 export default useStore;
+
+type AudioStore = {
+  sound: Audio.Sound | null;
+  setSound: (sound: Audio.Sound | null) => void;
+  playingAudioObject: PlayableAudioObject | null;
+  setPlayingAudioObject: (
+    playingAudioObject: PlayableAudioObject | null
+  ) => void;
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
+};
+
+export const useAudioStore = create<AudioStore>((set) => ({
+  sound: null,
+  setSound: (sound: Audio.Sound | null) =>
+    set((state) => ({ ...state, sound })),
+  playingAudioObject: null,
+  setPlayingAudioObject: (playingAudioObject: PlayableAudioObject | null) =>
+    set((state) => ({ ...state, playingAudioObject })),
+  isPlaying: false,
+  setIsPlaying: (isPlaying: boolean) =>
+    set((state) => ({ ...state, isPlaying })),
+}));

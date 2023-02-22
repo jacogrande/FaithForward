@@ -8,11 +8,15 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { TSermon } from "./types";
 
 const firebaseProdConfig = {
   apiKey: "AIzaSyDgj0UDgTub38VuhVjUFIe9Sc5U_ODJK1c",
@@ -132,4 +136,91 @@ export const deletePushToken = async (pushToken: string) => {
   // Remove push token from pushTokens collection
   const pushTokenRef = doc(db, "pushTokens", pushToken);
   await deleteDoc(pushTokenRef);
+};
+
+export const favoriteSermon = async (sermon: TSermon) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const sermonRef = doc(db, "sermons", sermon.id);
+
+  // Handle the users/favorites subcollection
+  // If the user has already favorited the sermon, do nothing
+  const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+  const favoritesQuery = query(
+    collection(userDoc.ref, "favorites"),
+    where("type", "==", "sermon"),
+    where("docId", "==", sermon.id)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  if (favoritesQuerySnapshot.docs.length > 0) {
+    console.warn("User has already favorited this sermon");
+  } else {
+    await addDoc(collection(userRef, "favorites"), {
+      type: "sermon",
+      docId: sermonRef.id,
+      docData: sermon,
+      createdAt: new Date(),
+    });
+  }
+
+  // Handle the sermons.favoritedBy field
+  // If the sermon has already been favorited by the user, do nothing
+  const sermonDoc = await getDoc(doc(db, "sermons", sermon.id));
+  const sermonFavoritedBy = sermonDoc.data()?.favoritedBy;
+  if (
+    sermonFavoritedBy?.some((user: any) => user.id === auth.currentUser?.uid)
+  ) {
+    console.warn("Sermon has already been favorited by user");
+  } else {
+    // Add user to sermon's favoritedBy
+    await updateDoc(sermonRef, {
+      favoritedBy: arrayUnion(auth.currentUser.uid),
+    });
+  }
+};
+
+export const unfavoriteSermon = async (sermon: TSermon) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const sermonRef = doc(db, "sermons", sermon.id);
+
+  // Handle users/favorites subcollection
+  // If the user has not favorited the sermon, do nothing
+  const favoritesQuery = query(
+    collection(userRef, "favorites"),
+    where("type", "==", "sermon"),
+    where("docId", "==", sermon.id)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  // Get document ID of favorite
+  if (favoritesQuerySnapshot.docs.length === 0) {
+    console.warn("User has not favorited this sermon");
+  } else {
+    const favoriteDocId = favoritesQuerySnapshot.docs[0].id;
+    const favoriteRef = await getDoc(doc(userRef, "favorites", favoriteDocId));
+    await deleteDoc(favoriteRef.ref);
+  }
+
+  // Handle sermon.favoritedBy field
+  // If the sermon has not been favorited by the user, do nothing
+  const sermonDoc = await getDoc(doc(db, "sermons", sermon.id));
+  const sermonFavoritedBy = sermonDoc.data()?.favoritedBy;
+  if (
+    !sermonFavoritedBy?.some(
+      (userId: string) => userId === auth.currentUser?.uid
+    )
+  ) {
+    console.warn("Sermon has not been favorited by user");
+  } else {
+    // Remove user from sermon's favoritedBy
+    await updateDoc(sermonRef, {
+      favoritedBy: arrayRemove(auth.currentUser.uid),
+    });
+  }
 };

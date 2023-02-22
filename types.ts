@@ -8,6 +8,7 @@ export type TSermon = {
   createdAt: Date | Timestamp;
   speaker: string;
   duration: number;
+  favoritedBy: string[];
 };
 
 export type TTradDevo = {
@@ -16,4 +17,10 @@ export type TTradDevo = {
   input: string;
   response: string;
   createdAt: Date | Timestamp;
+}
+
+export interface PlayableAudioObject {
+  id: string;
+  filename: string;
+  title: string;
 }
