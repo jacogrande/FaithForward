@@ -1,27 +1,25 @@
-import React, { useState } from "react";
-import {
-  AntDesign,
-  FontAwesome5,
-  FontAwesome,
-  Ionicons,
-} from "@expo/vector-icons";
-import { Text, TouchableOpacity, Share, View } from "react-native";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Share, Text, TouchableOpacity, View } from "react-native";
 import { TTradDevo } from "../../types";
+import useStore from "../Store";
 import colors from "../styles/colors";
-import { formatDate } from "../utils";
-import useStore from '../Store'
+import { formatDate, getVerseRef } from "../utils";
 
-export function DevotionalCard({ devotional }: { devotional: TTradDevo }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const { setError } = useStore()
-
-  const handleToggleExpanded = () => {
-    setIsExpanded(!isExpanded);
-  };
+export function DevotionalCard({
+  devotional,
+  isExpanded,
+  onPress,
+}: {
+  devotional: TTradDevo;
+  isExpanded: boolean;
+  onPress: () => void;
+}) {
+  const { setError } = useStore();
 
   const favoriteDevo = () => {};
 
-  async function shareDevo () {
+  async function shareDevo() {
     try {
       const result = await Share.share({
         message: `Check out this devotional from Faith Forward!
@@ -29,7 +27,7 @@ export function DevotionalCard({ devotional }: { devotional: TTradDevo }) {
 "${devotional.input}"
 
 Faith Forward:
-${devotional.response}`
+${devotional.response}`,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -42,9 +40,9 @@ ${devotional.response}`
       }
     } catch (error: any) {
       console.error(error.message);
-      setError(error.message)
+      setError(error.message);
     }
-  };
+  }
 
   return (
     <View
@@ -56,7 +54,7 @@ ${devotional.response}`
         borderBottomWidth: 2,
       }}
     >
-      <TouchableOpacity onPress={handleToggleExpanded}>
+      <TouchableOpacity onPress={onPress}>
         <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 4 }}>
           {devotional.title}
         </Text>
@@ -64,7 +62,6 @@ ${devotional.response}`
           style={{
             fontSize: 16,
             lineHeight: 24,
-            marginBottom: isExpanded ? 12 : 0,
             fontStyle: "italic",
           }}
         >
@@ -76,12 +73,14 @@ ${devotional.response}`
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          paddingTop: 10,
+          paddingVertical: 10,
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <FontAwesome name="calendar-o" size={20} color="#999" />
-          <Text style={{ fontSize: 14, color: "#999", paddingLeft: 10 }}>{formatDate(devotional.createdAt)}</Text>
+          <Text style={{ fontSize: 14, color: "#999", paddingLeft: 10 }}>
+            {formatDate(devotional.createdAt)}
+          </Text>
         </View>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity onPress={favoriteDevo} style={{ paddingRight: 20 }}>
@@ -93,24 +92,66 @@ ${devotional.response}`
         </View>
       </View>
       {isExpanded && (
-        <>
-          <View
-            style={{
-              borderTopColor: "#eee",
-              borderTopWidth: 1,
-              paddingTop: 12,
-              marginBottom: 12,
-              // TODO: Make section more visually distinct
-              // TODO: Support verse highlighting and clickthrough actions here
-              // TODO: Only have a single devo expanded at a time
-            }}
-          >
-            <Text style={{ fontSize: 16, lineHeight: 24 }}>
-              {devotional.response}
+        <View style={{ alignItems: "center" }}>
+          <View style={{ alignItems: "center", backgroundColor: colors.paper }}>
+            <Text
+              style={{
+                fontSize: 16,
+                paddingHorizontal: 20,
+                paddingBottom: 36,
+                paddingTop: 8,
+                color: "#333",
+                lineHeight: 28,
+              }}
+            >
+              {formatVerse(devotional.response, () => {})}
             </Text>
           </View>
-        </>
+        </View>
       )}
     </View>
   );
 }
+
+export const formatVerse = (
+  devotional: string,
+  onVersePress: (quote: string) => void
+) => {
+  if (!devotional) return null;
+  // convert all quotation marks to double quotes
+  devotional = devotional.replace(/“|”/g, '"');
+  // handle the edge case where the entire response is wrapped in quotes
+  if (devotional[0] === `"` && devotional[devotional.length - 1] === `"`) {
+    devotional = devotional.slice(1, devotional.length - 1);
+    devotional = devotional.replace(/'/g, '"');
+  }
+  const quotes: string[] = devotional.split(/(".*?")/);
+  let formattedVerse: (string | JSX.Element)[] = [];
+  if (quotes.length >= 1) {
+    formattedVerse = quotes.map((quote, i) => {
+      // non verse text
+      if (i % 2 === 0) return quote;
+      // style all biblical quotes
+      const verseRef = getVerseRef(quote, devotional);
+      if (verseRef)
+        return (
+          <Text
+            style={{
+              backgroundColor: "#fff3a8",
+              fontWeight: "600",
+              fontFamily: "Baskerville",
+            }}
+            key={quote}
+            onPress={() => onVersePress(quote)}
+            accessibilityHint="Tap to open the verse action menu."
+          >
+            {quote}
+          </Text>
+        );
+      // return non biblical quotes normally
+      return quote;
+    });
+  }
+  if (formattedVerse.length > 0) return formattedVerse;
+  return devotional;
+};

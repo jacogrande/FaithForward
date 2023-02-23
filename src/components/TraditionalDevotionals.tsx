@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,10 +6,13 @@ import {
   Text,
   View,
 } from "react-native";
+import { TTradDevo } from "../../types";
 import { useTradDevos } from "../hooks/useTradDevos";
 import { DevotionalCard } from "./DevotionalCard";
 
+// TODO: Scroll the newly expanded devotional into view
 export function TraditionalDevotionals() {
+  const [expandedDevoId, setExpandedDevoId] = useState<string | null>(null);
   const { tradDevos, loading, refreshing, setRefreshing } = useTradDevos();
 
   if (loading) {
@@ -24,8 +27,14 @@ export function TraditionalDevotionals() {
     <View>
       <FlatList
         data={tradDevos}
-        renderItem={({ item }) => <DevotionalCard devotional={item} />}
-        keyExtractor={(item) => item.id}
+        renderItem={({ item }: { item: TTradDevo }) => (
+          <DevotionalCard
+            devotional={item}
+            isExpanded={item.id === expandedDevoId}
+            onPress={() => setExpandedDevoId(expandedDevoId === item.id ? null : item.id)}
+          />
+        )}
+        keyExtractor={(item: TTradDevo) => item.id}
         style={{ width: "100%", paddingHorizontal: 20 }}
         ListEmptyComponent={() => (
           <View style={{ alignItems: "center", marginTop: 24 }}>
