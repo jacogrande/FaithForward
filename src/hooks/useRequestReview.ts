@@ -29,9 +29,14 @@ export const useRequestReview = (): Signature => {
       const userRef = doc(db, "users", auth.currentUser.uid);
       const userDoc = await getDoc(userRef);
       if (!userDoc.exists()) {
-        console.warn("User doc does not exist.");
+        // Create user doc
+        await setDoc(userRef, {
+          lastReviewRequestCheck: new Date(),
+          reviewRequestCheckCount: 1,
+        });
         return;
       }
+
       const user = userDoc.data();
       if (!user) {
         console.warn("User doc is empty.");
