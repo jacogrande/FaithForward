@@ -101,7 +101,7 @@ export default function FavoritesScreen() {
                 )}
                 keyExtractor={(item) => item.id}
                 style={{ height: "100%" }}
-                ListEmptyComponent={<Text>No sermons to display.</Text>}
+                ListEmptyComponent={<Text>No favorites to display.</Text>}
                 ListFooterComponent={<View style={{ height: 100 }} />}
                 refreshControl={
                   <RefreshControl
