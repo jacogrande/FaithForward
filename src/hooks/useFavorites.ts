@@ -1,11 +1,4 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { collection, doc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase";
 import useStore from "../Store";
@@ -35,17 +28,10 @@ export const useFavorites = (): Signature => {
         return;
       }
 
-      // Get current user doc
-      const userDoc = doc(db, "users", auth.currentUser.uid);
-      const userDocSnap = await getDoc(userDoc);
-      if (!userDocSnap.exists()) {
-        console.warn("No user found.");
-        return;
-      }
-
       // Get favorites
+      const userRef = doc(db, "users", auth.currentUser.uid);
       const favoritesQuery = query(
-        collection(userDoc, "favorites"),
+        collection(userRef, "favorites"),
         orderBy("createdAt", "desc")
       );
       const favoritesQuerySnap = await getDocs(favoritesQuery);
@@ -60,7 +46,7 @@ export const useFavorites = (): Signature => {
     } finally {
       setLoading(false);
       setRefreshing(false);
-      setQuietlyRefreshing(false)
+      setQuietlyRefreshing(false);
     }
   };
 
