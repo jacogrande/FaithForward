@@ -1,14 +1,17 @@
 import { AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
+import { getDownloadURL, ref } from "firebase/storage";
 import humanizeDuration from "humanize-duration";
 import React from "react";
 import {
   ActivityIndicator,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { storage } from "../../firebase";
 import { TSermon } from "../../types";
 import colors from "../styles/colors";
 
@@ -32,6 +35,16 @@ export function Sermon(props: SermonProps) {
     handleFavoritingSermon,
     handleUnfavoritingSermon,
   } = props;
+
+  // TODO: Use the marketing site URL for the sermon in the share message
+  async function shareSermon() {
+    const filename = ref(storage, sermon.filename);
+    const uri = await getDownloadURL(filename);
+    await Share.share({
+      message: `Check out this Faith Forward sermon!\n\n${sermon.title}`,
+      url: uri
+    });
+  }
 
   return (
     <View style={styles.sermonSection}>
@@ -60,15 +73,28 @@ export function Sermon(props: SermonProps) {
               <SermonPlayButton onPress={() => startPlayingSermon(sermon)} />
             )}
           </View>
-          {faves.includes(sermon.id) ? (
-            <TouchableOpacity onPress={() => handleUnfavoritingSermon(sermon)}>
-              <Ionicons name="heart-sharp" size={24} color={colors.red} />
+          <View style={{ marginRight: 20 }}>
+            {faves.includes(sermon.id) ? (
+              <TouchableOpacity
+                onPress={() => handleUnfavoritingSermon(sermon)}
+              >
+                <Ionicons name="heart-sharp" size={24} color={colors.red} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => handleFavoritingSermon(sermon)}>
+                <Ionicons name="heart-outline" size={24} color={colors.red} />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View>
+            <TouchableOpacity onPress={shareSermon}>
+              <Ionicons
+                name="ios-share-outline"
+                size={24}
+                color={colors.blue}
+              />
             </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => handleFavoritingSermon(sermon)}>
-              <Ionicons name="heart-outline" size={24} color={colors.red} />
-            </TouchableOpacity>
-          )}
+          </View>
         </View>
       </View>
     </View>
