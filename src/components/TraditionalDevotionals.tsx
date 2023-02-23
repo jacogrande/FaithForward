@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,14 +6,64 @@ import {
   Text,
   View,
 } from "react-native";
+import { auth, favoriteTradDevo, unfavoriteTradDevo } from "../../firebase";
 import { TTradDevo } from "../../types";
 import { useTradDevos } from "../hooks/useTradDevos";
+import useStore from "../Store";
 import { DevotionalCard } from "./DevotionalCard";
+
+// TODO: Why are optimisticFaves returning a devo that has been unfavorited?
+function initOptimisticFaves(devos: TTradDevo[]): string[] {
+  // Return an array of sermon IDs that are favoritedBy the current user
+  return devos
+    .filter((devo: TTradDevo) =>
+      devo.favoritedBy?.includes(auth.currentUser?.uid || "")
+    )
+    .map((devo: TTradDevo) => devo.id);
+}
 
 // TODO: Scroll the newly expanded devotional into view
 export function TraditionalDevotionals() {
   const [expandedDevoId, setExpandedDevoId] = useState<string | null>(null);
-  const { tradDevos, loading, refreshing, setRefreshing } = useTradDevos();
+  const {
+    tradDevos,
+    loading,
+    refreshing,
+    setRefreshing,
+    setQuietlyRefreshing,
+  } = useTradDevos();
+  const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
+    initOptimisticFaves(tradDevos)
+  );
+  const { setError } = useStore();
+
+  useEffect(() => {
+    setOptimisticFaves(initOptimisticFaves(tradDevos));
+  }, [JSON.stringify(tradDevos)]);
+
+  async function handleFavoritingDevo(devo: TTradDevo) {
+    try {
+      setOptimisticFaves([...optimisticFaves, devo.id]);
+      await favoriteTradDevo(devo);
+      setQuietlyRefreshing(true);
+    } catch (err: any) {
+      console.warn("Error favoriting devo:");
+      console.error(err);
+      setError(err.message);
+    }
+  }
+
+  async function handleUnfavoritingDevo(devo: TTradDevo) {
+    try {
+      setOptimisticFaves(optimisticFaves.filter((id) => id !== devo.id));
+      await unfavoriteTradDevo(devo);
+      setQuietlyRefreshing(true);
+    } catch (err: any) {
+      console.warn("Error unfavoriting devo:");
+      console.error(err);
+      setError(err.message);
+    }
+  }
 
   if (loading) {
     return (
@@ -31,7 +81,12 @@ export function TraditionalDevotionals() {
           <DevotionalCard
             devotional={item}
             isExpanded={item.id === expandedDevoId}
-            onPress={() => setExpandedDevoId(expandedDevoId === item.id ? null : item.id)}
+            onPress={() =>
+              setExpandedDevoId(expandedDevoId === item.id ? null : item.id)
+            }
+            faves={optimisticFaves}
+            handleFavoritingDevo={handleFavoritingDevo}
+            handleUnfavoritingDevo={handleUnfavoritingDevo}
           />
         )}
         keyExtractor={(item: TTradDevo) => item.id}

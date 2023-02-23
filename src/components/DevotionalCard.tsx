@@ -10,15 +10,20 @@ export function DevotionalCard({
   devotional,
   isExpanded,
   onPress,
+  faves,
+  handleFavoritingDevo,
+  handleUnfavoritingDevo,
 }: {
   devotional: TTradDevo;
   isExpanded: boolean;
   onPress: () => void;
+  faves: string[];
+  handleFavoritingDevo: (devo: TTradDevo) => void;
+  handleUnfavoritingDevo: (devo: TTradDevo) => void;
 }) {
   const { setError } = useStore();
 
-  const favoriteDevo = () => {};
-
+  // TODO: Rework share to use personalized devo logic, i.e. attach a screenshot of the full convo
   async function shareDevo() {
     try {
       const result = await Share.share({
@@ -68,6 +73,24 @@ ${devotional.response}`,
           {devotional.input}
         </Text>
       </TouchableOpacity>
+      {isExpanded && (
+        <View style={{ alignItems: "center", marginTop: 20 }}>
+          <View style={{ alignItems: "center", backgroundColor: colors.paper }}>
+            <Text
+              style={{
+                fontSize: 16,
+                paddingHorizontal: 20,
+                paddingBottom: 20,
+                paddingTop: 8,
+                color: "#333",
+                lineHeight: 28,
+              }}
+            >
+              {formatVerse(devotional.response, () => {})}
+            </Text>
+          </View>
+        </View>
+      )}
       <View
         style={{
           flexDirection: "row",
@@ -83,32 +106,26 @@ ${devotional.response}`,
           </Text>
         </View>
         <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity onPress={favoriteDevo} style={{ paddingRight: 20 }}>
-            <Ionicons name="heart-outline" size={24} color={colors.red} />
-          </TouchableOpacity>
+          {faves.includes(devotional.id) ? (
+            <TouchableOpacity
+              onPress={() => handleUnfavoritingDevo(devotional)}
+              style={{ paddingRight: 20 }}
+            >
+              <Ionicons name="heart-sharp" size={24} color={colors.red} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => handleFavoritingDevo(devotional)}
+              style={{ paddingRight: 20 }}
+            >
+              <Ionicons name="heart-outline" size={24} color={colors.red} />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity onPress={shareDevo}>
             <Ionicons name="ios-share-outline" size={24} color={colors.blue} />
           </TouchableOpacity>
         </View>
       </View>
-      {isExpanded && (
-        <View style={{ alignItems: "center" }}>
-          <View style={{ alignItems: "center", backgroundColor: colors.paper }}>
-            <Text
-              style={{
-                fontSize: 16,
-                paddingHorizontal: 20,
-                paddingBottom: 36,
-                paddingTop: 8,
-                color: "#333",
-                lineHeight: 28,
-              }}
-            >
-              {formatVerse(devotional.response, () => {})}
-            </Text>
-          </View>
-        </View>
-      )}
     </View>
   );
 }

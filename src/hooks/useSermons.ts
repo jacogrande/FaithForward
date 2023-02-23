@@ -41,8 +41,8 @@ export const useSermons = (): Signature => {
       });
       setSermons(ss);
     } catch (error: any) {
-      console.error(error);
-      setError(error.toString());
+      console.error(error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
       setRefreshing(false);
