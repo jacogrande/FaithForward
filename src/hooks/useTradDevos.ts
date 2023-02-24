@@ -9,12 +9,15 @@ type Signature = {
   loading: boolean;
   refreshing: boolean;
   setRefreshing: (refreshing: boolean) => void;
+  quietlyRefreshing: boolean;
+  setQuietlyRefreshing: (quietlyRefreshing: boolean) => void;
 };
 
 export const useTradDevos = (): Signature => {
   const [tradDevos, setTradDevos] = useState<TTradDevo[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [quietlyRefreshing, setQuietlyRefreshing] = useState(false);
   const { setError } = useStore();
 
   // Fetch tradDevos from Firestore
@@ -35,19 +38,27 @@ export const useTradDevos = (): Signature => {
       });
       setTradDevos(devos);
     } catch (error: any) {
-      console.error(error);
-      setError(error.message || error.toString());
+      console.error(error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
       setRefreshing(false);
+      setQuietlyRefreshing(false);
     }
   };
 
   useEffect(() => {
-    if (loading || refreshing) {
+    if (loading || refreshing || quietlyRefreshing) {
       fetchTradDevos();
     }
-  }, [refreshing]);
+  }, [refreshing, quietlyRefreshing]);
 
-  return { tradDevos, loading, refreshing, setRefreshing };
+  return {
+    tradDevos,
+    loading,
+    refreshing,
+    setRefreshing,
+    quietlyRefreshing,
+    setQuietlyRefreshing,
+  };
 };

@@ -6,15 +6,18 @@ import {
   RefreshControl,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
-import { auth, unfavoriteSermon } from "../../firebase";
-import { TSermon } from "../../types";
+import { auth, unfavoriteSermon, unfavoriteTradDevo } from "../../firebase";
+import { TSermon, TTradDevo } from "../../types";
 import { Container } from "../components/Container";
+import { DevotionalCard } from "../components/DevotionalCard";
 import { Sermon } from "../components/Sermon";
 import { useAudio } from "../hooks/useAudio";
 import { useFavorites } from "../hooks/useFavorites";
 import useStore, { useAudioStore } from "../Store";
+import colors from "../styles/colors";
 
 // TODO: Add proper handling for different fave types
 // TODO: Refresh list when faves change on other screens
@@ -30,6 +33,10 @@ export default function FavoritesScreen() {
   const { stopSound, playSound } = useAudio();
   const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
   const [favoriteSermons, setFavoriteSermons] = useState<TSermon[]>([]);
+  const [favoriteTradDevos, setFavoriteTradDevos] = useState<TTradDevo[]>([]);
+  const [expandedDevoId, setExpandedDevoId] = useState<string | null>(null);
+  const [viewType, setViewType] = useState<"sermons" | "tradDevos">("sermons");
+
   const { setError } = useStore();
 
   onIdTokenChanged(auth, (user) => {
@@ -42,7 +49,16 @@ export default function FavoritesScreen() {
 
   // Set favoriteSermons when favorites updates
   useEffect(() => {
-    setFavoriteSermons(favorites.map((fave) => ({ ...fave.docData })));
+    setFavoriteSermons(
+      favorites
+        .filter((fave) => fave.type === "sermon")
+        .map((fave) => ({ ...fave.docData }))
+    );
+    setFavoriteTradDevos(
+      favorites
+        .filter((fave) => fave.type === "tradDevo")
+        .map((fave) => ({ ...fave.docData }))
+    );
   }, [JSON.stringify(favorites)]);
 
   async function startPlayingSermon(sermon: TSermon) {
@@ -60,6 +76,7 @@ export default function FavoritesScreen() {
       setError(err.message);
     }
   }
+
   async function handleUnfavoritingSermon(sermon: TSermon) {
     try {
       setFavoriteSermons(
@@ -74,9 +91,58 @@ export default function FavoritesScreen() {
     }
   }
 
+  async function handleUnfavoritingTradDevo(tradDevo: TTradDevo) {
+    try {
+      setFavoriteTradDevos(
+        favoriteTradDevos.filter((fave) => fave.id !== tradDevo.id)
+      );
+      await unfavoriteTradDevo(tradDevo);
+      setQuietlyRefreshing(true);
+    } catch (err: any) {
+      console.warn("Error unfavoriting tradDevo:");
+      console.error(err);
+      setError(err.message);
+    }
+  }
+
+  function viewSermons() {
+    setViewType("sermons");
+    setQuietlyRefreshing(true);
+  }
+
+  function viewTradDevos() {
+    setViewType("tradDevos");
+    setQuietlyRefreshing(true);
+  }
+
   return (
     <Container>
       <View style={styles.container}>
+        <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+          <TouchableOpacity
+            onPress={viewSermons}
+            style={{
+              padding: 8,
+              backgroundColor:
+                viewType === "sermons" ? colors.blue : colors.lightBlue,
+              borderRadius: 8,
+              marginRight: 20,
+            }}
+          >
+            <Text>Sermons</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={viewTradDevos}
+            style={{
+              padding: 8,
+              backgroundColor:
+                viewType === "tradDevos" ? colors.blue : colors.lightBlue,
+              borderRadius: 8,
+            }}
+          >
+            <Text>Devotionals</Text>
+          </TouchableOpacity>
+        </View>
         {isAnonymous ? (
           <Text>You must have an account to save favorites.</Text>
         ) : (
@@ -85,7 +151,7 @@ export default function FavoritesScreen() {
               <View>
                 <ActivityIndicator />
               </View>
-            ) : (
+            ) : viewType === "sermons" ? (
               <FlatList
                 data={favoriteSermons}
                 renderItem={({ item: sermon }: { item: TSermon }) => (
@@ -101,7 +167,7 @@ export default function FavoritesScreen() {
                 )}
                 keyExtractor={(item) => item.id}
                 style={{ height: "100%" }}
-                ListEmptyComponent={<Text>No sermons to display.</Text>}
+                ListEmptyComponent={<EmptyFavorites />}
                 ListFooterComponent={<View style={{ height: 100 }} />}
                 refreshControl={
                   <RefreshControl
@@ -110,6 +176,38 @@ export default function FavoritesScreen() {
                   />
                 }
               />
+            ) : viewType === "tradDevos" ? (
+              <FlatList
+                data={favoriteTradDevos}
+                renderItem={({ item: tradDevo }: { item: TTradDevo }) => (
+                  <DevotionalCard
+                    devotional={tradDevo}
+                    isExpanded={expandedDevoId === tradDevo.id}
+                    faves={favoriteTradDevos.map((fave) => fave.id)}
+                    onPress={() =>
+                      setExpandedDevoId(
+                        expandedDevoId === tradDevo.id ? null : tradDevo.id
+                      )
+                    }
+                    handleFavoritingDevo={() => {}}
+                    handleUnfavoritingDevo={handleUnfavoritingTradDevo}
+                  />
+                )}
+                keyExtractor={(item) => item.id}
+                style={{ height: "100%" }}
+                ListEmptyComponent={<EmptyFavorites />}
+                ListFooterComponent={<View style={{ height: 100 }} />}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={() => setRefreshing(true)}
+                  />
+                }
+              />
+            ) : (
+              <Text>
+                Unrecognized view type for favorites screen, {viewType}.
+              </Text>
             )}
           </View>
         )}
@@ -117,6 +215,21 @@ export default function FavoritesScreen() {
     </Container>
   );
 }
+
+const EmptyFavorites = () => {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginVertical: 40,
+      }}
+    >
+      <Text style={{ fontSize: 16 }}>No favorites to display.</Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

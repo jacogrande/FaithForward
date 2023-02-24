@@ -18,10 +18,10 @@ import useStore, { useAudioStore } from "../Store";
 function initOptimisticFaves(sermons: TSermon[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user
   return sermons
-    .filter((sermon) =>
+    .filter((sermon: TSermon) =>
       sermon.favoritedBy?.includes(auth.currentUser?.uid || "")
     )
-    .map((sermon) => sermon.id);
+    .map((sermon: TSermon) => sermon.id);
 }
 
 export default function SermonsScreen() {

@@ -16,6 +16,7 @@ export type TTradDevo = {
   title: string;
   input: string;
   response: string;
+  favoritedBy: string[];
   createdAt: Date | Timestamp;
 }
 

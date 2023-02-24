@@ -35,3 +35,29 @@ export const formatTime = (date: Date | Timestamp): string => {
     hour12: true,
   });
 };
+
+export const getVerseRef = (verse: string, fullResponse: string) => {
+  // insert spaces after each opening parenthesis and before each closing parenthesis
+  const match = new RegExp(
+    /(?:\b\d+ )?[a-z]+ ?\d+(?:(?::\d+)?(?: ?- ?(?:\d+ [a-z]+ )?\d+(?::\d+)?)?)?(?=\b)/i
+  );
+  // check the characters around the pressed verse to try and find the verse reference
+  const verseIndex = fullResponse.indexOf(verse);
+  const startIndex = verseIndex - 100;
+  const surroundingText = fullResponse.slice(
+    startIndex > 0 ? startIndex : 0,
+    verseIndex + verse.length + 50
+  );
+  const reference = surroundingText.match(match);
+  if (reference?.toString().toLowerCase().substring(0, 2) === "in") {
+    // cut the full response from the "in" to the end
+    const newResponse = fullResponse.slice(
+      fullResponse.indexOf(reference?.toString()) + 2,
+      fullResponse.length
+    );
+    // find the next verse reference
+    const newReference = newResponse.match(match);
+    return newReference?.toString();
+  }
+  return reference?.toString();
+};
