@@ -1,6 +1,7 @@
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { Share, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import ViewShot from "react-native-view-shot";
 import { TTradDevo } from "../../types";
 import useStore from "../Store";
 import colors from "../styles/colors";
@@ -21,33 +22,31 @@ export function DevotionalCard({
   handleFavoritingDevo: (devo: TTradDevo) => void;
   handleUnfavoritingDevo: (devo: TTradDevo) => void;
 }) {
+  const [isSharing, setIsSharing] = useState(false);
+  const verseRef = useRef<ViewShot | null>(null);
   const { setError } = useStore();
 
-  // TODO: Rework share to use personalized devo logic, i.e. attach a screenshot of the full convo
-  async function shareDevo() {
-    try {
-      const result = await Share.share({
-        message: `Check out this devotional from Faith Forward!
-
-"${devotional.input}"
-
-Faith Forward:
-${devotional.response}`,
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
+  useEffect(() => {
+    if (isSharing) {
+      const asyncShare = async () => {
+        if (!verseRef.current || !verseRef.current.capture) return;
+        try {
+          const imageUri = await verseRef.current.capture();
+          await Share.share({
+            url: imageUri,
+          });
+        } catch (err: any) {
+          console.error(err.message);
+          setError(err.message);
+        } finally {
+          setIsSharing(false);
         }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error: any) {
-      console.error(error.message);
-      setError(error.message);
+      };
+      setTimeout(() => {
+        asyncShare();
+      }, 100);
     }
-  }
+  }, [isSharing]);
 
   return (
     <View
@@ -121,11 +120,20 @@ ${devotional.response}`,
               <Ionicons name="heart-outline" size={24} color={colors.red} />
             </TouchableOpacity>
           )}
-          <TouchableOpacity onPress={shareDevo}>
+          <TouchableOpacity onPress={() => setIsSharing(true)}>
             <Ionicons name="ios-share-outline" size={24} color={colors.blue} />
           </TouchableOpacity>
         </View>
       </View>
+      <ViewShot ref={verseRef} style={styles.screenshot}>
+        <Text style={styles.prompt}>
+          {devotional.input}
+        </Text>
+        <Text style={styles.response}>
+          <Text style={styles.bold}>Faith Forward: </Text>
+          {formatVerse(devotional.response, () => {})}
+        </Text>
+      </ViewShot>
     </View>
   );
 }
@@ -172,3 +180,57 @@ export const formatVerse = (
   if (formattedVerse.length > 0) return formattedVerse;
   return devotional;
 };
+
+const styles = StyleSheet.create({
+  verse: {
+    width: "100%",
+    alignItems: "center",
+    backgroundColor: colors.paper,
+  },
+  button: {
+    borderWidth: 2,
+    borderColor: colors.blue,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 48,
+    marginTop: 12,
+    alignItems: "center",
+    zIndex: 1,
+  },
+  buttonText: {
+    color: colors.blue,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  prompt: {
+    fontSize: 16,
+    color: "#333",
+    marginTop: 24,
+    paddingHorizontal: "10%",
+  },
+  response: {
+    fontSize: 16,
+    paddingHorizontal: "10%",
+    paddingBottom: 36,
+    paddingTop: 8,
+    color: "#333",
+    lineHeight: 28,
+  },
+  bold: {
+    fontWeight: "700",
+    color: "#111",
+  },
+  screenshot: {
+    position: "absolute",
+    top: -100000,
+    left: 0,
+    zIndex: -2,
+    alignItems: "flex-start",
+    backgroundColor: colors.paper,
+  },
+  highlight: {
+    backgroundColor: "#fff3a8",
+    fontWeight: "600",
+    fontFamily: "Baskerville",
+  },
+});
