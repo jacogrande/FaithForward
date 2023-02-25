@@ -2,7 +2,7 @@
   "expo": {
     "name": "Faith Forward",
     "slug": "faith-forward",
-    "version": "2.5.2",
+    "version": "2.5.3",
     "orientation": "portrait",
     "icon": "./assets/icon-dark-blue.png",
     "userInterfaceStyle": "light",
@@ -25,7 +25,7 @@
           "audio"
         ]
       },
-      "buildNumber": "24"
+      "buildNumber": "25"
     },
     "android": {
       "adaptiveIcon": {
