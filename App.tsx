@@ -4,7 +4,7 @@ import { PROJECT_ID } from "@src/constants";
 import { auth, syncPushToken } from "@src/firebase";
 import AuthScreen from "@src/screens/AuthScreen";
 import Navigation from "@src/screens/Navigation";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import * as Device from "expo-device";
 import * as Localization from "expo-localization";

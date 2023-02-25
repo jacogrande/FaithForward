@@ -1,6 +1,6 @@
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useAudio } from "@src/hooks/useAudio";
-import { useAudioStore } from "@src/Store";
+import { useAudioStore } from "@src/store";
 import colors from "@src/styles/colors";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";

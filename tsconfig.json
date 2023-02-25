@@ -4,8 +4,8 @@
     "strict": true,
     "baseUrl": "./",
     "paths": {
-      "@src/*": ["src/*"],
-      "@root/*": ["*"],
+      "@assets/*": ["assets/*"],
+      "@src/*": ["src/*"]
     }
-  },
+  }
 }

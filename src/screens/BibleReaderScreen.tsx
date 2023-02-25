@@ -1,7 +1,7 @@
 import { API_URL } from "@src/constants";
 import { auth } from "@src/firebase";
 import { useApi } from "@src/hooks/useApi";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import React from "react";
 import {

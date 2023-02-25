@@ -1,5 +1,5 @@
 import { auth, deletePushToken } from "@src/firebase";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import {
   deleteUser,

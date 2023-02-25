@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { auth } from "@src/firebase";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -113,7 +113,7 @@ export const AuthScreen = () => {
         <SafeAreaView style={styles.container}>
           <View style={styles.brandContainer}>
             <Image
-              source={require("../../assets/church.png")}
+              source={require("@assets/church.png")}
               resizeMode="contain"
               style={styles.logo}
             />

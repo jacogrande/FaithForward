@@ -1,5 +1,5 @@
 import { FLAGGED_INPUT_RESPONSES } from "@src/constants";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import { useState } from "react";
 
 export const useApi = <T>(url: string, data?: RequestInit) => {

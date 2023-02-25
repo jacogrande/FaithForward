@@ -1,7 +1,7 @@
 import { formatVerse } from "@src/components/DevotionalCard";
 import LoadingMessages from "@src/components/LoadingMessages";
 import VerseActionModal from "@src/components/VerseActionModal";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import { getVerseRef } from "@src/utils";
 import { useEffect, useRef, useState } from "react";

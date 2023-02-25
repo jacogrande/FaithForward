@@ -1,6 +1,6 @@
 import { storage } from "@src/firebase";
 import { useRequestReview } from "@src/hooks/useRequestReview";
-import useStore, { useAudioStore } from "@src/Store";
+import useStore, { useAudioStore } from "@src/store";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useEffect } from "react";

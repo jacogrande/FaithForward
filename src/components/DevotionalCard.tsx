@@ -1,5 +1,5 @@
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import { formatDate, getVerseRef } from "@src/utils";
 import React, { useEffect, useRef, useState } from "react";

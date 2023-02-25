@@ -1,5 +1,5 @@
 import { AudioControls } from "@src/components/AudioControls";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import React from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";

@@ -5,7 +5,7 @@ import { Container } from "@src/components/Container";
 import DeleteAccountModal from "@src/components/DeleteAccountModal";
 import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from "@src/constants";
 import { auth } from "@src/firebase";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import * as MailComposer from "expo-mail-composer";
 import { onIdTokenChanged } from "firebase/auth";

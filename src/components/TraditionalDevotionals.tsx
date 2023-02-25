@@ -2,7 +2,7 @@ import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { auth, favoriteTradDevo, unfavoriteTradDevo } from "@src/firebase";
 import { useTradDevos } from "@src/hooks/useTradDevos";
-import useStore from "@src/Store";
+import useStore from "@src/store";
 import { TTradDevo } from "@src/types";
 import React, { useEffect, useState } from "react";
 import {
