@@ -114,7 +114,7 @@ export default function App() {
 
   if (loading || loadingAutoSignIn) {
     return (
-      <View style={{ flex: 1 }}>
+      <View className="flex-1">
         <ActivityIndicator size="large" />
       </View>
     );

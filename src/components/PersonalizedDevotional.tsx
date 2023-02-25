@@ -101,14 +101,7 @@ export function PersonalizedDevotional() {
       >
         <View style={styles.container}>
           <View style={{ marginBottom: 20, alignItems: "center" }}>
-            <Text
-              style={{
-                color: colors.black,
-                fontSize: 18,
-                fontWeight: "500",
-                paddingVertical: 10,
-              }}
-            >
+            <Text className="text-gray-800 text-base font-medium py-2">
               Ask a question
             </Text>
             <Text style={{ color: colors.black, fontSize: 16 }}>

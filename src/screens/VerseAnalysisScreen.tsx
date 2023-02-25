@@ -4,7 +4,7 @@ import { auth } from "@src/firebase";
 import { useApi } from "@src/hooks/useApi";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
-import React from "react";
+import React, { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 const VerseAnalysisScreen: React.FC = () => {
@@ -25,13 +25,11 @@ const VerseAnalysisScreen: React.FC = () => {
     headers: { "Content-Type": "application/json" },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedVerse) {
       getExegesis();
     }
   }, [selectedVerse]);
-
-  if (isLoading) return <LoadingMessages />;
 
   return (
     <ScrollView
@@ -39,14 +37,18 @@ const VerseAnalysisScreen: React.FC = () => {
       contentContainerStyle={{ flexGrow: 1 }}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={styles.container}>
-        <Text style={[styles.text, styles.highlight]}>{selectedVerse}</Text>
-        <Text style={styles.text}>
-          {data
-            ? data.response
-            : "Oops... something went wrong. Please try again later"}
-        </Text>
-      </View>
+      {isLoading ? (
+        <LoadingMessages />
+      ) : (
+        <View style={styles.container}>
+          <Text style={[styles.text, styles.highlight]}>{selectedVerse}</Text>
+          <Text style={styles.text}>
+            {data
+              ? data.response
+              : "Oops... something went wrong. Please try again later"}
+          </Text>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -61,7 +63,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.paper,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 64,
     paddingBottom: 48,
   },
   highlight: {
