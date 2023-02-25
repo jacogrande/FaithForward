@@ -1,6 +1,6 @@
-import apiConfig from "@root/apiConfig";
 import { auth } from "@root/firebase";
 import LoadingMessages from "@src/components/LoadingMessages";
+import { API_URL } from "@src/constants";
 import { useApi } from "@src/hooks/useApi";
 import useStore from "@src/Store";
 import colors from "@src/styles/colors";
@@ -14,7 +14,7 @@ const VerseAnalysisScreen: React.FC = () => {
     isLoading,
     data,
     fetchData: getExegesis,
-  } = useApi<{ response: string }>(`${apiConfig.apiUrl}/analyzeVerse`, {
+  } = useApi<{ response: string }>(`${API_URL}/analyzeVerse`, {
     method: "POST",
     body: JSON.stringify({
       userId: auth.currentUser?.uid,

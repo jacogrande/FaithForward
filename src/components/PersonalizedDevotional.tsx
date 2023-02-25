@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import apiConfig from "@root/apiConfig";
 import { auth } from "@root/firebase";
 import VerseContainer from "@src/components/VerseContainer";
+import { API_URL } from "@src/constants";
 import { useApi } from "@src/hooks/useApi";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore from "@src/Store";
@@ -40,7 +40,7 @@ export function PersonalizedDevotional() {
   } = useApi<{
     response: string;
     promptId: string;
-  }>(`${apiConfig.apiUrl}/getGpt3Response`, {
+  }>(`${API_URL}/getGpt3Response`, {
     method: "POST",
     body: JSON.stringify({
       userId: auth.currentUser?.uid,

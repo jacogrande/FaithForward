@@ -1,4 +1,5 @@
-// TODO: Figure out why @root/apiConfig and @root/firebase imports don't work
+// TODO: Figure out why @root/firebase import doesn't work
+import { API_URL } from "@src/constants";
 import { useApi } from "@src/hooks/useApi";
 import useStore from "@src/Store";
 import colors from "@src/styles/colors";
@@ -10,7 +11,6 @@ import {
   Text,
   View,
 } from "react-native";
-import apiConfig from "../../apiConfig";
 import { auth } from "../../firebase";
 
 interface IVerse {
@@ -32,7 +32,7 @@ const BibleReaderScreen: React.FC = () => {
     isLoading,
     data,
     fetchData: getBibleChapter,
-  } = useApi<{ verses: IVerse[] }>(`${apiConfig.apiUrl}/getBiblePassage`, {
+  } = useApi<{ verses: IVerse[] }>(`${API_URL}/getBiblePassage`, {
     method: "POST",
     body: JSON.stringify({
       verse: getVerseReference(selectedVerse),

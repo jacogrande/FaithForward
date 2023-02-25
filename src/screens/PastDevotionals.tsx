@@ -20,7 +20,6 @@ function initOptimisticFaves(devos: TPersonalDevo[]): string[] {
     .map((devo: TPersonalDevo) => devo.id);
 }
 
-// TODO: Scroll the newly expanded devotional into view
 export function PastDevotionals() {
   const {
     pastDevos,

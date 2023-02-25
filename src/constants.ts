@@ -88,9 +88,16 @@ export const PLACEHOLDERS = [
   "I'm feeling burned out at work and I need to take a break, but I can't afford to quit my job. I'm thinking of taking a sabbatical but I don't know how to make that happen.",
 ];
 
+// TODO: Figure out what this is and whether there's a staging v prod version
 export const PROJECT_ID = "f0e47dc4-652b-438e-a726-e4db36dec0cb";
 
+// Policy links
 export const PRIVACY_POLICY_URL =
   "https://www.github.com/jacogrande/FaithForward/blob/master/privacy-policy.md";
 export const TERMS_OF_SERVICE_URL =
   "https://www.github.com/jacogrande/FaithForward/blob/master/terms-of-service.md";
+
+const PROD_URL = "https://us-central1-robo-jesus.cloudfunctions.net";
+const STAGING_URL =
+  "https://us-central1-faith-forward-staging.cloudfunctions.net";
+export const API_URL = process.env.NODE_ENV === "production" ? PROD_URL : STAGING_URL;
