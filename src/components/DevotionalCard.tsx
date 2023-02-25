@@ -48,8 +48,7 @@ export function DevotionalCard({
     <View
       style={{
         borderRadius: 12,
-        paddingVertical: 24,
-        paddingHorizontal: 4,
+        padding: 24,
         borderBottomColor: colors.lightBlue,
         borderBottomWidth: 2,
       }}
@@ -96,6 +95,7 @@ export function DevotionalCard({
           justifyContent: "space-between",
           alignItems: "center",
           paddingVertical: 10,
+          marginTop: 10
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>

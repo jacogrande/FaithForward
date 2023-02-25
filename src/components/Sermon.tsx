@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   sermonSection: {
     borderBottomColor: colors.lightBlue,
     borderBottomWidth: 2,
-    paddingVertical: 24,
+    padding: 24,
   },
   sermonTitle: {
     fontSize: 18,

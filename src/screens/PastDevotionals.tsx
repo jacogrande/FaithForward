@@ -82,7 +82,7 @@ export function PastDevotionals() {
           />
         )}
         keyExtractor={(item: any) => item.id}
-        style={{ width: "100%", paddingHorizontal: 20 }}
+        style={{ width: "100%" }}
         ListEmptyComponent={() => (
           <View style={{ alignItems: "center", marginTop: 24 }}>
             <Text style={{ fontSize: 18, color: "#999" }}>

@@ -169,7 +169,7 @@ export default function FavoritesScreen() {
   return (
     <Container>
       <View style={styles.container}>
-        <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+        <View style={{ flexDirection: "row", justifyContent: "flex-start", paddingHorizontal: 24, marginVertical: 24 }}>
           <TouchableOpacity
             onPress={viewSermons}
             style={{
@@ -281,6 +281,5 @@ const EmptyFavorites = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
   },
 });

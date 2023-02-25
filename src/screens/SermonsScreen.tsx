@@ -117,7 +117,6 @@ export default function SermonsScreen() {
 const styles = StyleSheet.create({
   sermonsContainer: {
     backgroundColor: "#fff",
-    padding: 24,
   },
   loadingContainer: {
     flex: 1,
