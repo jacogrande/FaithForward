@@ -10,6 +10,7 @@ import { auth, favoriteTradDevo, unfavoriteTradDevo } from "../../firebase";
 import { TTradDevo } from "../../types";
 import { useTradDevos } from "../hooks/useTradDevos";
 import useStore from "../Store";
+import { Container } from "./Container";
 import { DevotionalCard } from "./DevotionalCard";
 
 // TODO: Why are optimisticFaves returning a devo that has been unfavorited?
@@ -73,7 +74,7 @@ export function TraditionalDevotionals() {
   }
 
   return (
-    <View>
+    <Container>
       <FlatList
         data={tradDevos}
         renderItem={({ item }: { item: TTradDevo }) => (
@@ -101,6 +102,6 @@ export function TraditionalDevotionals() {
           />
         }
       />
-    </View>
+    </Container>
   );
 }

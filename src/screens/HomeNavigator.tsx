@@ -2,7 +2,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import * as React from "react";
 import colors from "../styles/colors";
 import BibleReaderScreen from "./BibleReaderScreen";
-import HomeScreen from "./HomeScreen";
+import DevoNavigator from "./DevoNavigator";
 import { PastDevotionals } from "./PastDevotionals";
 import VerseAnalysisScreen from "./VerseAnalysisScreen";
 
@@ -28,7 +28,11 @@ const BaseNavigator: React.FC = () => {
         headerTitleAlign: "center",
       }}
     >
-      <Stack.Screen name="Prompt" component={HomeScreen} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="Prompt"
+        component={DevoNavigator}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="Past Devotionals" component={PastDevotionals} />
       <Stack.Screen name="Exegesis" component={VerseAnalysisScreen} />
       <Stack.Screen name="Reader" component={BibleReaderScreen} />

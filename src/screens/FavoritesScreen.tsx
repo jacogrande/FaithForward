@@ -56,6 +56,16 @@ export default function FavoritesScreen() {
     setFavoriteSermons(
       favorites
         .filter((fave) => fave.type === "sermon")
+        .sort((a, b) => {
+          // Sort by createdAt
+          if (a.createdAt > b.createdAt) {
+            return -1;
+          }
+          if (a.createdAt < b.createdAt) {
+            return 1;
+          }
+          return 0;
+        })
         .map((fave) => ({ ...fave.docData }))
     );
     setFavoriteDevos(
@@ -63,6 +73,16 @@ export default function FavoritesScreen() {
         .filter(
           (fave) => fave.type === "tradDevo" || fave.type === "personalDevo"
         )
+        .sort((a, b) => {
+          // Sort by createdAt
+          if (a.createdAt > b.createdAt) {
+            return -1;
+          }
+          if (a.createdAt < b.createdAt) {
+            return 1;
+          }
+          return 0;
+        })
         .map((fave) => ({ ...fave.docData }))
     );
   }, [JSON.stringify(favorites)]);

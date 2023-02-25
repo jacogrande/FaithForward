@@ -21,6 +21,7 @@ import { useRequestReview } from "../hooks/useRequestReview";
 import useStore from "../Store";
 import colors from "../styles/colors";
 
+// TODO: Change all imports to absolute paths
 export function PersonalizedDevotional() {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const {
@@ -118,7 +119,7 @@ export function PersonalizedDevotional() {
           <TextInput
             ref={inputRef}
             style={[styles.input]}
-            placeholder="Type your question or describe your situation here..."
+            placeholder="What's on your mind?"
             placeholderTextColor="#999"
             onChangeText={(text) => setInput(text)}
             value={input}
