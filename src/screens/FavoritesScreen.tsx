@@ -1,3 +1,17 @@
+import {
+  auth,
+  unfavoritePersonalDevo,
+  unfavoriteSermon,
+  unfavoriteTradDevo
+} from "@root/firebase";
+import { TPersonalDevo, TSermon, TTradDevo } from "@root/types";
+import { Container } from "@src/components/Container";
+import { DevotionalCard } from "@src/components/DevotionalCard";
+import { Sermon } from "@src/components/Sermon";
+import { useAudio } from "@src/hooks/useAudio";
+import { useFavorites } from "@src/hooks/useFavorites";
+import useStore, { useAudioStore } from "@src/Store";
+import colors from "@src/styles/colors";
 import { onIdTokenChanged } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import {
@@ -7,22 +21,8 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import {
-  auth,
-  unfavoritePersonalDevo,
-  unfavoriteSermon,
-  unfavoriteTradDevo,
-} from "../../firebase";
-import { TPersonalDevo, TSermon, TTradDevo } from "../../types";
-import { Container } from "../components/Container";
-import { DevotionalCard } from "../components/DevotionalCard";
-import { Sermon } from "../components/Sermon";
-import { useAudio } from "../hooks/useAudio";
-import { useFavorites } from "../hooks/useFavorites";
-import useStore, { useAudioStore } from "../Store";
-import colors from "../styles/colors";
 
 // TODO: Refresh list when faves change on other screens
 export default function FavoritesScreen() {
@@ -38,7 +38,6 @@ export default function FavoritesScreen() {
   const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
   const [favoriteSermons, setFavoriteSermons] = useState<TSermon[]>([]);
   const [favoriteDevos, setFavoriteDevos] = useState<any[]>([]);
-  const [expandedDevoId, setExpandedDevoId] = useState<string | null>(null);
   const [viewType, setViewType] = useState<"sermons" | "devos">("sermons");
 
   const { setError } = useStore();
@@ -218,13 +217,7 @@ export default function FavoritesScreen() {
                 renderItem={({ item: devo }: { item: any }) => (
                   <DevotionalCard
                     devotional={devo}
-                    isExpanded={expandedDevoId === devo.id}
                     faves={favoriteDevos.map((fave) => fave.id)}
-                    onPress={() =>
-                      setExpandedDevoId(
-                        expandedDevoId === devo.id ? null : devo.id
-                      )
-                    }
                     handleFavoritingDevo={() => {}}
                     handleUnfavoritingDevo={
                       devo.favorited

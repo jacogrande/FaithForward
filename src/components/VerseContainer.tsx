@@ -1,3 +1,9 @@
+import { formatVerse } from "@src/components/DevotionalCard";
+import LoadingMessages from "@src/components/LoadingMessages";
+import VerseActionModal from "@src/components/VerseActionModal";
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
+import { getVerseRef } from "@src/utils";
 import { useEffect, useRef, useState } from "react";
 import {
   ScrollView,
@@ -8,12 +14,6 @@ import {
   View,
 } from "react-native";
 import ViewShot from "react-native-view-shot";
-import useStore from "../Store";
-import colors from "../styles/colors";
-import { getVerseRef } from "../utils";
-import { formatVerse } from "./DevotionalCard";
-import LoadingMessages from "./LoadingMessages";
-import VerseActionModal from "./VerseActionModal";
 
 const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
   let devotional = useStore((state) => state.devotional);

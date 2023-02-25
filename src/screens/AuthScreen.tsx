@@ -1,5 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { auth } from "@root/firebase";
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   createUserWithEmailAndPassword,
@@ -24,9 +27,6 @@ import {
   View,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
-import { auth } from "../../firebase";
-import useStore from "../Store";
-import colors from "../styles/colors";
 
 export const AuthScreen = () => {
   const [email, setEmail] = useState("");

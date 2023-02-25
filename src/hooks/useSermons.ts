@@ -1,8 +1,8 @@
+import { db } from "@root/firebase";
+import { TSermon } from "@root/types";
+import useStore from "@src/Store";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase";
-import { TSermon } from "../../types";
-import useStore from "../Store";
 
 type Signature = {
   sermons: TSermon[];

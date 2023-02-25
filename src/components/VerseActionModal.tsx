@@ -1,17 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import colors from "@src/styles/colors";
 import React from "react";
 import {
-  View,
-  Text,
-  Button,
+  Keyboard,
   Modal,
   StyleSheet,
+  Text,
   TouchableWithoutFeedback,
-  Keyboard,
+  View,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import colors from "../styles/colors";
 
 interface VerseActionModalProps {
   isModalVisible: boolean;

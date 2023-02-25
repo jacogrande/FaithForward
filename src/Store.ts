@@ -1,6 +1,6 @@
+import { PlayableAudioObject } from "@root/types";
 import { Audio } from "expo-av";
 import { create } from "zustand";
-import { PlayableAudioObject } from "./types";
 
 type Store = {
   input: string;

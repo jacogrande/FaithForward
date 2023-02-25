@@ -1,3 +1,4 @@
+// TODO: Consolidate this with constants + utils
 export const initialLoadingMessage =
   "Hang on tight. This will only take a minute";
 

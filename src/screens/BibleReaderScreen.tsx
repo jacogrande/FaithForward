@@ -1,16 +1,17 @@
+// TODO: Figure out why @root/apiConfig and @root/firebase imports don't work
+import { useApi } from "@src/hooks/useApi";
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
 import React from "react";
 import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
 } from "react-native";
 import apiConfig from "../../apiConfig";
 import { auth } from "../../firebase";
-import { useApi } from "../hooks/useApi";
-import useStore from "../Store";
-import colors from "../styles/colors";
 
 interface IVerse {
   verse_nr: number;

@@ -1,3 +1,9 @@
+import { favoritePersonalDevo, unfavoritePersonalDevo } from "@root/firebase";
+import { TPersonalDevo } from "@root/types";
+import { Container } from "@src/components/Container";
+import { DevotionalCard } from "@src/components/DevotionalCard";
+import { usePastDevos } from "@src/hooks/usePastDevos";
+import useStore from "@src/Store";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -6,12 +12,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { favoritePersonalDevo, unfavoritePersonalDevo } from "../../firebase";
-import { TPersonalDevo } from "../../types";
-import { Container } from "../components/Container";
-import { DevotionalCard } from "../components/DevotionalCard";
-import { usePastDevos } from "../hooks/usePastDevos";
-import useStore from "../Store";
 
 function initOptimisticFaves(devos: TPersonalDevo[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user

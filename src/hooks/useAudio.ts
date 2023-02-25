@@ -1,9 +1,9 @@
+import { storage } from "@root/firebase";
+import { useRequestReview } from "@src/hooks/useRequestReview";
+import useStore, { useAudioStore } from "@src/Store";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useEffect } from "react";
-import { storage } from "../../firebase";
-import { useRequestReview } from "../hooks/useRequestReview";
-import useStore, { useAudioStore } from "../Store";
 
 type Signature = {
   stopSound: () => Promise<void>;

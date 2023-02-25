@@ -1,13 +1,11 @@
+import apiConfig from "@root/apiConfig";
+import { auth } from "@root/firebase";
+import LoadingMessages from "@src/components/LoadingMessages";
+import { useApi } from "@src/hooks/useApi";
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
 import React from "react";
-import {
-  ScrollView, StyleSheet, Text, View
-} from "react-native";
-import apiConfig from "../../apiConfig";
-import { auth } from "../../firebase";
-import LoadingMessages from "../components/LoadingMessages";
-import { useApi } from "../hooks/useApi";
-import useStore from "../Store";
-import colors from "../styles/colors";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 const VerseAnalysisScreen: React.FC = () => {
   const { input, selectedVerse, promptId } = useStore();

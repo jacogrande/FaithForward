@@ -1,6 +1,6 @@
+import { FLAGGED_INPUT_RESPONSES } from "@src/constants";
+import useStore from "@src/Store";
 import { useState } from "react";
-import { FLAGGED_INPUT_RESPONSES } from "../constants";
-import useStore from "../Store";
 
 export const useApi = <T>(url: string, data?: RequestInit) => {
   const [isLoading, setIsLoading] = useState(false);

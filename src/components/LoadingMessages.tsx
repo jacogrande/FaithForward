@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+// TODO: Consolidate loadingMessages with constants / utils
 import {
   getRandomMessage,
   initialLoadingMessage,
-} from "../data/loadingMessages";
-import colors from "../styles/colors";
+} from "@src/data/loadingMessages";
+import colors from "@src/styles/colors";
 
 const LoadingMessages = () => {
   const [ellipsis, setEllipsis] = useState("   ");

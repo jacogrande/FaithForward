@@ -1,18 +1,17 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { auth, syncPushToken } from "@root/firebase";
+import { PROJECT_ID } from "@src/constants";
+import AuthScreen from "@src/screens/AuthScreen";
+import Navigation from "@src/screens/Navigation";
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
 import * as Device from "expo-device";
 import * as Localization from "expo-localization";
 import * as Notifications from "expo-notifications";
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { auth, syncPushToken } from "./firebase";
-import { PROJECT_ID } from "./src/constants";
-import AuthScreen from "./src/screens/AuthScreen";
-import { BackButton } from "./src/screens/HomeNavigator";
-import Navigation from "./src/screens/Navigation";
-import useStore from "./src/Store";
-import colors from "./src/styles/colors";
 
 const Stack = createStackNavigator();
 
@@ -123,26 +122,33 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Faith Forward">
+      <Stack.Navigator
+        initialRouteName="Faith Forward"
+        screenOptions={{
+          headerBackTitleVisible: false,
+          headerTintColor: colors.blue,
+          headerStyle: {
+            backgroundColor: colors.paper,
+            shadowColor: "transparent",
+            height: 70,
+          },
+          headerTitleStyle: {
+            color: colors.black,
+            fontWeight: "bold",
+            fontSize: 18,
+          },
+          headerTitleAlign: "center",
+        }}
+      >
         <Stack.Screen
           name="Faith Forward"
           component={Navigation}
-          options={{
-            header: () => null,
-          }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Sign Up"
           component={AuthScreen}
-          options={{
-            headerTitle: "",
-            headerStyle: {
-              backgroundColor: colors.paper,
-              shadowColor: "transparent",
-              height: 0,
-            },
-            headerLeft: BackButton,
-          }}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,3 +1,10 @@
+import { auth, favoriteSermon, unfavoriteSermon } from "@root/firebase";
+import { TSermon } from "@root/types";
+import { Container } from "@src/components/Container";
+import { Sermon } from "@src/components/Sermon";
+import { useAudio } from "@src/hooks/useAudio";
+import { useSermons } from "@src/hooks/useSermons";
+import useStore, { useAudioStore } from "@src/Store";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -7,13 +14,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { auth, favoriteSermon, unfavoriteSermon } from "../../firebase";
-import { TSermon } from "../../types";
-import { Container } from "../components/Container";
-import { Sermon } from "../components/Sermon";
-import { useAudio } from "../hooks/useAudio";
-import { useSermons } from "../hooks/useSermons";
-import useStore, { useAudioStore } from "../Store";
 
 function initOptimisticFaves(sermons: TSermon[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user

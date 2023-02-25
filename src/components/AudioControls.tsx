@@ -1,9 +1,9 @@
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useAudio } from "@src/hooks/useAudio";
+import { useAudioStore } from "@src/Store";
+import colors from "@src/styles/colors";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useAudio } from "../hooks/useAudio";
-import { useAudioStore } from "../Store";
-import colors from "../styles/colors";
 
 export function AudioControls() {
   const { sound, playingAudioObject, isPlaying } = useAudioStore();
@@ -23,7 +23,10 @@ export function AudioControls() {
             <FontAwesome5 name="pause" size={24} color={colors.blue} />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={{ marginRight: 25 }} onPress={() => playSound(null)}>
+          <TouchableOpacity
+            style={{ marginRight: 25 }}
+            onPress={() => playSound(null)}
+          >
             <FontAwesome5 name="play" size={24} color={colors.blue} />
           </TouchableOpacity>
         )}

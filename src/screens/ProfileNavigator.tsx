@@ -1,8 +1,8 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import FavoritesScreen from "@src/screens/FavoritesScreen";
+import ProfileScreen from "@src/screens/ProfileScreen";
+import colors from "@src/styles/colors";
 import * as React from "react";
-import colors from "../styles/colors";
-import FavoritesScreen from "./FavoritesScreen";
-import ProfileScreen from "./ProfileScreen";
 
 const Tab = createMaterialTopTabNavigator();
 

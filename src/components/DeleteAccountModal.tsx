@@ -17,9 +17,10 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Snackbar } from "react-native-paper";
+// TODO: Figure out why @root/firebase import doesn't work
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
 import { auth, deletePushToken } from "../../firebase";
-import useStore from "../Store";
-import colors from "../styles/colors";
 
 interface DeleteAccountModalProps {
   isModalVisible: boolean;

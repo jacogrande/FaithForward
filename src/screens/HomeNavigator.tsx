@@ -1,10 +1,10 @@
 import { createStackNavigator } from "@react-navigation/stack";
+import BibleReaderScreen from "@src/screens/BibleReaderScreen";
+import DevoNavigator from "@src/screens/DevoNavigator";
+import { PastDevotionals } from "@src/screens/PastDevotionals";
+import VerseAnalysisScreen from "@src/screens/VerseAnalysisScreen";
+import colors from "@src/styles/colors";
 import * as React from "react";
-import colors from "../styles/colors";
-import BibleReaderScreen from "./BibleReaderScreen";
-import DevoNavigator from "./DevoNavigator";
-import { PastDevotionals } from "./PastDevotionals";
-import VerseAnalysisScreen from "./VerseAnalysisScreen";
 
 const Stack = createStackNavigator();
 

@@ -1,3 +1,4 @@
+import { TPersonalDevo, TSermon, TTradDevo } from "@root/types";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
@@ -16,7 +17,6 @@ import {
   where,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { TPersonalDevo, TSermon, TTradDevo } from "./types";
 
 const firebaseProdConfig = {
   apiKey: "AIzaSyDgj0UDgTub38VuhVjUFIe9Sc5U_ODJK1c",

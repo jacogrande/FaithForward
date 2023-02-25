@@ -1,9 +1,9 @@
+import { AudioControls } from "@src/components/AudioControls";
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
 import React from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { Snackbar } from "react-native-paper";
-import useStore from "../Store";
-import colors from "../styles/colors";
-import { AudioControls } from "./AudioControls";
 
 interface ContainerProps {
   children: React.ReactNode;

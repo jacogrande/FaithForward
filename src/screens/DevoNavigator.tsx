@@ -1,8 +1,8 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { PersonalizedDevotional } from "@src/components/PersonalizedDevotional";
+import { TraditionalDevotionals } from "@src/components/TraditionalDevotionals";
+import colors from "@src/styles/colors";
 import * as React from "react";
-import colors from "../styles/colors";
-import { PersonalizedDevotional } from "../components/PersonalizedDevotional";
-import { TraditionalDevotionals } from "../components/TraditionalDevotionals";
 
 const Tab = createMaterialTopTabNavigator();
 

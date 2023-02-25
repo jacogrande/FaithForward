@@ -1,6 +1,12 @@
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { auth } from "@root/firebase";
+import { Container } from "@src/components/Container";
+import DeleteAccountModal from "@src/components/DeleteAccountModal";
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from "@src/constants";
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
 import * as MailComposer from "expo-mail-composer";
 import { onIdTokenChanged } from "firebase/auth";
 import React, { useState } from "react";
@@ -12,12 +18,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { auth } from "../../firebase";
-import { Container } from "../components/Container";
-import DeleteAccountModal from "../components/DeleteAccountModal";
-import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from "../constants";
-import useStore from "../Store";
-import colors from "../styles/colors";
 
 // TODO: Add toggle for push notifications
 const LoggedInProfile: React.FC = () => {
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   policyIcon: {
     width: 24,
-    textAlign: "center"
+    textAlign: "center",
   },
   policyLink: {
     fontSize: 14,

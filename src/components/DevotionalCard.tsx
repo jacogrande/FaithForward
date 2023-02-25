@@ -1,10 +1,10 @@
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
+import { formatDate, getVerseRef } from "@src/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ViewShot from "react-native-view-shot";
-import useStore from "../Store";
-import colors from "../styles/colors";
-import { formatDate, getVerseRef } from "../utils";
 
 export function DevotionalCard({
   devotional,
