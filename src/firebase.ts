@@ -320,9 +320,8 @@ export const favoritePersonalDevo = async (
 
   // Handle the users/favorites subcollection
   // If the user has already favorited the devo, do nothing
-  const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
   const favoritesQuery = query(
-    collection(userDoc.ref, "favorites"),
+    collection(userRef, "favorites"),
     where("type", "==", "personalDevo"),
     where("docId", "==", devo.id)
   );

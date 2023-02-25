@@ -116,6 +116,22 @@ export default function FavoritesScreen() {
     }
   }
 
+  async function handleUnfavoritingDevo(devo: TTradDevo | TPersonalDevo) {
+    const fave = favorites.find((fave) => fave.docId === devo.id);
+
+    switch (fave?.type) {
+      case "tradDevo":
+        handleUnfavoritingTradDevo(devo as TTradDevo);
+        break;
+      case "personalDevo":
+        handleUnfavoritingPersonalDevo(devo as TPersonalDevo);
+        break;
+      default:
+        console.warn("Error unfavoriting devo: fave.type is not valid");
+        break;
+    }
+  }
+
   async function handleUnfavoritingTradDevo(tradDevo: TTradDevo) {
     try {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== tradDevo.id));
@@ -219,11 +235,7 @@ export default function FavoritesScreen() {
                     devotional={devo}
                     faves={favoriteDevos.map((fave) => fave.id)}
                     handleFavoritingDevo={() => {}}
-                    handleUnfavoritingDevo={
-                      devo.favorited
-                        ? handleUnfavoritingPersonalDevo
-                        : handleUnfavoritingTradDevo
-                    }
+                    handleUnfavoritingDevo={handleUnfavoritingDevo}
                   />
                 )}
                 keyExtractor={(item) => item.id}
