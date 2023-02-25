@@ -1,10 +1,10 @@
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { auth } from "@root/firebase";
 import { Container } from "@src/components/Container";
 import DeleteAccountModal from "@src/components/DeleteAccountModal";
 import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from "@src/constants";
+import { auth } from "@src/firebase";
 import useStore from "@src/Store";
 import colors from "@src/styles/colors";
 import * as MailComposer from "expo-mail-composer";

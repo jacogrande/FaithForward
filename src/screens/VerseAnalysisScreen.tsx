@@ -1,6 +1,6 @@
-import { auth } from "@root/firebase";
 import LoadingMessages from "@src/components/LoadingMessages";
 import { API_URL } from "@src/constants";
+import { auth } from "@src/firebase";
 import { useApi } from "@src/hooks/useApi";
 import useStore from "@src/Store";
 import colors from "@src/styles/colors";

@@ -1,13 +1,13 @@
-import {
-  auth,
-  unfavoritePersonalDevo,
-  unfavoriteSermon,
-  unfavoriteTradDevo
-} from "@root/firebase";
 import { TPersonalDevo, TSermon, TTradDevo } from "@root/types";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { Sermon } from "@src/components/Sermon";
+import {
+  auth,
+  unfavoritePersonalDevo,
+  unfavoriteSermon,
+  unfavoriteTradDevo,
+} from "@src/firebase";
 import { useAudio } from "@src/hooks/useAudio";
 import { useFavorites } from "@src/hooks/useFavorites";
 import useStore, { useAudioStore } from "@src/Store";
@@ -21,7 +21,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 // TODO: Refresh list when faves change on other screens

@@ -1,5 +1,5 @@
-// TODO: Figure out why @root/firebase import doesn't work
 import { API_URL } from "@src/constants";
+import { auth } from "@src/firebase";
 import { useApi } from "@src/hooks/useApi";
 import useStore from "@src/Store";
 import colors from "@src/styles/colors";
@@ -11,7 +11,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { auth } from "../../firebase";
 
 interface IVerse {
   verse_nr: number;

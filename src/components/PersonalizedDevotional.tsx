@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { auth } from "@root/firebase";
 import VerseContainer from "@src/components/VerseContainer";
 import { API_URL } from "@src/constants";
+import { auth } from "@src/firebase";
 import { useApi } from "@src/hooks/useApi";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore from "@src/Store";

@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { auth } from "@root/firebase";
+import { auth } from "@src/firebase";
 import useStore from "@src/Store";
 import colors from "@src/styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
@@ -9,7 +9,7 @@ import {
   EmailAuthProvider,
   linkWithCredential,
   sendPasswordResetEmail,
-  signInWithEmailAndPassword,
+  signInWithEmailAndPassword
 } from "firebase/auth";
 import React, { useState } from "react";
 import {
@@ -24,7 +24,7 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { Snackbar } from "react-native-paper";
 

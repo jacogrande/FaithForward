@@ -1,4 +1,4 @@
-import { storage } from "@root/firebase";
+import { storage } from "@src/firebase";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore, { useAudioStore } from "@src/Store";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";

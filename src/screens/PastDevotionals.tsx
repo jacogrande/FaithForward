@@ -1,7 +1,7 @@
-import { favoritePersonalDevo, unfavoritePersonalDevo } from "@root/firebase";
 import { TPersonalDevo } from "@root/types";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
+import { favoritePersonalDevo, unfavoritePersonalDevo } from "@src/firebase";
 import { usePastDevos } from "@src/hooks/usePastDevos";
 import useStore from "@src/Store";
 import React, { useEffect, useState } from "react";

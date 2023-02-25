@@ -1,4 +1,4 @@
-import { auth, db } from "@root/firebase";
+import { auth, db } from "@src/firebase";
 import { ensureDate } from "@src/utils";
 import * as StoreReview from "expo-store-review";
 import { doc, getDoc, setDoc } from "firebase/firestore";

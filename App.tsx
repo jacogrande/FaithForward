@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { auth, syncPushToken } from "@root/firebase";
 import { PROJECT_ID } from "@src/constants";
+import { auth, syncPushToken } from "@src/firebase";
 import AuthScreen from "@src/screens/AuthScreen";
 import Navigation from "@src/screens/Navigation";
 import useStore from "@src/Store";

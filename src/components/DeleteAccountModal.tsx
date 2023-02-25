@@ -1,3 +1,6 @@
+import { auth, deletePushToken } from "@src/firebase";
+import useStore from "@src/Store";
+import colors from "@src/styles/colors";
 import {
   deleteUser,
   EmailAuthProvider,
@@ -17,10 +20,6 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Snackbar } from "react-native-paper";
-// TODO: Figure out why @root/firebase import doesn't work
-import useStore from "@src/Store";
-import colors from "@src/styles/colors";
-import { auth, deletePushToken } from "../../firebase";
 
 interface DeleteAccountModalProps {
   isModalVisible: boolean;
