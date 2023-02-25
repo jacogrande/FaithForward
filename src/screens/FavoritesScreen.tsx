@@ -195,7 +195,9 @@ export default function FavoritesScreen() {
           </TouchableOpacity>
         </View>
         {isAnonymous ? (
-          <Text>You must have an account to save favorites.</Text>
+          <View style={{ marginVertical: 20 }}>
+            <Text>You must have an account to save favorites.</Text>
+          </View>
         ) : (
           <View>
             {loading ? (
