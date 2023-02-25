@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Container } from "../components/Container";
 import {
   ActivityIndicator,
   FlatList,
@@ -7,15 +6,12 @@ import {
   Text,
   View,
 } from "react-native";
-import {
-  auth,
-  favoritePersonalDevo,
-  unfavoritePersonalDevo,
-} from "../../firebase";
+import { favoritePersonalDevo, unfavoritePersonalDevo } from "../../firebase";
+import { TPersonalDevo } from "../../types";
+import { Container } from "../components/Container";
+import { DevotionalCard } from "../components/DevotionalCard";
 import { usePastDevos } from "../hooks/usePastDevos";
 import useStore from "../Store";
-import { TPersonalDevo } from "../../types";
-import { DevotionalCard } from "../components/DevotionalCard";
 
 function initOptimisticFaves(devos: TPersonalDevo[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user
@@ -26,7 +22,6 @@ function initOptimisticFaves(devos: TPersonalDevo[]): string[] {
 
 // TODO: Scroll the newly expanded devotional into view
 export function PastDevotionals() {
-  const [expandedDevoId, setExpandedDevoId] = useState<string | null>(null);
   const {
     pastDevos,
     loading,
@@ -82,10 +77,6 @@ export function PastDevotionals() {
         renderItem={({ item }: { item: TPersonalDevo }) => (
           <DevotionalCard
             devotional={item}
-            isExpanded={item.id === expandedDevoId}
-            onPress={() =>
-              setExpandedDevoId(expandedDevoId === item.id ? null : item.id)
-            }
             faves={optimisticFaves}
             handleFavoritingDevo={handleFavoritingDevo}
             handleUnfavoritingDevo={handleUnfavoritingDevo}

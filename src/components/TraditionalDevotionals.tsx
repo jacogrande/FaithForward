@@ -24,7 +24,6 @@ function initOptimisticFaves(devos: TTradDevo[]): string[] {
 
 // TODO: Scroll the newly expanded devotional into view
 export function TraditionalDevotionals() {
-  const [expandedDevoId, setExpandedDevoId] = useState<string | null>(null);
   const {
     tradDevos,
     loading,
@@ -80,10 +79,6 @@ export function TraditionalDevotionals() {
         renderItem={({ item }: { item: TTradDevo }) => (
           <DevotionalCard
             devotional={item}
-            isExpanded={item.id === expandedDevoId}
-            onPress={() =>
-              setExpandedDevoId(expandedDevoId === item.id ? null : item.id)
-            }
             faves={optimisticFaves}
             handleFavoritingDevo={handleFavoritingDevo}
             handleUnfavoritingDevo={handleUnfavoritingDevo}

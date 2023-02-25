@@ -8,20 +8,17 @@ import { formatDate, getVerseRef } from "../utils";
 
 export function DevotionalCard({
   devotional,
-  isExpanded,
-  onPress,
   faves,
   handleFavoritingDevo,
   handleUnfavoritingDevo,
 }: {
   devotional: any;
-  isExpanded: boolean;
-  onPress: () => void;
   faves: string[];
   handleFavoritingDevo: (devo: any) => void;
   handleUnfavoritingDevo: (devo: any) => void;
 }) {
   const [isSharing, setIsSharing] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const verseRef = useRef<ViewShot | null>(null);
   const { setError } = useStore();
 
@@ -57,7 +54,9 @@ export function DevotionalCard({
         borderBottomWidth: 2,
       }}
     >
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity
+        onPress={() => setIsExpanded((isExpanded) => !isExpanded)}
+      >
         {!!devotional.title && (
           <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 4 }}>
             {devotional.title}
