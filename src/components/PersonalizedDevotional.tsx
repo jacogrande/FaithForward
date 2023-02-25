@@ -1,3 +1,5 @@
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useRef } from "react";
 import {
   Keyboard,
@@ -20,6 +22,7 @@ import useStore from "../Store";
 import colors from "../styles/colors";
 
 export function PersonalizedDevotional() {
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const {
     promptStart,
     input,
@@ -80,6 +83,11 @@ export function PersonalizedDevotional() {
     Keyboard.dismiss();
   };
 
+  const seePastDevos = () => {
+    navigation.navigate("Past Devotionals", {});
+    Keyboard.dismiss();
+  };
+
   // TODO: Refactor to use Container, delegate Snackbar error handling to Container
   return (
     <KeyboardAvoidingView
@@ -126,6 +134,14 @@ export function PersonalizedDevotional() {
               disabled={!input || isLoading}
             >
               <Text style={styles.buttonText}>Get Guidance</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              onPress={seePastDevos}
+              style={{ flex: 1, alignItems: "center", paddingVertical: 20 }}
+            >
+              <Text style={{ color: colors.black, fontSize: 14 }}>See past devotionals</Text>
             </TouchableOpacity>
           </View>
           <VerseContainer isLoading={isLoading} />

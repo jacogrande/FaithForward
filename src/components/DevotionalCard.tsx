@@ -2,27 +2,23 @@ import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ViewShot from "react-native-view-shot";
-import { TTradDevo } from "../../types";
 import useStore from "../Store";
 import colors from "../styles/colors";
 import { formatDate, getVerseRef } from "../utils";
 
 export function DevotionalCard({
   devotional,
-  isExpanded,
-  onPress,
   faves,
   handleFavoritingDevo,
   handleUnfavoritingDevo,
 }: {
-  devotional: TTradDevo;
-  isExpanded: boolean;
-  onPress: () => void;
+  devotional: any;
   faves: string[];
-  handleFavoritingDevo: (devo: TTradDevo) => void;
-  handleUnfavoritingDevo: (devo: TTradDevo) => void;
+  handleFavoritingDevo: (devo: any) => void;
+  handleUnfavoritingDevo: (devo: any) => void;
 }) {
   const [isSharing, setIsSharing] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const verseRef = useRef<ViewShot | null>(null);
   const { setError } = useStore();
 
@@ -58,10 +54,14 @@ export function DevotionalCard({
         borderBottomWidth: 2,
       }}
     >
-      <TouchableOpacity onPress={onPress}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 4 }}>
-          {devotional.title}
-        </Text>
+      <TouchableOpacity
+        onPress={() => setIsExpanded((isExpanded) => !isExpanded)}
+      >
+        {!!devotional.title && (
+          <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 4 }}>
+            {devotional.title}
+          </Text>
+        )}
         <Text
           style={{
             fontSize: 16,
@@ -126,9 +126,7 @@ export function DevotionalCard({
         </View>
       </View>
       <ViewShot ref={verseRef} style={styles.screenshot}>
-        <Text style={styles.prompt}>
-          {devotional.input}
-        </Text>
+        <Text style={styles.prompt}>{devotional.input}</Text>
         <Text style={styles.response}>
           <Text style={styles.bold}>Faith Forward: </Text>
           {formatVerse(devotional.response, () => {})}

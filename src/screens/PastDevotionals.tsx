@@ -6,44 +6,42 @@ import {
   Text,
   View,
 } from "react-native";
-import { auth, favoriteTradDevo, unfavoriteTradDevo } from "../../firebase";
-import { TTradDevo } from "../../types";
-import { useTradDevos } from "../hooks/useTradDevos";
+import { favoritePersonalDevo, unfavoritePersonalDevo } from "../../firebase";
+import { TPersonalDevo } from "../../types";
+import { Container } from "../components/Container";
+import { DevotionalCard } from "../components/DevotionalCard";
+import { usePastDevos } from "../hooks/usePastDevos";
 import useStore from "../Store";
-import { DevotionalCard } from "./DevotionalCard";
 
-// TODO: Why are optimisticFaves returning a devo that has been unfavorited?
-function initOptimisticFaves(devos: TTradDevo[]): string[] {
+function initOptimisticFaves(devos: TPersonalDevo[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user
   return devos
-    .filter((devo: TTradDevo) =>
-      devo.favoritedBy?.includes(auth.currentUser?.uid || "")
-    )
-    .map((devo: TTradDevo) => devo.id);
+    .filter((devo: TPersonalDevo) => devo.favorited)
+    .map((devo: TPersonalDevo) => devo.id);
 }
 
 // TODO: Scroll the newly expanded devotional into view
-export function TraditionalDevotionals() {
+export function PastDevotionals() {
   const {
-    tradDevos,
+    pastDevos,
     loading,
     refreshing,
     setRefreshing,
     setQuietlyRefreshing,
-  } = useTradDevos();
+  } = usePastDevos();
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
-    initOptimisticFaves(tradDevos)
+    initOptimisticFaves(pastDevos)
   );
   const { setError } = useStore();
 
   useEffect(() => {
-    setOptimisticFaves(initOptimisticFaves(tradDevos));
-  }, [JSON.stringify(tradDevos)]);
+    setOptimisticFaves(initOptimisticFaves(pastDevos));
+  }, [JSON.stringify(pastDevos)]);
 
-  async function handleFavoritingDevo(devo: TTradDevo) {
+  async function handleFavoritingDevo(devo: TPersonalDevo) {
     try {
       setOptimisticFaves([...optimisticFaves, devo.id]);
-      await favoriteTradDevo(devo);
+      await favoritePersonalDevo(devo);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error favoriting devo:");
@@ -52,10 +50,10 @@ export function TraditionalDevotionals() {
     }
   }
 
-  async function handleUnfavoritingDevo(devo: TTradDevo) {
+  async function handleUnfavoritingDevo(devo: TPersonalDevo) {
     try {
       setOptimisticFaves(optimisticFaves.filter((id) => id !== devo.id));
-      await unfavoriteTradDevo(devo);
+      await unfavoritePersonalDevo(devo);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error unfavoriting devo:");
@@ -73,10 +71,10 @@ export function TraditionalDevotionals() {
   }
 
   return (
-    <View>
+    <Container>
       <FlatList
-        data={tradDevos}
-        renderItem={({ item }: { item: TTradDevo }) => (
+        data={pastDevos}
+        renderItem={({ item }: { item: TPersonalDevo }) => (
           <DevotionalCard
             devotional={item}
             faves={optimisticFaves}
@@ -84,7 +82,7 @@ export function TraditionalDevotionals() {
             handleUnfavoritingDevo={handleUnfavoritingDevo}
           />
         )}
-        keyExtractor={(item: TTradDevo) => item.id}
+        keyExtractor={(item: any) => item.id}
         style={{ width: "100%", paddingHorizontal: 20 }}
         ListEmptyComponent={() => (
           <View style={{ alignItems: "center", marginTop: 24 }}>
@@ -101,6 +99,6 @@ export function TraditionalDevotionals() {
           />
         }
       />
-    </View>
+    </Container>
   );
 }

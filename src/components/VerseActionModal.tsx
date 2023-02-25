@@ -21,7 +21,7 @@ interface VerseActionModalProps {
 
 const VerseActionModal: React.FC<VerseActionModalProps> = (props) => {
   const navigation =
-    useNavigation<StackNavigationProp<{ Analysis: {}; Reader: {} }>>();
+    useNavigation<StackNavigationProp<{ Exegesis: {}; Reader: {} }>>();
   const handleOutsideClick = () => {
     Keyboard.dismiss();
     props.onClose();
@@ -29,7 +29,7 @@ const VerseActionModal: React.FC<VerseActionModalProps> = (props) => {
 
   const goDepeer = () => {
     props.onClose();
-    navigation.navigate("Analysis", {});
+    navigation.navigate("Exegesis", {});
   };
 
   const goToChapter = () => {

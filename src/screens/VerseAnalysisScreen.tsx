@@ -1,16 +1,13 @@
 import React from "react";
 import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  ScrollView,
+  ScrollView, StyleSheet, Text, View
 } from "react-native";
-import colors from "../styles/colors";
-import useStore from "../Store";
 import apiConfig from "../../apiConfig";
 import { auth } from "../../firebase";
+import LoadingMessages from "../components/LoadingMessages";
 import { useApi } from "../hooks/useApi";
+import useStore from "../Store";
+import colors from "../styles/colors";
 
 const VerseAnalysisScreen: React.FC = () => {
   const { input, selectedVerse, promptId } = useStore();
@@ -36,12 +33,7 @@ const VerseAnalysisScreen: React.FC = () => {
     }
   }, [selectedVerse]);
 
-  if (isLoading)
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color={colors.blue} />
-      </View>
-    );
+  if (isLoading) return <LoadingMessages />;
 
   return (
     <ScrollView
