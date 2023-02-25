@@ -1,4 +1,4 @@
-import { PlayableAudioObject } from "@root/types";
+import { PlayableAudioObject } from "@src/types";
 import { Audio } from "expo-av";
 import { create } from "zustand";
 

@@ -1,6 +1,6 @@
 import { AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { TSermon } from "@root/types";
 import colors from "@src/styles/colors";
+import { TSermon } from "@src/types";
 import { Audio } from "expo-av";
 import humanizeDuration from "humanize-duration";
 import React from "react";

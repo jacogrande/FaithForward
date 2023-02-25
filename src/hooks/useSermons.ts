@@ -1,6 +1,6 @@
-import { TSermon } from "@root/types";
 import { db } from "@src/firebase";
 import useStore from "@src/Store";
+import { TSermon } from "@src/types";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 

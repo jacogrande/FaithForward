@@ -1,4 +1,3 @@
-import { TPersonalDevo, TSermon, TTradDevo } from "@root/types";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { Sermon } from "@src/components/Sermon";
@@ -12,6 +11,7 @@ import { useAudio } from "@src/hooks/useAudio";
 import { useFavorites } from "@src/hooks/useFavorites";
 import useStore, { useAudioStore } from "@src/Store";
 import colors from "@src/styles/colors";
+import { TPersonalDevo, TSermon, TTradDevo } from "@src/types";
 import { onIdTokenChanged } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import {

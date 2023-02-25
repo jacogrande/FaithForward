@@ -1,4 +1,4 @@
-import { TPersonalDevo, TSermon, TTradDevo } from "@root/types";
+import { TPersonalDevo, TSermon, TTradDevo } from "@src/types";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {

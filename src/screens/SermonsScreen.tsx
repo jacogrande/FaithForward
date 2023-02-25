@@ -1,10 +1,10 @@
-import { TSermon } from "@root/types";
 import { Container } from "@src/components/Container";
 import { Sermon } from "@src/components/Sermon";
 import { auth, favoriteSermon, unfavoriteSermon } from "@src/firebase";
 import { useAudio } from "@src/hooks/useAudio";
 import { useSermons } from "@src/hooks/useSermons";
 import useStore, { useAudioStore } from "@src/Store";
+import { TSermon } from "@src/types";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
