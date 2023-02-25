@@ -1,4 +1,5 @@
 import { Timestamp } from "@firebase/firestore";
+import { LOADING_MESSAGES } from "@src/constants";
 
 export const ensureDate = (date: Date | Timestamp): Date => {
   if (date instanceof Date) {
@@ -60,4 +61,9 @@ export const getVerseRef = (verse: string, fullResponse: string) => {
     return newReference?.toString();
   }
   return reference?.toString();
+};
+
+export const getRandomLoadingMessage = () => {
+  const randomIndex = Math.floor(Math.random() * LOADING_MESSAGES.PILE.length);
+  return LOADING_MESSAGES.PILE[randomIndex];
 };

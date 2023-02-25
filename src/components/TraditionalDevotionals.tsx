@@ -1,3 +1,9 @@
+import { Container } from "@src/components/Container";
+import { DevotionalCard } from "@src/components/DevotionalCard";
+import { auth, favoriteTradDevo, unfavoriteTradDevo } from "@src/firebase";
+import { useTradDevos } from "@src/hooks/useTradDevos";
+import useStore from "@src/store";
+import { TTradDevo } from "@src/types";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -6,13 +12,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { auth, favoriteTradDevo, unfavoriteTradDevo } from "../../firebase";
-import { TTradDevo } from "../../types";
-import { useTradDevos } from "../hooks/useTradDevos";
-import useStore from "../Store";
-import { DevotionalCard } from "./DevotionalCard";
 
-// TODO: Why are optimisticFaves returning a devo that has been unfavorited?
 function initOptimisticFaves(devos: TTradDevo[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user
   return devos
@@ -22,7 +22,6 @@ function initOptimisticFaves(devos: TTradDevo[]): string[] {
     .map((devo: TTradDevo) => devo.id);
 }
 
-// TODO: Scroll the newly expanded devotional into view
 export function TraditionalDevotionals() {
   const {
     tradDevos,
@@ -73,7 +72,7 @@ export function TraditionalDevotionals() {
   }
 
   return (
-    <View>
+    <Container>
       <FlatList
         data={tradDevos}
         renderItem={({ item }: { item: TTradDevo }) => (
@@ -101,6 +100,6 @@ export function TraditionalDevotionals() {
           />
         }
       />
-    </View>
+    </Container>
   );
 }

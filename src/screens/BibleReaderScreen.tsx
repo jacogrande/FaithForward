@@ -1,16 +1,16 @@
+import { API_URL } from "@src/constants";
+import { auth } from "@src/firebase";
+import { useApi } from "@src/hooks/useApi";
+import useStore from "@src/store";
+import colors from "@src/styles/colors";
 import React from "react";
 import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
 } from "react-native";
-import apiConfig from "../../apiConfig";
-import { auth } from "../../firebase";
-import { useApi } from "../hooks/useApi";
-import useStore from "../Store";
-import colors from "../styles/colors";
 
 interface IVerse {
   verse_nr: number;
@@ -31,7 +31,7 @@ const BibleReaderScreen: React.FC = () => {
     isLoading,
     data,
     fetchData: getBibleChapter,
-  } = useApi<{ verses: IVerse[] }>(`${apiConfig.apiUrl}/getBiblePassage`, {
+  } = useApi<{ verses: IVerse[] }>(`${API_URL}/getBiblePassage`, {
     method: "POST",
     body: JSON.stringify({
       verse: getVerseReference(selectedVerse),

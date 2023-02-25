@@ -1,3 +1,4 @@
+import { TPersonalDevo, TSermon, TTradDevo } from "@src/types";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
@@ -16,7 +17,6 @@ import {
   where,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { TPersonalDevo, TSermon, TTradDevo } from "./types";
 
 const firebaseProdConfig = {
   apiKey: "AIzaSyDgj0UDgTub38VuhVjUFIe9Sc5U_ODJK1c",
@@ -320,9 +320,8 @@ export const favoritePersonalDevo = async (
 
   // Handle the users/favorites subcollection
   // If the user has already favorited the devo, do nothing
-  const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
   const favoritesQuery = query(
-    collection(userDoc.ref, "favorites"),
+    collection(userRef, "favorites"),
     where("type", "==", "personalDevo"),
     where("docId", "==", devo.id)
   );

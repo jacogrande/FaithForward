@@ -88,9 +88,56 @@ export const PLACEHOLDERS = [
   "I'm feeling burned out at work and I need to take a break, but I can't afford to quit my job. I'm thinking of taking a sabbatical but I don't know how to make that happen.",
 ];
 
+// TODO: Figure out what this is and whether there's a staging v prod version
 export const PROJECT_ID = "f0e47dc4-652b-438e-a726-e4db36dec0cb";
 
+// Policy links
 export const PRIVACY_POLICY_URL =
   "https://www.github.com/jacogrande/FaithForward/blob/master/privacy-policy.md";
 export const TERMS_OF_SERVICE_URL =
   "https://www.github.com/jacogrande/FaithForward/blob/master/terms-of-service.md";
+
+const PROD_URL = "https://us-central1-robo-jesus.cloudfunctions.net";
+const STAGING_URL =
+  "https://us-central1-faith-forward-staging.cloudfunctions.net";
+export const API_URL =
+  process.env.NODE_ENV === "production" ? PROD_URL : STAGING_URL;
+
+// Loading messages
+export const LOADING_MESSAGES = {
+  INITIAL: "Hang on tight. This will only take a minute",
+  PILE: [
+    "Herding sheep",
+    "Building an ark",
+    "Fighting the good fight of faith",
+    "Defeating Goliath",
+    "Building the Tower of Babel",
+    "Searching for manna",
+    "Forgiving seventy times seven",
+    "Studying the Bible",
+    "Finding the lost coin",
+    "Praying for the sick",
+    "Sowing seed in good soil",
+    "Baptizing new believers",
+    "Teaching the Word",
+    "Washing the disciples' feet",
+    "Feeding the five thousand",
+    "Singing a hymn of praise to the loading bar",
+    "Building a virtual temple",
+    "Waiting for the burning bush to speak",
+    "Blessing the internet connection",
+    "Tuning harps",
+    "Fighting the temptation to close the app",
+    "Practicing the patience of Job",
+    "Climbing the mountain of faith",
+    "Walking through the valley of shadows",
+    "Planting seeds of hope",
+    "Nurturing the fruits of the spirit",
+    "Lighting the way with the lamp of faith",
+    "Striving for righteousness",
+    "Sowing the seeds of love and kindness",
+    "Refining gold in the furnace of affliction",
+    "Rising on eagle's wings",
+    "Holding on to the anchor of hope",
+  ],
+};

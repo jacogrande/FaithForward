@@ -1,8 +1,8 @@
+import { db } from "@src/firebase";
+import useStore from "@src/store";
+import { TTradDevo } from "@src/types";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase";
-import { TTradDevo } from "../../types";
-import useStore from "../Store";
 
 type Signature = {
   tradDevos: TTradDevo[];

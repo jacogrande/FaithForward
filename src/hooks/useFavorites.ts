@@ -1,7 +1,7 @@
+import { auth, db } from "@src/firebase";
+import useStore from "@src/store";
 import { collection, doc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { auth, db } from "../../firebase";
-import useStore from "../Store";
 
 type Signature = {
   favorites: any[];

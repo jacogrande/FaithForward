@@ -1,12 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { auth } from "@src/firebase";
+import useStore from "@src/store";
+import colors from "@src/styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   createUserWithEmailAndPassword,
   EmailAuthProvider,
   linkWithCredential,
   sendPasswordResetEmail,
-  signInWithEmailAndPassword,
+  signInWithEmailAndPassword
 } from "firebase/auth";
 import React, { useState } from "react";
 import {
@@ -21,12 +24,9 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { Snackbar } from "react-native-paper";
-import { auth } from "../../firebase";
-import useStore from "../Store";
-import colors from "../styles/colors";
 
 export const AuthScreen = () => {
   const [email, setEmail] = useState("");
@@ -113,7 +113,7 @@ export const AuthScreen = () => {
         <SafeAreaView style={styles.container}>
           <View style={styles.brandContainer}>
             <Image
-              source={require("../../assets/church.png")}
+              source={require("@assets/church.png")}
               resizeMode="contain"
               style={styles.logo}
             />

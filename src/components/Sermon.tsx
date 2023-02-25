@@ -1,4 +1,6 @@
 import { AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import colors from "@src/styles/colors";
+import { TSermon } from "@src/types";
 import { Audio } from "expo-av";
 import humanizeDuration from "humanize-duration";
 import React from "react";
@@ -9,8 +11,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { TSermon } from "../../types";
-import colors from "../styles/colors";
 
 interface SermonProps {
   sermon: TSermon;

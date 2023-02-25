@@ -1,3 +1,6 @@
+import { auth, deletePushToken } from "@src/firebase";
+import useStore from "@src/store";
+import colors from "@src/styles/colors";
 import {
   deleteUser,
   EmailAuthProvider,
@@ -17,9 +20,6 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Snackbar } from "react-native-paper";
-import { auth, deletePushToken } from "../../firebase";
-import useStore from "../Store";
-import colors from "../styles/colors";
 
 interface DeleteAccountModalProps {
   isModalVisible: boolean;

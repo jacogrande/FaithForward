@@ -1,13 +1,11 @@
+import LoadingMessages from "@src/components/LoadingMessages";
+import { API_URL } from "@src/constants";
+import { auth } from "@src/firebase";
+import { useApi } from "@src/hooks/useApi";
+import useStore from "@src/store";
+import colors from "@src/styles/colors";
 import React from "react";
-import {
-  ScrollView, StyleSheet, Text, View
-} from "react-native";
-import apiConfig from "../../apiConfig";
-import { auth } from "../../firebase";
-import LoadingMessages from "../components/LoadingMessages";
-import { useApi } from "../hooks/useApi";
-import useStore from "../Store";
-import colors from "../styles/colors";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 const VerseAnalysisScreen: React.FC = () => {
   const { input, selectedVerse, promptId } = useStore();
@@ -16,7 +14,7 @@ const VerseAnalysisScreen: React.FC = () => {
     isLoading,
     data,
     fetchData: getExegesis,
-  } = useApi<{ response: string }>(`${apiConfig.apiUrl}/analyzeVerse`, {
+  } = useApi<{ response: string }>(`${API_URL}/analyzeVerse`, {
     method: "POST",
     body: JSON.stringify({
       userId: auth.currentUser?.uid,

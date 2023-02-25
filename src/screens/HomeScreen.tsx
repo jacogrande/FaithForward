@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Container } from "@src/components/Container";
+import { PersonalizedDevotional } from "@src/components/PersonalizedDevotional";
+import { TraditionalDevotionals } from "@src/components/TraditionalDevotionals";
+import colors from "@src/styles/colors";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Container } from "../components/Container";
-import { PersonalizedDevotional } from "../components/PersonalizedDevotional";
-import { TraditionalDevotionals } from "../components/TraditionalDevotionals";
-import colors from "../styles/colors";
 
 const HomeScreen: React.FC = () => {
   const [devoType, setDevoType] = useState<"traditional" | "personalized">(
