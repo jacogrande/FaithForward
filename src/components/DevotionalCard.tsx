@@ -2,7 +2,6 @@ import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ViewShot from "react-native-view-shot";
-import { TTradDevo } from "../../types";
 import useStore from "../Store";
 import colors from "../styles/colors";
 import { formatDate, getVerseRef } from "../utils";
@@ -15,12 +14,12 @@ export function DevotionalCard({
   handleFavoritingDevo,
   handleUnfavoritingDevo,
 }: {
-  devotional: TTradDevo;
+  devotional: any;
   isExpanded: boolean;
   onPress: () => void;
   faves: string[];
-  handleFavoritingDevo: (devo: TTradDevo) => void;
-  handleUnfavoritingDevo: (devo: TTradDevo) => void;
+  handleFavoritingDevo: (devo: any) => void;
+  handleUnfavoritingDevo: (devo: any) => void;
 }) {
   const [isSharing, setIsSharing] = useState(false);
   const verseRef = useRef<ViewShot | null>(null);
@@ -59,9 +58,11 @@ export function DevotionalCard({
       }}
     >
       <TouchableOpacity onPress={onPress}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 4 }}>
-          {devotional.title}
-        </Text>
+        {!!devotional.title && (
+          <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 4 }}>
+            {devotional.title}
+          </Text>
+        )}
         <Text
           style={{
             fontSize: 16,
@@ -126,9 +127,7 @@ export function DevotionalCard({
         </View>
       </View>
       <ViewShot ref={verseRef} style={styles.screenshot}>
-        <Text style={styles.prompt}>
-          {devotional.input}
-        </Text>
+        <Text style={styles.prompt}>{devotional.input}</Text>
         <Text style={styles.response}>
           <Text style={styles.bold}>Faith Forward: </Text>
           {formatVerse(devotional.response, () => {})}

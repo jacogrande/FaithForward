@@ -9,8 +9,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { auth, unfavoriteSermon, unfavoriteTradDevo } from "../../firebase";
-import { TSermon, TTradDevo } from "../../types";
+import {
+  auth,
+  unfavoritePersonalDevo,
+  unfavoriteSermon,
+  unfavoriteTradDevo,
+} from "../../firebase";
+import { TPersonalDevo, TSermon, TTradDevo } from "../../types";
 import { Container } from "../components/Container";
 import { DevotionalCard } from "../components/DevotionalCard";
 import { Sermon } from "../components/Sermon";
@@ -19,7 +24,6 @@ import { useFavorites } from "../hooks/useFavorites";
 import useStore, { useAudioStore } from "../Store";
 import colors from "../styles/colors";
 
-// TODO: Add proper handling for different fave types
 // TODO: Refresh list when faves change on other screens
 export default function FavoritesScreen() {
   const [isAnonymous, setIsAnonymous] = useState(true);
@@ -33,9 +37,9 @@ export default function FavoritesScreen() {
   const { stopSound, playSound } = useAudio();
   const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
   const [favoriteSermons, setFavoriteSermons] = useState<TSermon[]>([]);
-  const [favoriteTradDevos, setFavoriteTradDevos] = useState<TTradDevo[]>([]);
+  const [favoriteDevos, setFavoriteDevos] = useState<any[]>([]);
   const [expandedDevoId, setExpandedDevoId] = useState<string | null>(null);
-  const [viewType, setViewType] = useState<"sermons" | "tradDevos">("sermons");
+  const [viewType, setViewType] = useState<"sermons" | "devos">("sermons");
 
   const { setError } = useStore();
 
@@ -54,9 +58,11 @@ export default function FavoritesScreen() {
         .filter((fave) => fave.type === "sermon")
         .map((fave) => ({ ...fave.docData }))
     );
-    setFavoriteTradDevos(
+    setFavoriteDevos(
       favorites
-        .filter((fave) => fave.type === "tradDevo")
+        .filter(
+          (fave) => fave.type === "tradDevo" || fave.type === "personalDevo"
+        )
         .map((fave) => ({ ...fave.docData }))
     );
   }, [JSON.stringify(favorites)]);
@@ -93,13 +99,23 @@ export default function FavoritesScreen() {
 
   async function handleUnfavoritingTradDevo(tradDevo: TTradDevo) {
     try {
-      setFavoriteTradDevos(
-        favoriteTradDevos.filter((fave) => fave.id !== tradDevo.id)
-      );
+      setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== tradDevo.id));
       await unfavoriteTradDevo(tradDevo);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error unfavoriting tradDevo:");
+      console.error(err);
+      setError(err.message);
+    }
+  }
+
+  async function handleUnfavoritingPersonalDevo(devo: TPersonalDevo) {
+    try {
+      setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== devo.id));
+      await unfavoritePersonalDevo(devo);
+      setQuietlyRefreshing(true);
+    } catch (err: any) {
+      console.warn("Error unfavoriting devo:");
       console.error(err);
       setError(err.message);
     }
@@ -110,8 +126,8 @@ export default function FavoritesScreen() {
     setQuietlyRefreshing(true);
   }
 
-  function viewTradDevos() {
-    setViewType("tradDevos");
+  function viewDevos() {
+    setViewType("devos");
     setQuietlyRefreshing(true);
   }
 
@@ -132,11 +148,11 @@ export default function FavoritesScreen() {
             <Text>Sermons</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={viewTradDevos}
+            onPress={viewDevos}
             style={{
               padding: 8,
               backgroundColor:
-                viewType === "tradDevos" ? colors.blue : colors.lightBlue,
+                viewType === "devos" ? colors.blue : colors.lightBlue,
               borderRadius: 8,
             }}
           >
@@ -176,21 +192,25 @@ export default function FavoritesScreen() {
                   />
                 }
               />
-            ) : viewType === "tradDevos" ? (
+            ) : viewType === "devos" ? (
               <FlatList
-                data={favoriteTradDevos}
-                renderItem={({ item: tradDevo }: { item: TTradDevo }) => (
+                data={favoriteDevos}
+                renderItem={({ item: devo }: { item: any }) => (
                   <DevotionalCard
-                    devotional={tradDevo}
-                    isExpanded={expandedDevoId === tradDevo.id}
-                    faves={favoriteTradDevos.map((fave) => fave.id)}
+                    devotional={devo}
+                    isExpanded={expandedDevoId === devo.id}
+                    faves={favoriteDevos.map((fave) => fave.id)}
                     onPress={() =>
                       setExpandedDevoId(
-                        expandedDevoId === tradDevo.id ? null : tradDevo.id
+                        expandedDevoId === devo.id ? null : devo.id
                       )
                     }
                     handleFavoritingDevo={() => {}}
-                    handleUnfavoritingDevo={handleUnfavoritingTradDevo}
+                    handleUnfavoritingDevo={
+                      devo.favorited
+                        ? handleUnfavoritingPersonalDevo
+                        : handleUnfavoritingTradDevo
+                    }
                   />
                 )}
                 keyExtractor={(item) => item.id}

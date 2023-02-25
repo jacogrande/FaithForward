@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Container } from "../components/Container";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,18 +7,21 @@ import {
   Text,
   View,
 } from "react-native";
-import { auth, favoriteTradDevo, unfavoriteTradDevo } from "../../firebase";
+import {
+  auth,
+  favoritePersonalDevo,
+  unfavoritePersonalDevo,
+} from "../../firebase";
 import { usePastDevos } from "../hooks/usePastDevos";
 import useStore from "../Store";
+import { TPersonalDevo } from "../../types";
 import { DevotionalCard } from "../components/DevotionalCard";
 
-function initOptimisticFaves(devos: any[]): string[] {
+function initOptimisticFaves(devos: TPersonalDevo[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user
   return devos
-    .filter((devo: any) =>
-      devo.favoritedBy?.includes(auth.currentUser?.uid || "")
-    )
-    .map((devo: any) => devo.id);
+    .filter((devo: TPersonalDevo) => devo.favorited)
+    .map((devo: TPersonalDevo) => devo.id);
 }
 
 // TODO: Scroll the newly expanded devotional into view
@@ -39,30 +43,28 @@ export function PastDevotionals() {
     setOptimisticFaves(initOptimisticFaves(pastDevos));
   }, [JSON.stringify(pastDevos)]);
 
-  // TODO: Unstub
-  async function handleFavoritingDevo(devo: any) {
-    /* try { */
-    /*   setOptimisticFaves([...optimisticFaves, devo.id]); */
-    /*   await favoriteTradDevo(devo); */
-    /*   setQuietlyRefreshing(true); */
-    /* } catch (err: any) { */
-    /*   console.warn("Error favoriting devo:"); */
-    /*   console.error(err); */
-    /*   setError(err.message); */
-    /* } */
+  async function handleFavoritingDevo(devo: TPersonalDevo) {
+    try {
+      setOptimisticFaves([...optimisticFaves, devo.id]);
+      await favoritePersonalDevo(devo);
+      setQuietlyRefreshing(true);
+    } catch (err: any) {
+      console.warn("Error favoriting devo:");
+      console.error(err);
+      setError(err.message);
+    }
   }
 
-  // TODO: Unstub
-  async function handleUnfavoritingDevo(devo: any) {
-    /* try { */
-    /*   setOptimisticFaves(optimisticFaves.filter((id) => id !== devo.id)); */
-    /*   await unfavoriteTradDevo(devo); */
-    /*   setQuietlyRefreshing(true); */
-    /* } catch (err: any) { */
-    /*   console.warn("Error unfavoriting devo:"); */
-    /*   console.error(err); */
-    /*   setError(err.message); */
-    /* } */
+  async function handleUnfavoritingDevo(devo: TPersonalDevo) {
+    try {
+      setOptimisticFaves(optimisticFaves.filter((id) => id !== devo.id));
+      await unfavoritePersonalDevo(devo);
+      setQuietlyRefreshing(true);
+    } catch (err: any) {
+      console.warn("Error unfavoriting devo:");
+      console.error(err);
+      setError(err.message);
+    }
   }
 
   if (loading) {
@@ -74,10 +76,10 @@ export function PastDevotionals() {
   }
 
   return (
-    <View>
+    <Container>
       <FlatList
         data={pastDevos}
-        renderItem={({ item }: { item: any }) => (
+        renderItem={({ item }: { item: TPersonalDevo }) => (
           <DevotionalCard
             devotional={item}
             isExpanded={item.id === expandedDevoId}
@@ -106,6 +108,6 @@ export function PastDevotionals() {
           />
         }
       />
-    </View>
+    </Container>
   );
 }

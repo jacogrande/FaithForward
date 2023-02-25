@@ -20,6 +20,16 @@ export type TTradDevo = {
   createdAt: Date | Timestamp;
 }
 
+export type TPersonalDevo = {
+  id: string;
+  input: string;
+  response: string;
+  favorited: boolean;
+  createdAt: Date | Timestamp;
+}
+
+export type TDevo = TTradDevo | TPersonalDevo;
+
 export interface PlayableAudioObject {
   id: string;
   filename: string;
