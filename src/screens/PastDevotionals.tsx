@@ -1,6 +1,7 @@
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { favoritePersonalDevo, unfavoritePersonalDevo } from "@src/firebase";
+import { useFavorites } from "@src/hooks/useFavorites";
 import { usePastDevos } from "@src/hooks/usePastDevos";
 import useStore from "@src/store";
 import { TPersonalDevo } from "@src/types";
@@ -28,6 +29,7 @@ export function PastDevotionals() {
     setRefreshing,
     setQuietlyRefreshing,
   } = usePastDevos();
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites();
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(pastDevos)
   );
@@ -42,6 +44,7 @@ export function PastDevotionals() {
       setOptimisticFaves([...optimisticFaves, devo.id]);
       await favoritePersonalDevo(devo);
       setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error favoriting devo:");
       console.error(err);
@@ -54,6 +57,7 @@ export function PastDevotionals() {
       setOptimisticFaves(optimisticFaves.filter((id) => id !== devo.id));
       await unfavoritePersonalDevo(devo);
       setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error unfavoriting devo:");
       console.error(err);

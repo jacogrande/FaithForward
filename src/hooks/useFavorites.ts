@@ -1,5 +1,5 @@
 import { auth, db } from "@src/firebase";
-import useStore from "@src/store";
+import useStore, { useContentStore } from "@src/store";
 import { collection, doc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
@@ -13,15 +13,14 @@ type Signature = {
 };
 
 export const useFavorites = (): Signature => {
-  const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [quietlyRefreshing, setQuietlyRefreshing] = useState(false);
   const { setError } = useStore();
+  const { favorites, setFavorites } = useContentStore();
 
   // Fetch favorites from Firestore
   const fetchFavorites = async () => {
-    console.log("Fetching favorites...");
     try {
       if (!auth.currentUser) {
         console.warn("No user is logged in.");
@@ -35,11 +34,11 @@ export const useFavorites = (): Signature => {
         orderBy("createdAt", "desc")
       );
       const favoritesQuerySnap = await getDocs(favoritesQuery);
-      const favorites = favoritesQuerySnap.docs.map((doc) => ({
+      const faves = favoritesQuerySnap.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setFavorites(favorites);
+      setFavorites(faves);
     } catch (error: any) {
       console.error(error);
       setError(error.toString());

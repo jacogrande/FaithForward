@@ -1,4 +1,9 @@
-import { PlayableAudioObject } from "@src/types";
+import {
+  PlayableAudioObject,
+  TSermon,
+  TTradDevo,
+  TPersonalDevo,
+} from "@src/types";
 import { Audio } from "expo-av";
 import { create } from "zustand";
 
@@ -63,4 +68,28 @@ export const useAudioStore = create<AudioStore>((set) => ({
   isPlaying: false,
   setIsPlaying: (isPlaying: boolean) =>
     set((state) => ({ ...state, isPlaying })),
+}));
+
+type ContentStore = {
+  sermons: TSermon[];
+  setSermons: (sermons: TSermon[]) => void;
+  tradDevos: TTradDevo[];
+  setTradDevos: (tradDevos: TTradDevo[]) => void;
+  pastDevos: TPersonalDevo[];
+  setPastDevos: (pastDevos: TPersonalDevo[]) => void;
+  favorites: any[];
+  setFavorites: (favorites: any[]) => void;
+};
+
+export const useContentStore = create<ContentStore>((set) => ({
+  sermons: [],
+  setSermons: (sermons: TSermon[]) => set((state) => ({ ...state, sermons })),
+  tradDevos: [],
+  setTradDevos: (tradDevos: TTradDevo[]) =>
+    set((state) => ({ ...state, tradDevos })),
+  pastDevos: [],
+  setPastDevos: (pastDevos: TPersonalDevo[]) =>
+    set((state) => ({ ...state, pastDevos })),
+  favorites: [],
+  setFavorites: (favorites: any[]) => set((state) => ({ ...state, favorites })),
 }));

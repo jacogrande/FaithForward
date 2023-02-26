@@ -1,5 +1,5 @@
 import { auth, db } from "@src/firebase";
-import useStore from "@src/store";
+import useStore, { useContentStore } from "@src/store";
 import { collection, doc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
@@ -13,15 +13,14 @@ type Signature = {
 };
 
 export const usePastDevos = (): Signature => {
-  const [pastDevos, setPastDevos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [quietlyRefreshing, setQuietlyRefreshing] = useState(false);
   const { setError } = useStore();
+  const { pastDevos, setPastDevos } = useContentStore();
 
   // Fetch pastDevos from Firestore
   const fetchPastDevos = async () => {
-    console.log("Fetching pastDevos...");
     try {
       // Get user ref
       if (!auth.currentUser) {

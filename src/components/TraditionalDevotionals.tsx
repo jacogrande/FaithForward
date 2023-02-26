@@ -2,6 +2,7 @@ import { logFavoriteDevotional } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { auth, favoriteTradDevo, unfavoriteTradDevo } from "@src/firebase";
+import { useFavorites } from "@src/hooks/useFavorites";
 import { useTradDevos } from "@src/hooks/useTradDevos";
 import useStore from "@src/store";
 import { TTradDevo } from "@src/types";
@@ -31,6 +32,7 @@ export function TraditionalDevotionals() {
     setRefreshing,
     setQuietlyRefreshing,
   } = useTradDevos();
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites();
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(tradDevos)
   );
@@ -46,6 +48,7 @@ export function TraditionalDevotionals() {
       await favoriteTradDevo(devo);
       logFavoriteDevotional(devo.id, devo.title);
       setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error favoriting devo:");
       console.error(err);
@@ -59,6 +62,7 @@ export function TraditionalDevotionals() {
       await unfavoriteTradDevo(devo);
       logFavoriteDevotional(devo.id, devo.title, false);
       setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error unfavoriting devo:");
       console.error(err);

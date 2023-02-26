@@ -2,10 +2,11 @@
   "expo": {
     "name": "Faith Forward",
     "slug": "faith-forward",
-    "version": "2.5.3",
+    "version": "2.6.0",
     "orientation": "portrait",
     "icon": "./assets/icon-dark-blue.png",
     "userInterfaceStyle": "light",
+    "owner": "sisyphus-labs",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -21,7 +22,7 @@
       "infoPlist": {
         "UIBackgroundModes": ["audio"]
       },
-      "buildNumber": "25"
+      "buildNumber": "27"
     },
     "android": {
       "adaptiveIcon": {

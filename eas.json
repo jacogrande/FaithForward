@@ -8,7 +8,8 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "image": "latest"
+        "image": "latest",
+        "resourceClass": "m1-medium"
       }
     },
     "development-simulator": {
@@ -21,7 +22,11 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "ios": {
+        "resourceClass": "m1-medium"
+      }
+    }
   },
   "submit": {
     "production": {}

@@ -3,6 +3,7 @@ import { Container } from "@src/components/Container";
 import { Sermon } from "@src/components/Sermon";
 import { auth, favoriteSermon, unfavoriteSermon } from "@src/firebase";
 import { useAudio } from "@src/hooks/useAudio";
+import { useFavorites } from "@src/hooks/useFavorites";
 import { useSermons } from "@src/hooks/useSermons";
 import useStore, { useAudioStore } from "@src/store";
 import { TSermon } from "@src/types";
@@ -28,6 +29,7 @@ function initOptimisticFaves(sermons: TSermon[]): string[] {
 export default function SermonsScreen() {
   const { sermons, loading, refreshing, setRefreshing, setQuietlyRefreshing } =
     useSermons();
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites();
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(sermons)
   );
@@ -58,10 +60,11 @@ export default function SermonsScreen() {
 
   async function handleFavoritingSermon(sermon: TSermon) {
     try {
-      setOptimisticFaves([...optimisticFaves, sermon.id]);
+      setOptimisticFaves((optimisticFaves) => [...optimisticFaves, sermon.id]);
       await favoriteSermon(sermon);
       logFavoriteSermon(sermon.id, sermon.title);
       setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error favoriting sermon:");
       console.error(err);
@@ -71,10 +74,13 @@ export default function SermonsScreen() {
 
   async function handleUnfavoritingSermon(sermon: TSermon) {
     try {
-      setOptimisticFaves(optimisticFaves.filter((id) => id !== sermon.id));
+      setOptimisticFaves((optimisticFaves) =>
+        optimisticFaves.filter((id) => id !== sermon.id)
+      );
       await unfavoriteSermon(sermon);
       logFavoriteSermon(sermon.id, sermon.title, false);
       setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error unfavoriting sermon:");
       console.error(err);

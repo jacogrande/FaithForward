@@ -3,6 +3,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import analytics from "@src/analytics";
 import { PROJECT_ID } from "@src/constants";
 import { auth, syncPushToken } from "@src/firebase";
+import { useFavorites } from "@src/hooks/useFavorites";
+import { useSermons } from "@src/hooks/useSermons";
+import { useTradDevos } from "@src/hooks/useTradDevos";
 import AuthScreen from "@src/screens/AuthScreen";
 import Navigation from "@src/screens/Navigation";
 import useStore from "@src/store";
@@ -58,6 +61,10 @@ export default function App() {
   const { pushToken, setPushToken } = useStore();
   const notificationListener = useRef();
   const responseListener = useRef();
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites();
+  const { setQuietlyRefreshing: setQuietlyRefreshingTradDevos } =
+    useTradDevos();
+  const { setQuietlyRefreshing: setQuietlyRefreshingSermons } = useSermons();
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
@@ -91,19 +98,14 @@ export default function App() {
     }
   }, [user, pushToken]);
 
-  // Identify the user once an id has been assigned to them (only if the userid hasn't changed since the last identification)
-  useEffect(() => {
-    if (user && user.uid) {
-      const trackedUserId = analytics.userInfo.get().userId;
-      if (trackedUserId !== user.uid) {
-        analytics.identify(user.uid);
-      }
+  onAuthStateChanged(auth, (u) => {
+    if (u !== user) {
+      setUser(u);
+      setLoading(false);
+      setQuietlyRefreshingFaves(true);
+      setQuietlyRefreshingTradDevos(true);
+      setQuietlyRefreshingSermons(true);
     }
-  }, [user]);
-
-  onAuthStateChanged(auth, (user) => {
-    setUser(user);
-    setLoading(false);
   });
 
   const autoSignIn = async () => {

@@ -5,7 +5,6 @@ import ProfileNavigator from "@src/screens/ProfileNavigator";
 import SermonsScreen from "@src/screens/SermonsScreen";
 import colors from "@src/styles/colors";
 import * as React from "react";
-import { Dimensions } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
@@ -15,7 +14,6 @@ const BaseNavigator: React.FC = () => {
       screenOptions={{
         tabBarStyle: {
           backgroundColor: colors.paper,
-          height: Dimensions.get("window").height * 0.09,
           paddingBottom: 24,
           paddingTop: 4,
         },
@@ -26,9 +24,10 @@ const BaseNavigator: React.FC = () => {
       }}
     >
       <Tab.Screen
-        name="Devotionals"
+        name="Devos"
         component={HomeNavigator}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="md-sunny" size={size} color={color} />
           ),
@@ -38,6 +37,11 @@ const BaseNavigator: React.FC = () => {
         name="Sermons"
         component={SermonsScreen}
         options={{
+          headerTitleStyle: {
+            color: colors.black,
+            fontWeight: "600",
+            fontSize: 18,
+          },
           tabBarIcon: ({ color, size }) => (
             <FontAwesome5 name="book-reader" size={size} color={color} />
           ),

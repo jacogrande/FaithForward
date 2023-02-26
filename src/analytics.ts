@@ -136,4 +136,25 @@ export const logSermonPause = () => {
   }
 };
 
+export const logGoToChapter = (chapter: string | null) => {
+  try {
+    analytics.track("Go To Chapter", {
+      chapter,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const logGetExegesis = (chapter: string | null, promptID: string) => {
+  try {
+    analytics.track("Get Exegesis", {
+      chapter,
+      promptID,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export default analytics;
