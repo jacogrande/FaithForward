@@ -1,4 +1,4 @@
-import { logFavoriteDevotional } from "@src/analytics";
+import { logFavoriteDevotional, logUnfavoriteDevotional } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { auth, favoriteTradDevo, unfavoriteTradDevo } from "@src/firebase";
@@ -60,7 +60,7 @@ export function TraditionalDevotionals() {
     try {
       setOptimisticFaves(optimisticFaves.filter((id) => id !== devo.id));
       await unfavoriteTradDevo(devo);
-      logFavoriteDevotional(devo.id, devo.title, false);
+      logUnfavoriteDevotional(devo.id, devo.title);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     } catch (err: any) {

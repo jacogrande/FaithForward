@@ -75,43 +75,49 @@ export const logSignup = (signUpMethod: "email") => {
 
 export const logFavoriteDevotional = (
   devotionalID: string,
-  devotionalName: string,
-  isFavorite: boolean = true
+  devotionalName: string
 ) => {
   try {
-    if (isFavorite) {
-      analytics.track("Favorite Devotional", {
-        devotionalID,
-        devotionalName,
-      });
-    } else {
-      analytics.track("Unfavorite Devotional", {
-        devotionalID,
-        devotionalName,
-      });
-    }
+    analytics.track("Favorite Devotional", {
+      devotionalID,
+      devotionalName,
+    });
   } catch (err) {
     console.error(err);
   }
 };
 
-export const logFavoriteSermon = (
-  sermonID: string,
-  sermonName: string,
-  isFavorite: boolean = true
+export const logUnfavoriteDevotional = (
+  devotionalID: string,
+  devotionalName: string
 ) => {
   try {
-    if (isFavorite) {
-      analytics.track("Favorite Sermon", {
-        sermonID,
-        sermonName,
-      });
-    } else {
-      analytics.track("Unfavorite Sermon", {
-        sermonID,
-        sermonName,
-      });
-    }
+    analytics.track("Unfavorite Devotional", {
+      devotionalID,
+      devotionalName,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const logFavoriteSermon = (sermonID: string, sermonName: string) => {
+  try {
+    analytics.track("Favorite Sermon", {
+      sermonID,
+      sermonName,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const logUnfavoriteSermon = (sermonID: string, sermonName: string) => {
+  try {
+    analytics.track("Unfavorite Sermon", {
+      sermonID,
+      sermonName,
+    });
   } catch (err) {
     console.error(err);
   }

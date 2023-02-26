@@ -2,6 +2,8 @@ import {
   logFavoriteDevotional,
   logFavoriteSermon,
   logSermonPlay,
+  logUnfavoriteDevotional,
+  logUnfavoriteSermon,
 } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
@@ -119,7 +121,7 @@ export default function FavoritesScreen() {
         favoriteSermons.filter((fave) => fave.id !== sermon.id)
       );
       await unfavoriteSermon(sermon);
-      logFavoriteSermon(sermon.id, sermon.title, false);
+      logUnfavoriteSermon(sermon.id, sermon.title);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingSermons(true);
     } catch (err: any) {
@@ -149,7 +151,7 @@ export default function FavoritesScreen() {
     try {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== tradDevo.id));
       await unfavoriteTradDevo(tradDevo);
-      logFavoriteDevotional(tradDevo.id, tradDevo.title, false);
+      logUnfavoriteDevotional(tradDevo.id, tradDevo.title);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingTradDevos(true);
     } catch (err: any) {
@@ -163,7 +165,7 @@ export default function FavoritesScreen() {
     try {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== devo.id));
       await unfavoritePersonalDevo(devo);
-      logFavoriteDevotional(devo.id, "Personal Devo", false);
+      logUnfavoriteDevotional(devo.id, "Personal Devo");
       setQuietlyRefreshing(true);
       setQuietlyRefreshingPastDevos(true);
     } catch (err: any) {

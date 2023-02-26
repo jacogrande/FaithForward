@@ -1,4 +1,8 @@
-import { logFavoriteSermon, logSermonPlay } from "@src/analytics";
+import {
+  logFavoriteSermon,
+  logSermonPlay,
+  logUnfavoriteSermon,
+} from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { Sermon } from "@src/components/Sermon";
 import { auth, favoriteSermon, unfavoriteSermon } from "@src/firebase";
@@ -79,7 +83,7 @@ export default function SermonsScreen() {
         optimisticFaves.filter((id) => id !== sermon.id)
       );
       await unfavoriteSermon(sermon);
-      logFavoriteSermon(sermon.id, sermon.title, false);
+      logUnfavoriteSermon(sermon.id, sermon.title);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     } catch (err: any) {

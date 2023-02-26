@@ -14,7 +14,7 @@ export function DevotionalCard({
   handleFavoritingDevo,
   handleUnfavoritingDevo,
 }: {
-  devotional: TTradDevo;
+  devotional: any;
   faves: string[];
   handleFavoritingDevo: (devo: any) => void;
   handleUnfavoritingDevo: (devo: any) => void;
@@ -53,7 +53,10 @@ export function DevotionalCard({
 
   useEffect(() => {
     if (isExpanded) {
-      logViewDevotional(devotional.id, devotional.title);
+      logViewDevotional(
+        devotional.id,
+        devotional.title || "Personal Devotional"
+      );
     }
   }, [isExpanded]);
 
