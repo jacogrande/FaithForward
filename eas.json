@@ -16,7 +16,9 @@
       "distribution": "internal"
     },
     "production": {
-      "resourceClass": "m1-medium"
+      "ios": {
+        "resourceClass": "m1-medium"
+      }
     }
   },
   "submit": {
