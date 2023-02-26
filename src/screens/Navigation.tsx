@@ -20,17 +20,6 @@ const BaseNavigator: React.FC = () => {
         tabBarLabelStyle: {
           fontWeight: "600",
         },
-        headerTintColor: colors.blue,
-        headerStyle: {
-          backgroundColor: colors.paper,
-          shadowColor: "transparent",
-        },
-        headerTitleStyle: {
-          color: colors.black,
-          fontWeight: "600",
-          fontSize: 18,
-        },
-        headerTitleAlign: "center",
         tabBarActiveTintColor: colors.blue,
       }}
     >
@@ -48,9 +37,10 @@ const BaseNavigator: React.FC = () => {
         name="Sermons"
         component={SermonsScreen}
         options={{
-          headerStyle: {
-            backgroundColor: colors.paper,
-            shadowColor: "#d0d0d0",
+          headerTitleStyle: {
+            color: colors.black,
+            fontWeight: "600",
+            fontSize: 18,
           },
           tabBarIcon: ({ color, size }) => (
             <FontAwesome5 name="book-reader" size={size} color={color} />

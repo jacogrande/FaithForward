@@ -13,17 +13,10 @@ export default function DevoNavigator() {
         tabBarIndicatorStyle: {
           backgroundColor: colors.blue,
         },
-        tabBarStyle: {
-          backgroundColor: colors.paper,
-        },
-        tabBarLabelStyle: {
-          fontWeight: "500",
-        },
-        tabBarActiveTintColor: colors.black,
       }}
     >
-      <Tab.Screen name="Daily" component={TraditionalDevotionals} />
-      <Tab.Screen name="For You" component={PersonalizedDevotional} />
+      <Tab.Screen name="Traditional" component={TraditionalDevotionals} />
+      <Tab.Screen name="Personalized" component={PersonalizedDevotional} />
     </Tab.Navigator>
   );
 }

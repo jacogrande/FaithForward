@@ -13,13 +13,6 @@ export default function ProfileNavigator() {
         tabBarIndicatorStyle: {
           backgroundColor: colors.blue,
         },
-        tabBarStyle: {
-          backgroundColor: colors.paper,
-        },
-        tabBarLabelStyle: {
-          fontWeight: "500",
-        },
-        tabBarActiveTintColor: colors.black,
       }}
     >
       <Tab.Screen name="Account" component={ProfileScreen} />
