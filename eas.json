@@ -8,13 +8,16 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "image": "latest"
+        "image": "latest",
+        "resourceClass": "m1-medium"
       }
     },
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "resourceClass": "m1-medium"
+    }
   },
   "submit": {
     "production": {}
