@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon-dark-blue.png",
     "userInterfaceStyle": "light",
+    "owner": "sisyphus-labs",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
