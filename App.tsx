@@ -1,5 +1,6 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import analytics from "@src/analytics";
 import { PROJECT_ID } from "@src/constants";
 import { auth, syncPushToken } from "@src/firebase";
 import AuthScreen from "@src/screens/AuthScreen";
@@ -53,6 +54,7 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
   const [loadingAutoSignIn, setLoadingAutoSignIn] = useState(false);
   const [notification, setNotification] = useState<any>(false);
+  const [currentRoute, setCurrentRoute] = useState<string>("Unknown");
   const { pushToken, setPushToken } = useStore();
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -89,6 +91,16 @@ export default function App() {
     }
   }, [user, pushToken]);
 
+  // Identify the user once an id has been assigned to them (only if the userid hasn't changed since the last identification)
+  useEffect(() => {
+    if (user && user.uid) {
+      const trackedUserId = analytics.userInfo.get().userId;
+      if (trackedUserId !== user.uid) {
+        analytics.identify(user.uid);
+      }
+    }
+  }, [user]);
+
   onAuthStateChanged(auth, (user) => {
     setUser(user);
     setLoading(false);
@@ -120,8 +132,29 @@ export default function App() {
     );
   }
 
+  // Recursively find the current screen name
+  const getRouteName = (state: any): string => {
+    if (!state || typeof state.index !== "number") {
+      return "Unknown";
+    }
+    const route = state.routes[state.index];
+    if (route.state) {
+      return getRouteName(route.state);
+    }
+
+    return route.name;
+  };
+
+  const handleNavigationStateChange = (state: any) => {
+    const newRoute = getRouteName(state);
+    if (currentRoute !== newRoute) {
+      analytics.screen(newRoute);
+      setCurrentRoute(newRoute);
+    }
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer onStateChange={handleNavigationStateChange}>
       <Stack.Navigator
         initialRouteName="Faith Forward"
         screenOptions={{
