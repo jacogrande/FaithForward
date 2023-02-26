@@ -2,6 +2,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { PROJECT_ID } from "@src/constants";
 import { auth, syncPushToken } from "@src/firebase";
+import { useFavorites } from "@src/hooks/useFavorites";
+import { useSermons } from "@src/hooks/useSermons";
+import { useTradDevos } from "@src/hooks/useTradDevos";
 import AuthScreen from "@src/screens/AuthScreen";
 import Navigation from "@src/screens/Navigation";
 import useStore from "@src/store";
@@ -56,6 +59,10 @@ export default function App() {
   const { pushToken, setPushToken } = useStore();
   const notificationListener = useRef();
   const responseListener = useRef();
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites();
+  const { setQuietlyRefreshing: setQuietlyRefreshingTradDevos } =
+    useTradDevos();
+  const { setQuietlyRefreshing: setQuietlyRefreshingSermons } = useSermons();
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
@@ -89,9 +96,14 @@ export default function App() {
     }
   }, [user, pushToken]);
 
-  onAuthStateChanged(auth, (user) => {
-    setUser(user);
-    setLoading(false);
+  onAuthStateChanged(auth, (u) => {
+    if (u !== user) {
+      setUser(u);
+      setLoading(false);
+      setQuietlyRefreshingFaves(true);
+      setQuietlyRefreshingTradDevos(true);
+      setQuietlyRefreshingSermons(true);
+    }
   });
 
   const autoSignIn = async () => {
@@ -121,36 +133,36 @@ export default function App() {
   }
 
   return (
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Faith Forward"
-          screenOptions={{
-            headerBackTitleVisible: false,
-            headerTintColor: colors.blue,
-            headerStyle: {
-              backgroundColor: colors.paper,
-              shadowColor: "transparent",
-              height: 70,
-            },
-            headerTitleStyle: {
-              color: colors.black,
-              fontWeight: "bold",
-              fontSize: 18,
-            },
-            headerTitleAlign: "center",
-          }}
-        >
-          <Stack.Screen
-            name="Faith Forward"
-            component={Navigation}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Sign Up"
-            component={AuthScreen}
-            options={{ headerTitle: "" }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Faith Forward"
+        screenOptions={{
+          headerBackTitleVisible: false,
+          headerTintColor: colors.blue,
+          headerStyle: {
+            backgroundColor: colors.paper,
+            shadowColor: "transparent",
+            height: 70,
+          },
+          headerTitleStyle: {
+            color: colors.black,
+            fontWeight: "bold",
+            fontSize: 18,
+          },
+          headerTitleAlign: "center",
+        }}
+      >
+        <Stack.Screen
+          name="Faith Forward"
+          component={Navigation}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Sign Up"
+          component={AuthScreen}
+          options={{ headerTitle: "" }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }

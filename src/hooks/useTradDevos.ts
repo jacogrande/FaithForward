@@ -1,5 +1,5 @@
 import { db } from "@src/firebase";
-import useStore from "@src/store";
+import useStore, { useContentStore } from "@src/store";
 import { TTradDevo } from "@src/types";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -14,11 +14,11 @@ type Signature = {
 };
 
 export const useTradDevos = (): Signature => {
-  const [tradDevos, setTradDevos] = useState<TTradDevo[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [quietlyRefreshing, setQuietlyRefreshing] = useState(false);
   const { setError } = useStore();
+  const { tradDevos, setTradDevos } = useContentStore();
 
   // Fetch tradDevos from Firestore
   const fetchTradDevos = async () => {

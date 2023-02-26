@@ -9,6 +9,9 @@ import {
 } from "@src/firebase";
 import { useAudio } from "@src/hooks/useAudio";
 import { useFavorites } from "@src/hooks/useFavorites";
+import { usePastDevos } from "@src/hooks/usePastDevos";
+import { useSermons } from "@src/hooks/useSermons";
+import { useTradDevos } from "@src/hooks/useTradDevos";
 import useStore, { useAudioStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { TPersonalDevo, TSermon, TTradDevo } from "@src/types";
@@ -23,7 +26,6 @@ import {
   View,
 } from "react-native";
 
-// TODO: Refresh list when faves change on other screens
 export default function FavoritesScreen() {
   const [isAnonymous, setIsAnonymous] = useState(true);
   const {
@@ -33,12 +35,16 @@ export default function FavoritesScreen() {
     setRefreshing,
     setQuietlyRefreshing,
   } = useFavorites();
+  const { setQuietlyRefreshing: setQuietlyRefreshingSermons } = useSermons();
+  const { setQuietlyRefreshing: setQuietlyRefreshingTradDevos } =
+    useTradDevos();
+  const { setQuietlyRefreshing: setQuietlyRefreshingPastDevos } =
+    usePastDevos();
   const { stopSound, playSound } = useAudio();
   const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
   const [favoriteSermons, setFavoriteSermons] = useState<TSermon[]>([]);
   const [favoriteDevos, setFavoriteDevos] = useState<any[]>([]);
   const [viewType, setViewType] = useState<"sermons" | "devos">("sermons");
-
   const { setError } = useStore();
 
   onIdTokenChanged(auth, (user) => {
@@ -108,6 +114,7 @@ export default function FavoritesScreen() {
       );
       await unfavoriteSermon(sermon);
       setQuietlyRefreshing(true);
+      setQuietlyRefreshingSermons(true);
     } catch (err: any) {
       console.warn("Error unfavoriting sermon:");
       console.error(err);
@@ -136,6 +143,7 @@ export default function FavoritesScreen() {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== tradDevo.id));
       await unfavoriteTradDevo(tradDevo);
       setQuietlyRefreshing(true);
+      setQuietlyRefreshingTradDevos(true);
     } catch (err: any) {
       console.warn("Error unfavoriting tradDevo:");
       console.error(err);
@@ -148,6 +156,7 @@ export default function FavoritesScreen() {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== devo.id));
       await unfavoritePersonalDevo(devo);
       setQuietlyRefreshing(true);
+      setQuietlyRefreshingPastDevos(true);
     } catch (err: any) {
       console.warn("Error unfavoriting devo:");
       console.error(err);
