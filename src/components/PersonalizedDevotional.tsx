@@ -130,7 +130,7 @@ export function PersonalizedDevotional() {
               ]}
               disabled={!input || isLoading}
             >
-              <Text style={styles.buttonText}>Get Guidance</Text>
+              <Text style={styles.buttonText}>Get Devotional</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonRow}>

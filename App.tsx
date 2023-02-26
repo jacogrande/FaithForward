@@ -15,7 +15,8 @@ import * as Localization from "expo-localization";
 import * as Notifications from "expo-notifications";
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 const Stack = createStackNavigator();
 
@@ -99,8 +100,11 @@ export default function App() {
   }, [user, pushToken]);
 
   onAuthStateChanged(auth, (u) => {
-    if (u !== user) {
+    if (u && u !== user) {
       setUser(u);
+      if (analytics.userInfo.get().userId !== u.uid) {
+        analytics.identify(u.uid);
+      }
       setLoading(false);
       setQuietlyRefreshingFaves(true);
       setQuietlyRefreshingTradDevos(true);
@@ -173,6 +177,9 @@ export default function App() {
             fontSize: 18,
           },
           headerTitleAlign: "center",
+          headerLeftContainerStyle: {
+            paddingLeft: 24,
+          },
         }}
       >
         <Stack.Screen
