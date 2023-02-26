@@ -5,12 +5,15 @@ import { useState } from "react";
 export const useApi = <T>(url: string, data?: RequestInit) => {
   const [isLoading, setIsLoading] = useState(false);
   const [responseData, setResponseData] = useState<T | null>(null);
+  const [requestTime, setRequestTime] = useState<number | null>(null); // How much time the request took (in ms)
   const { setError } = useStore();
 
   const fetchData = async () => {
     setIsLoading(true);
+    const startTime = Date.now();
     try {
       const response = await fetch(url, data);
+      setRequestTime(Date.now() - startTime);
       if (response.status === 200) {
         setResponseData(await response.json());
       } else {
@@ -96,5 +99,11 @@ export const useApi = <T>(url: string, data?: RequestInit) => {
     }
   };
 
-  return { isLoading, data: responseData, fetchData, setResponseData };
+  return {
+    isLoading,
+    data: responseData,
+    fetchData,
+    setResponseData,
+    requestTime,
+  };
 };

@@ -1,6 +1,8 @@
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { logShareDevotional, logViewDevotional } from "@src/analytics";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
+import { TTradDevo } from "@src/types";
 import { formatDate, getVerseRef } from "@src/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -12,7 +14,7 @@ export function DevotionalCard({
   handleFavoritingDevo,
   handleUnfavoritingDevo,
 }: {
-  devotional: any;
+  devotional: TTradDevo;
   faves: string[];
   handleFavoritingDevo: (devo: any) => void;
   handleUnfavoritingDevo: (devo: any) => void;
@@ -28,9 +30,14 @@ export function DevotionalCard({
         if (!verseRef.current || !verseRef.current.capture) return;
         try {
           const imageUri = await verseRef.current.capture();
-          await Share.share({
+          const shareAction = await Share.share({
             url: imageUri,
           });
+          logShareDevotional(
+            devotional.id,
+            devotional.title,
+            shareAction.action
+          );
         } catch (err: any) {
           console.error(err.message);
           setError(err.message);
@@ -43,6 +50,12 @@ export function DevotionalCard({
       }, 100);
     }
   }, [isSharing]);
+
+  useEffect(() => {
+    if (isExpanded) {
+      logViewDevotional(devotional.id, devotional.title);
+    }
+  }, [isExpanded]);
 
   return (
     <View
@@ -57,7 +70,7 @@ export function DevotionalCard({
         onPress={() => setIsExpanded((isExpanded) => !isExpanded)}
       >
         {!!devotional.title && (
-          <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 4 }}>
+          <Text className="text-lg text-ffBlack font-bold leading-tight mb-2">
             {devotional.title}
           </Text>
         )}
@@ -66,6 +79,7 @@ export function DevotionalCard({
             fontSize: 16,
             lineHeight: 24,
             fontStyle: "italic",
+            color: "#333",
           }}
         >
           {devotional.input}
@@ -95,7 +109,7 @@ export function DevotionalCard({
           justifyContent: "space-between",
           alignItems: "center",
           paddingVertical: 10,
-          marginTop: 10
+          marginTop: 10,
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>

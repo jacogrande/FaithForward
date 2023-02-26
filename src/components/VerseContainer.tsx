@@ -1,3 +1,4 @@
+import { logShareDevotional } from "@src/analytics";
 import { formatVerse } from "@src/components/DevotionalCard";
 import LoadingMessages from "@src/components/LoadingMessages";
 import VerseActionModal from "@src/components/VerseActionModal";
@@ -40,9 +41,10 @@ const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
         if (!verseRef.current || !verseRef.current.capture) return;
         try {
           const imageUri = await verseRef.current.capture();
-          await Share.share({
+          const shareAction = await Share.share({
             url: imageUri,
           });
+          logShareDevotional("", "Personal Devotional", shareAction.action);
         } catch (err) {
           console.error(err);
         } finally {

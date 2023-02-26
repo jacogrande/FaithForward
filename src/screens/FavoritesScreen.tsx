@@ -1,3 +1,8 @@
+import {
+  logFavoriteDevotional,
+  logFavoriteSermon,
+  logSermonPlay,
+} from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { Sermon } from "@src/components/Sermon";
@@ -88,6 +93,7 @@ export default function FavoritesScreen() {
 
   async function startPlayingSermon(sermon: TSermon) {
     try {
+      logSermonPlay(sermon.id, sermon.title);
       if (playingAudioObject?.id === sermon.id) {
         await playSound(null);
       } else {
@@ -108,6 +114,7 @@ export default function FavoritesScreen() {
         favoriteSermons.filter((fave) => fave.id !== sermon.id)
       );
       await unfavoriteSermon(sermon);
+      logFavoriteSermon(sermon.id, sermon.title, false);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error unfavoriting sermon:");
@@ -136,6 +143,7 @@ export default function FavoritesScreen() {
     try {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== tradDevo.id));
       await unfavoriteTradDevo(tradDevo);
+      logFavoriteDevotional(tradDevo.id, tradDevo.title, false);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error unfavoriting tradDevo:");
@@ -148,6 +156,7 @@ export default function FavoritesScreen() {
     try {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== devo.id));
       await unfavoritePersonalDevo(devo);
+      logFavoriteDevotional(devo.id, "Personal Devo", false);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error unfavoriting devo:");
@@ -169,29 +178,41 @@ export default function FavoritesScreen() {
   return (
     <Container>
       <View style={styles.container}>
-        <View style={{ flexDirection: "row", justifyContent: "flex-start", paddingHorizontal: 24, marginVertical: 24 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            paddingHorizontal: 24,
+            marginVertical: 24,
+          }}
+        >
           <TouchableOpacity
             onPress={viewSermons}
-            style={{
-              padding: 8,
-              backgroundColor:
-                viewType === "sermons" ? colors.blue : colors.lightBlue,
-              borderRadius: 8,
-              marginRight: 20,
-            }}
+            className={`px-6 py-2 mr-4 rounded-full ${
+              viewType === "sermons" ? "bg-ffBlue" : "bg-ffDarkPaper"
+            }`}
           >
-            <Text>Sermons</Text>
+            <Text
+              className={`${
+                viewType === "sermons" ? "text-white" : "text-ffBlack"
+              } font-semibold`}
+            >
+              Sermons
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={viewDevos}
-            style={{
-              padding: 8,
-              backgroundColor:
-                viewType === "devos" ? colors.blue : colors.lightBlue,
-              borderRadius: 8,
-            }}
+            className={`px-6 py-2 rounded-full ${
+              viewType === "devos" ? "bg-ffBlue" : "bg-ffDarkPaper"
+            }`}
           >
-            <Text>Devotionals</Text>
+            <Text
+              className={`${
+                viewType === "devos" ? "text-white" : "text-ffBlack"
+              } font-semibold`}
+            >
+              Devotionals
+            </Text>
           </TouchableOpacity>
         </View>
         {isAnonymous ? (

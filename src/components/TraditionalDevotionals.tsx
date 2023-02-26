@@ -1,3 +1,4 @@
+import { logFavoriteDevotional } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { auth, favoriteTradDevo, unfavoriteTradDevo } from "@src/firebase";
@@ -43,6 +44,7 @@ export function TraditionalDevotionals() {
     try {
       setOptimisticFaves([...optimisticFaves, devo.id]);
       await favoriteTradDevo(devo);
+      logFavoriteDevotional(devo.id, devo.title);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error favoriting devo:");
@@ -55,6 +57,7 @@ export function TraditionalDevotionals() {
     try {
       setOptimisticFaves(optimisticFaves.filter((id) => id !== devo.id));
       await unfavoriteTradDevo(devo);
+      logFavoriteDevotional(devo.id, devo.title, false);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error unfavoriting devo:");
