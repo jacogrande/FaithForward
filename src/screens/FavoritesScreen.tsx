@@ -1,6 +1,4 @@
 import {
-  logFavoriteDevotional,
-  logFavoriteSermon,
   logSermonPlay,
   logUnfavoriteDevotional,
   logUnfavoriteSermon,
@@ -20,7 +18,6 @@ import { usePastDevos } from "@src/hooks/usePastDevos";
 import { useSermons } from "@src/hooks/useSermons";
 import { useTradDevos } from "@src/hooks/useTradDevos";
 import useStore, { useAudioStore } from "@src/store";
-import colors from "@src/styles/colors";
 import { TPersonalDevo, TSermon, TTradDevo } from "@src/types";
 import { onIdTokenChanged } from "firebase/auth";
 import React, { useEffect, useState } from "react";

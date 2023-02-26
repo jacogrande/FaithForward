@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import analytics, { logLogin, logSignup } from "@src/analytics";
+import { logLogin, logSignup } from "@src/analytics";
 import { auth } from "@src/firebase";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";

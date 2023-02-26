@@ -2,7 +2,6 @@ import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { logShareDevotional, logViewDevotional } from "@src/analytics";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
-import { TTradDevo } from "@src/types";
 import { formatDate, getVerseRef } from "@src/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
