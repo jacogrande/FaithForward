@@ -1,3 +1,4 @@
+import { logFavoriteSermon, logSermonPlay } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { Sermon } from "@src/components/Sermon";
 import { auth, favoriteSermon, unfavoriteSermon } from "@src/firebase";
@@ -40,6 +41,7 @@ export default function SermonsScreen() {
 
   async function startPlayingSermon(sermon: TSermon) {
     try {
+      logSermonPlay(sermon.id, sermon.title);
       if (playingAudioObject?.id === sermon.id) {
         await playSound(null);
       } else {
@@ -58,6 +60,7 @@ export default function SermonsScreen() {
     try {
       setOptimisticFaves([...optimisticFaves, sermon.id]);
       await favoriteSermon(sermon);
+      logFavoriteSermon(sermon.id, sermon.title);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error favoriting sermon:");
@@ -70,6 +73,7 @@ export default function SermonsScreen() {
     try {
       setOptimisticFaves(optimisticFaves.filter((id) => id !== sermon.id));
       await unfavoriteSermon(sermon);
+      logFavoriteSermon(sermon.id, sermon.title, false);
       setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error unfavoriting sermon:");

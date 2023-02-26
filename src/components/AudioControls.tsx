@@ -1,4 +1,5 @@
 import { FontAwesome5 } from "@expo/vector-icons";
+import { logSermonPause } from "@src/analytics";
 import { useAudio } from "@src/hooks/useAudio";
 import { useAudioStore } from "@src/store";
 import colors from "@src/styles/colors";
@@ -8,6 +9,11 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 export function AudioControls() {
   const { sound, playingAudioObject, isPlaying } = useAudioStore();
   const { playSound, pauseSound, stopSound } = useAudio();
+
+  const pause = () => {
+    pauseSound();
+    logSermonPause();
+  };
 
   if (!sound) {
     return <></>;
@@ -19,7 +25,7 @@ export function AudioControls() {
       <Text style={styles.playingSermonText}>{playingAudioObject?.title}</Text>
       <View style={styles.audioControlButtons}>
         {isPlaying ? (
-          <TouchableOpacity style={{ marginRight: 25 }} onPress={pauseSound}>
+          <TouchableOpacity style={{ marginRight: 25 }} onPress={pause}>
             <FontAwesome5 name="pause" size={24} color={colors.blue} />
           </TouchableOpacity>
         ) : (
