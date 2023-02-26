@@ -20,6 +20,17 @@ const BaseNavigator: React.FC = () => {
         tabBarLabelStyle: {
           fontWeight: "600",
         },
+        headerTintColor: colors.blue,
+        headerStyle: {
+          backgroundColor: colors.paper,
+          shadowColor: "transparent",
+        },
+        headerTitleStyle: {
+          color: colors.black,
+          fontWeight: "600",
+          fontSize: 18,
+        },
+        headerTitleAlign: "center",
         tabBarActiveTintColor: colors.blue,
       }}
     >

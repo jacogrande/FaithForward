@@ -6,6 +6,7 @@ import { useAudio } from "@src/hooks/useAudio";
 import { useFavorites } from "@src/hooks/useFavorites";
 import { useSermons } from "@src/hooks/useSermons";
 import useStore, { useAudioStore } from "@src/store";
+import colors from "@src/styles/colors";
 import { TSermon } from "@src/types";
 import React, { useEffect, useState } from "react";
 import {
@@ -126,7 +127,7 @@ export default function SermonsScreen() {
 
 const styles = StyleSheet.create({
   sermonsContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.paper,
   },
   loadingContainer: {
     flex: 1,
