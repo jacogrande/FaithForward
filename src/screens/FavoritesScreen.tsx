@@ -18,7 +18,6 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -168,8 +167,15 @@ export default function FavoritesScreen() {
 
   return (
     <Container>
-      <View style={styles.container}>
-        <View style={{ flexDirection: "row", justifyContent: "flex-start", paddingHorizontal: 24, marginVertical: 24 }}>
+      <View className="flex-1">
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            paddingHorizontal: 24,
+            marginVertical: 24,
+          }}
+        >
           <TouchableOpacity
             onPress={viewSermons}
             style={{
@@ -195,7 +201,7 @@ export default function FavoritesScreen() {
           </TouchableOpacity>
         </View>
         {isAnonymous ? (
-          <View style={{ marginVertical: 20 }}>
+          <View className="flex-1 my-5 mx-7">
             <Text>You must have an account to save favorites.</Text>
           </View>
         ) : (
@@ -277,9 +283,3 @@ const EmptyFavorites = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

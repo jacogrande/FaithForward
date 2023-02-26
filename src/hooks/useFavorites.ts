@@ -21,7 +21,6 @@ export const useFavorites = (): Signature => {
 
   // Fetch favorites from Firestore
   const fetchFavorites = async () => {
-    console.log("Fetching favorites...");
     try {
       if (!auth.currentUser) {
         console.warn("No user is logged in.");

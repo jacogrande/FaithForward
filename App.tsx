@@ -121,36 +121,36 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Faith Forward"
-        screenOptions={{
-          headerBackTitleVisible: false,
-          headerTintColor: colors.blue,
-          headerStyle: {
-            backgroundColor: colors.paper,
-            shadowColor: "transparent",
-            height: 70,
-          },
-          headerTitleStyle: {
-            color: colors.black,
-            fontWeight: "bold",
-            fontSize: 18,
-          },
-          headerTitleAlign: "center",
-        }}
-      >
-        <Stack.Screen
-          name="Faith Forward"
-          component={Navigation}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Sign Up"
-          component={AuthScreen}
-          options={{ headerTitle: "" }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Faith Forward"
+          screenOptions={{
+            headerBackTitleVisible: false,
+            headerTintColor: colors.blue,
+            headerStyle: {
+              backgroundColor: colors.paper,
+              shadowColor: "transparent",
+              height: 70,
+            },
+            headerTitleStyle: {
+              color: colors.black,
+              fontWeight: "bold",
+              fontSize: 18,
+            },
+            headerTitleAlign: "center",
+          }}
+        >
+          <Stack.Screen
+            name="Faith Forward"
+            component={Navigation}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Sign Up"
+            component={AuthScreen}
+            options={{ headerTitle: "" }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
   );
 }

@@ -21,7 +21,6 @@ export const usePastDevos = (): Signature => {
 
   // Fetch pastDevos from Firestore
   const fetchPastDevos = async () => {
-    console.log("Fetching pastDevos...");
     try {
       // Get user ref
       if (!auth.currentUser) {

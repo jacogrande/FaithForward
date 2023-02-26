@@ -22,7 +22,6 @@ export const useTradDevos = (): Signature => {
 
   // Fetch tradDevos from Firestore
   const fetchTradDevos = async () => {
-    console.log("Fetching tradDevos...");
     try {
       let devos: TTradDevo[] = [];
       const tradDevosQuery = query(

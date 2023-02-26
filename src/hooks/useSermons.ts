@@ -22,7 +22,6 @@ export const useSermons = (): Signature => {
 
   // Fetch sermons from Firestore
   const fetchSermons = async () => {
-    console.log("Fetching sermons...");
     try {
       let ss: TSermon[] = [];
       const sermonsQuery = query(

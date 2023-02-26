@@ -11,27 +11,25 @@ const Stack = createStackNavigator();
 const BaseNavigator: React.FC = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Prompt"
+      initialRouteName="Devotionals"
       screenOptions={{
         headerBackTitleVisible: false,
         headerTintColor: colors.blue,
         headerStyle: {
           backgroundColor: colors.paper,
           shadowColor: "transparent",
-          height: 70,
         },
         headerTitleStyle: {
           color: colors.black,
-          fontWeight: "bold",
+          fontWeight: "600",
           fontSize: 18,
         },
         headerTitleAlign: "center",
       }}
     >
       <Stack.Screen
-        name="Prompt"
+        name="Devotionals"
         component={DevoNavigator}
-        options={{ headerShown: false }}
       />
       <Stack.Screen name="Past Devotionals" component={PastDevotionals} />
       <Stack.Screen name="Exegesis" component={VerseAnalysisScreen} />
