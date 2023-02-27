@@ -1,7 +1,7 @@
 import { createClient } from "@segment/analytics-react-native";
 
 const analytics = createClient({
-  writeKey: "EG2VNIJRwclr8Ls7NckUctGCQEuoZfzr",
+  writeKey: "Pu7wg6OGDGP2qeFdEglRDtdxkbnzRvvK",
   trackAppLifecycleEvents: true,
   //additional config options
 });
