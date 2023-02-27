@@ -5,6 +5,7 @@ import ProfileNavigator from "@src/screens/ProfileNavigator";
 import SermonsScreen from "@src/screens/SermonsScreen";
 import colors from "@src/styles/colors";
 import * as React from "react";
+import BibleScreen from "./BibleScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -41,6 +42,16 @@ const BaseNavigator: React.FC = () => {
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="md-sunny" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Bible"
+        component={BibleScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome5 name="bible" size={size} color={color} />
           ),
         }}
       />
