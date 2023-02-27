@@ -99,9 +99,9 @@ export default function App() {
   }, [user, pushToken]);
 
   onAuthStateChanged(auth, (u) => {
-    if (u && u !== user) {
+    if (u !== user) {
       setUser(u);
-      if (analytics.userInfo.get().userId !== u.uid) {
+      if (u && analytics.userInfo.get().userId !== u.uid) {
         analytics.identify(u.uid);
       }
       setLoading(false);
