@@ -82,12 +82,13 @@ export function TraditionalDevotionals() {
     <Container>
       <FlatList
         data={tradDevos}
-        renderItem={({ item }: { item: TTradDevo }) => (
+        renderItem={({ item, index }: { item: TTradDevo, index: number }) => (
           <DevotionalCard
             devotional={item}
             faves={optimisticFaves}
             handleFavoritingDevo={handleFavoritingDevo}
             handleUnfavoritingDevo={handleUnfavoritingDevo}
+            initExpanded={index === 0}
           />
         )}
         keyExtractor={(item: TTradDevo) => item.id}

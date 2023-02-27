@@ -12,14 +12,16 @@ export function DevotionalCard({
   faves,
   handleFavoritingDevo,
   handleUnfavoritingDevo,
+  initExpanded
 }: {
   devotional: any;
   faves: string[];
   handleFavoritingDevo: (devo: any) => void;
   handleUnfavoritingDevo: (devo: any) => void;
+  initExpanded?: boolean;
 }) {
   const [isSharing, setIsSharing] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(initExpanded || false);
   const verseRef = useRef<ViewShot | null>(null);
   const { setError } = useStore();
 

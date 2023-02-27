@@ -40,6 +40,7 @@ const BaseNavigator: React.FC = () => {
         component={HomeNavigator}
         options={{
           headerShown: false,
+          tabBarLabel: "Devotionals",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="md-sunny" size={size} color={color} />
           ),
