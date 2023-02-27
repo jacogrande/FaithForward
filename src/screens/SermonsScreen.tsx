@@ -1,3 +1,8 @@
+import {
+  logFavoriteSermon,
+  logSermonPlay,
+  logUnfavoriteSermon,
+} from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { Sermon } from "@src/components/Sermon";
 import { auth, favoriteSermon, unfavoriteSermon } from "@src/firebase";
@@ -5,6 +10,7 @@ import { useAudio } from "@src/hooks/useAudio";
 import { useFavorites } from "@src/hooks/useFavorites";
 import { useSermons } from "@src/hooks/useSermons";
 import useStore, { useAudioStore } from "@src/store";
+import colors from "@src/styles/colors";
 import { TSermon } from "@src/types";
 import React, { useEffect, useState } from "react";
 import {
@@ -42,6 +48,7 @@ export default function SermonsScreen() {
 
   async function startPlayingSermon(sermon: TSermon) {
     try {
+      logSermonPlay(sermon.id, sermon.title);
       if (playingAudioObject?.id === sermon.id) {
         await playSound(null);
       } else {
@@ -60,6 +67,7 @@ export default function SermonsScreen() {
     try {
       setOptimisticFaves((optimisticFaves) => [...optimisticFaves, sermon.id]);
       await favoriteSermon(sermon);
+      logFavoriteSermon(sermon.id, sermon.title);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     } catch (err: any) {
@@ -75,6 +83,7 @@ export default function SermonsScreen() {
         optimisticFaves.filter((id) => id !== sermon.id)
       );
       await unfavoriteSermon(sermon);
+      logUnfavoriteSermon(sermon.id, sermon.title);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     } catch (err: any) {
@@ -122,7 +131,7 @@ export default function SermonsScreen() {
 
 const styles = StyleSheet.create({
   sermonsContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.paper,
   },
   loadingContainer: {
     flex: 1,

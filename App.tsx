@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import analytics from "@src/analytics";
 import { PROJECT_ID } from "@src/constants";
 import { auth, syncPushToken } from "@src/firebase";
 import { useFavorites } from "@src/hooks/useFavorites";
@@ -56,6 +57,7 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
   const [loadingAutoSignIn, setLoadingAutoSignIn] = useState(false);
   const [notification, setNotification] = useState<any>(false);
+  const [currentRoute, setCurrentRoute] = useState<string>("Unknown");
   const { pushToken, setPushToken } = useStore();
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -97,13 +99,16 @@ export default function App() {
   }, [user, pushToken]);
 
   onAuthStateChanged(auth, (u) => {
-    if (u !== user) {
+    if (u && u !== user) {
       setUser(u);
-      setLoading(false);
+      if (u && analytics.userInfo.get().userId !== u.uid) {
+        analytics.identify(u.uid);
+      }
       setQuietlyRefreshingFaves(true);
       setQuietlyRefreshingTradDevos(true);
       setQuietlyRefreshingSermons(true);
     }
+    setLoading(false);
   });
 
   const autoSignIn = async () => {
@@ -126,14 +131,35 @@ export default function App() {
 
   if (loading || loadingAutoSignIn) {
     return (
-      <View className="flex-1">
+      <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
       </View>
     );
   }
 
+  // Recursively find the current screen name
+  const getRouteName = (state: any): string => {
+    if (!state || typeof state.index !== "number") {
+      return "Unknown";
+    }
+    const route = state.routes[state.index];
+    if (route.state) {
+      return getRouteName(route.state);
+    }
+
+    return route.name;
+  };
+
+  const handleNavigationStateChange = (state: any) => {
+    const newRoute = getRouteName(state);
+    if (currentRoute !== newRoute) {
+      analytics.screen(newRoute);
+      setCurrentRoute(newRoute);
+    }
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer onStateChange={handleNavigationStateChange}>
       <Stack.Navigator
         initialRouteName="Faith Forward"
         screenOptions={{
@@ -150,6 +176,9 @@ export default function App() {
             fontSize: 18,
           },
           headerTitleAlign: "center",
+          headerLeftContainerStyle: {
+            paddingLeft: 24,
+          },
         }}
       >
         <Stack.Screen

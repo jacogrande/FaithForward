@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { logCreateDevotional } from "@src/analytics";
 import VerseContainer from "@src/components/VerseContainer";
 import { API_URL } from "@src/constants";
 import { auth } from "@src/firebase";
@@ -36,6 +37,7 @@ export function PersonalizedDevotional() {
   const {
     isLoading,
     data,
+    requestTime,
     fetchData: getDevotional,
   } = useApi<{
     response: string;
@@ -56,6 +58,7 @@ export function PersonalizedDevotional() {
     if (data && data.response && data.promptId) {
       setPromptId(data.promptId);
       setDevotional(data.response);
+      logCreateDevotional(data.promptId, input, requestTime || 0);
       requestReviewTimeout = setTimeout(() => {
         requestReview();
       }, 10000);
@@ -79,6 +82,7 @@ export function PersonalizedDevotional() {
 
   const submit = () => {
     getDevotional();
+
     setDevotional("");
     Keyboard.dismiss();
   };
@@ -100,11 +104,11 @@ export function PersonalizedDevotional() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.container}>
-          <View style={{ marginBottom: 20, alignItems: "center" }}>
-            <Text className="text-gray-800 text-base font-medium py-2">
+          <View style={{ marginBottom: 32, alignItems: "center" }}>
+            <Text className="text-ffBlack text-[28px] font-bold py-2">
               Ask a question
             </Text>
-            <Text style={{ color: colors.black, fontSize: 16 }}>
+            <Text style={{ color: "#444", fontSize: 16, fontWeight: "500" }}>
               Receive a tailored devotional just for you
             </Text>
           </View>
@@ -126,15 +130,26 @@ export function PersonalizedDevotional() {
               ]}
               disabled={!input || isLoading}
             >
-              <Text style={styles.buttonText}>Get Guidance</Text>
+              <Text style={styles.buttonText}>Get Devotional</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonRow}>
             <TouchableOpacity
               onPress={seePastDevos}
-              style={{ flex: 1, alignItems: "center", paddingVertical: 20 }}
+              style={{
+                flex: 1,
+                alignItems: "center",
+                paddingVertical: 20,
+                marginTop: 8,
+              }}
             >
-              <Text style={{ color: colors.black, fontSize: 14 }}>
+              <Text
+                style={{
+                  color: "#444",
+                  fontSize: 14,
+                  fontWeight: "500",
+                }}
+              >
                 See past devotionals
               </Text>
             </TouchableOpacity>

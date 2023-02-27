@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { logLogin, logSignup } from "@src/analytics";
 import { auth } from "@src/firebase";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
@@ -37,6 +38,10 @@ export const AuthScreen = () => {
   const navigation =
     useNavigation<StackNavigationProp<{ "Faith Forward": undefined }>>();
 
+  // React.useEffect(() => {
+  //   analytics.screen("Auth");
+  // }, []);
+
   const handleError = (err: any): void => {
     console.error(err);
     if (err.message.includes("email-already-in-use")) {
@@ -67,6 +72,7 @@ export const AuthScreen = () => {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
+      logSignup("email");
       setError("");
       navigation.navigate("Faith Forward");
     } catch (err) {
@@ -81,6 +87,7 @@ export const AuthScreen = () => {
       setLoading(true);
       Keyboard.dismiss();
       await signInWithEmailAndPassword(auth, email, password);
+      logLogin("email");
       setError("");
       navigation.navigate("Faith Forward");
     } catch (err) {

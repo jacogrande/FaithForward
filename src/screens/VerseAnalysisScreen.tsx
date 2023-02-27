@@ -1,3 +1,4 @@
+import { logGetExegesis } from "@src/analytics";
 import LoadingMessages from "@src/components/LoadingMessages";
 import { API_URL } from "@src/constants";
 import { auth } from "@src/firebase";
@@ -27,6 +28,7 @@ const VerseAnalysisScreen: React.FC = () => {
 
   useEffect(() => {
     if (selectedVerse) {
+      logGetExegesis(selectedVerse, promptId);
       getExegesis();
     }
   }, [selectedVerse]);

@@ -1,3 +1,4 @@
+import { logFavoriteDevotional, logUnfavoriteDevotional } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { auth, favoriteTradDevo, unfavoriteTradDevo } from "@src/firebase";
@@ -45,6 +46,7 @@ export function TraditionalDevotionals() {
     try {
       setOptimisticFaves([...optimisticFaves, devo.id]);
       await favoriteTradDevo(devo);
+      logFavoriteDevotional(devo.id, devo.title);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     } catch (err: any) {
@@ -58,6 +60,7 @@ export function TraditionalDevotionals() {
     try {
       setOptimisticFaves(optimisticFaves.filter((id) => id !== devo.id));
       await unfavoriteTradDevo(devo);
+      logUnfavoriteDevotional(devo.id, devo.title);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     } catch (err: any) {
@@ -79,12 +82,13 @@ export function TraditionalDevotionals() {
     <Container>
       <FlatList
         data={tradDevos}
-        renderItem={({ item }: { item: TTradDevo }) => (
+        renderItem={({ item, index }: { item: TTradDevo, index: number }) => (
           <DevotionalCard
             devotional={item}
             faves={optimisticFaves}
             handleFavoritingDevo={handleFavoritingDevo}
             handleUnfavoritingDevo={handleUnfavoritingDevo}
+            initExpanded={index === 0}
           />
         )}
         keyExtractor={(item: TTradDevo) => item.id}

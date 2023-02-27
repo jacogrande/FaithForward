@@ -27,10 +27,7 @@ const BaseNavigator: React.FC = () => {
         headerTitleAlign: "center",
       }}
     >
-      <Stack.Screen
-        name="Devotionals"
-        component={DevoNavigator}
-      />
+      <Stack.Screen name="Devotionals" component={DevoNavigator} />
       <Stack.Screen name="Past Devotionals" component={PastDevotionals} />
       <Stack.Screen name="Exegesis" component={VerseAnalysisScreen} />
       <Stack.Screen name="Reader" component={BibleReaderScreen} />

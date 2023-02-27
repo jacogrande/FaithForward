@@ -20,6 +20,17 @@ const BaseNavigator: React.FC = () => {
         tabBarLabelStyle: {
           fontWeight: "600",
         },
+        headerTintColor: colors.blue,
+        headerStyle: {
+          backgroundColor: colors.paper,
+          shadowColor: "transparent",
+        },
+        headerTitleStyle: {
+          color: colors.black,
+          fontWeight: "600",
+          fontSize: 18,
+        },
+        headerTitleAlign: "center",
         tabBarActiveTintColor: colors.blue,
       }}
     >
@@ -28,6 +39,7 @@ const BaseNavigator: React.FC = () => {
         component={HomeNavigator}
         options={{
           headerShown: false,
+          tabBarLabel: "Devotionals",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="md-sunny" size={size} color={color} />
           ),
@@ -37,6 +49,10 @@ const BaseNavigator: React.FC = () => {
         name="Sermons"
         component={SermonsScreen}
         options={{
+          headerStyle: {
+            backgroundColor: colors.paper,
+            shadowColor: "#ccc",
+          },
           headerTitleStyle: {
             color: colors.black,
             fontWeight: "600",

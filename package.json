@@ -9,11 +9,14 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.17.11",
     "@react-navigation/bottom-tabs": "^6.5.2",
     "@react-navigation/material-top-tabs": "^6.6.0",
     "@react-navigation/native": "^6.1.1",
     "@react-navigation/native-stack": "^6.9.7",
     "@react-navigation/stack": "^6.3.10",
+    "@segment/analytics-react-native": "^2.13.0",
+    "@segment/sovran-react-native": "^0.4.5",
     "axios": "^1.2.1",
     "expo": "~47.0.9",
     "expo-av": "~13.0.3",
@@ -48,7 +51,6 @@
     "@types/react": "~18.0.14",
     "@types/react-native": "~0.70.6",
     "babel-plugin-module-resolver": "^5.0.0",
-    "react-native-firebase": "^5.6.0",
     "tailwindcss": "^3.2.7",
     "typescript": "^4.6.3"
   },
