@@ -48,6 +48,10 @@ const BaseNavigator: React.FC = () => {
         name="Sermons"
         component={SermonsScreen}
         options={{
+          headerStyle: {
+            backgroundColor: colors.paper,
+            shadowColor: "#ccc",
+          },
           headerTitleStyle: {
             color: colors.black,
             fontWeight: "600",

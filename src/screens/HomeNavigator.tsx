@@ -17,7 +17,7 @@ const BaseNavigator: React.FC = () => {
         headerTintColor: colors.blue,
         headerStyle: {
           backgroundColor: colors.paper,
-          shadowColor: "#d0d0d0",
+          shadowColor: "transparent",
         },
         headerTitleStyle: {
           color: colors.black,
