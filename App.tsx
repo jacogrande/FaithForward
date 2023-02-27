@@ -99,16 +99,16 @@ export default function App() {
   }, [user, pushToken]);
 
   onAuthStateChanged(auth, (u) => {
-    if (u !== user) {
+    if (u && u !== user) {
       setUser(u);
       if (u && analytics.userInfo.get().userId !== u.uid) {
         analytics.identify(u.uid);
       }
-      setLoading(false);
       setQuietlyRefreshingFaves(true);
       setQuietlyRefreshingTradDevos(true);
       setQuietlyRefreshingSermons(true);
     }
+    setLoading(false);
   });
 
   const autoSignIn = async () => {
@@ -131,7 +131,7 @@ export default function App() {
 
   if (loading || loadingAutoSignIn) {
     return (
-      <View className="flex-1">
+      <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
       </View>
     );
