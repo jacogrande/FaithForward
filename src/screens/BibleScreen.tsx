@@ -1,31 +1,40 @@
-import { API_URL } from "@src/constants";
-import React, { useState, useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { Container } from "@src/components/Container";
+import { Loading } from "@src/components/Loading";
+import { API_URL, BIBLE_BOOKS } from "@src/constants";
+import { useApi } from "@src/hooks/useApi";
+import colors from "@src/styles/colors";
+import React, { useEffect, useState } from "react";
 import {
-  Text,
-  View,
-  PanResponder,
-  StyleSheet,
   ScrollView,
-  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-// import apiConfig from "../../apiConfig";
-import bookList from "../data/bookList";
-import { useApi } from "../hooks/useApi";
-import colors from "../styles/colors";
 
 interface IVerse {
   verse_nr: number;
   verse: string;
 }
 
+// TODO: Add buttons for previous and next chapter, as well as table of contents
 const BibleScreen = () => {
   const [book, setBook] = useState<string>("Genesis");
   const [chapter, setChapter] = useState(1);
   const [error, setError] = useState<string | null>(null);
-  const [pan, setPan] = useState(new Animated.ValueXY());
+  const [showToc, setShowToc] = useState(false);
+
+  console.debug("*** BibleScreen ***")
+  console.debug("book: ", book)
+  console.debug("chapter: ", chapter)
+  console.debug("error: ", error)
+  console.debug("showToc: ", showToc)
 
   const nextChapter = () => {
-    const currentBook = bookList[book];
+    console.debug("nextChapter")
+    const currentBook = BIBLE_BOOKS[book];
+    console.debug("currentBook: ", currentBook)
     if (chapter < currentBook.chapters) {
       setChapter(chapter + 1);
     } else {
@@ -35,21 +44,21 @@ const BibleScreen = () => {
         setChapter(1);
       }
     }
-    pan.setValue({ x: 0, y: 0 });
   };
 
   const previousChapter = () => {
-    const currentBook = bookList[book];
+    console.debug("previousChapter")
+    const currentBook = BIBLE_BOOKS[book];
+    console.debug("currentBook: ", currentBook)
     if (chapter > 1) {
       setChapter(chapter - 1);
     } else {
       const prevBook = currentBook.prevBook;
       if (prevBook) {
         setBook(prevBook);
-        setChapter(bookList[prevBook].chapters);
+        setChapter(BIBLE_BOOKS[prevBook].chapters);
       }
     }
-    pan.setValue({ x: 0, y: 0 });
   };
 
   // This cloud function isn't deployed yet.
@@ -83,48 +92,82 @@ const BibleScreen = () => {
     }
   }, [book, chapter]);
 
-  const panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (evt, gestureState) => {
-      return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
-    },
-    onPanResponderMove: (evt, gestureState) =>
-      pan.setValue({ x: gestureState.dx, y: 0 }),
-    onPanResponderRelease: (evt, gestureState) => {
-      if (gestureState.dx > 75) {
-        // Handle swipe to the right (previous chapter)
-        // Swipe to the right, display the previous chapter
-        previousChapter();
-      } else if (gestureState.dx < -75) {
-        // Handle swipe to the left (next chapter)
-        nextChapter();
-      } else {
-        Animated.timing(pan, {
-          toValue: { x: 0, y: 0 },
-          duration: 200,
-          useNativeDriver: true,
-        }).start();
-      }
-    },
-  });
+  function goToBook(book: string) {
+    setBook(book);
+    setChapter(1);
+    setShowToc(false);
+  }
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  // TODO: Refactor into separate stack nav screens
   return (
-    <ScrollView style={styles.scroll} {...panResponder.panHandlers}>
-      <Animated.View
-        style={{ transform: [{ translateX: pan.x }] }}
-        {...panResponder.panHandlers}
-      >
-        <View style={styles.container}>
-          <Text style={styles.header}>
-            {book} {chapter}
-          </Text>
-          <Text style={styles.text}>
-            {data?.chapter.map((verse) => (
-              <Text key={verse.verse_nr}>{verse.verse}</Text>
-            ))}
-          </Text>
+    <Container>
+      {showToc ? (
+        <View className="flex-1 justify-center items-center py-4 px-6 bg-ffPaper">
+          <View className="flex flex-row justify-between items-center py-4 px-6 bg-ffPaper">
+            <TouchableOpacity
+              onPress={() => setShowToc(false)}
+              className="text-gray-700 hover:text-gray-900"
+            >
+              <Ionicons name="ios-arrow-back" size={28} color={colors.black} />
+            </TouchableOpacity>
+            <Text style={styles.header} className="font-bold text-xl">
+              Table of Contents
+            </Text>
+          </View>
+          <ScrollView style={[styles.scroll, { width: "100%" }]}>
+            <View className="bg-ffPaper">
+              {Object.keys(BIBLE_BOOKS).map((book) => (
+                <TouchableOpacity key={book} onPress={() => goToBook(book)}>
+                  <Text className="text-xl">
+                    {book}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
         </View>
-      </Animated.View>
-    </ScrollView>
+      ) : (
+        <>
+          <View className="flex flex-row justify-between items-center py-4 px-6 bg-ffPaper">
+            <TouchableOpacity
+              onPress={previousChapter}
+              className="text-gray-700 hover:text-gray-900"
+            >
+              <Ionicons name="ios-arrow-back" size={28} color={colors.black} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowToc(true)}>
+              <Text style={styles.header} className="font-bold text-xl">
+                {book} {chapter}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={nextChapter}
+              className="text-gray-700 hover:text-gray-900"
+            >
+              <Ionicons
+                name="ios-arrow-forward"
+                size={28}
+                color={colors.black}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.scroll}>
+            <View className="flex-1 justify-center items-center bg-ffPaper">
+              <Text style={styles.text}>
+                {data?.chapter.map((verse) => (
+                  <Text key={verse.verse_nr}>{verse.verse}</Text>
+                ))}
+              </Text>
+            </View>
+          </ScrollView>
+        </>
+      )}
+    </Container>
   );
 };
 
@@ -132,14 +175,6 @@ const styles = StyleSheet.create({
   scroll: {
     backgroundColor: colors.paper,
     flex: 1,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.paper,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 124,
-    paddingBottom: 48,
   },
   highlight: {
     backgroundColor: "#fff3a8",
@@ -154,14 +189,10 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   header: {
-    fontSize: 28,
-    fontWeight: "600",
     fontFamily: "Baskerville",
-    color: "#333",
   },
   verseNumber: {
     fontSize: 14,
-    // lineHeight: 12,
   },
 });
 

@@ -9,6 +9,8 @@ import BibleScreen from "./BibleScreen";
 
 const Tab = createBottomTabNavigator();
 
+// TODO: Use stack navigator for Bible screen
+//       Cover: reader, table of contents
 const BaseNavigator: React.FC = () => {
   return (
     <Tab.Navigator
