@@ -1,11 +1,10 @@
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Container } from "@src/components/Container";
 import { Loading } from "@src/components/Loading";
-import { API_URL, BIBLE_BOOKS } from "@src/constants";
-import { useApi } from "@src/hooks/useApi";
-import useStore from "@src/store";
+import { BIBLE_BOOKS } from "@src/constants";
+import { useBibleChapter } from "@src/hooks/useBibleChapter";
 import colors from "@src/styles/colors";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -27,7 +26,7 @@ const BibleScreen = () => {
   const [showChapterSelection, setShowChapterSelection] = useState<
     string | null
   >(null);
-  const { setError } = useStore();
+  const { isLoading, data } = useBibleChapter(book, chapter);
 
   const nextChapter = () => {
     const currentBook = BIBLE_BOOKS[book];
@@ -55,16 +54,8 @@ const BibleScreen = () => {
     }
   };
 
-  // This cloud function isn't deployed yet.
-  const {
-    isLoading,
-    data,
-    fetchData: getBibleChapter,
-  } = useApi<{ chapter: IVerse[] }>(
-    `${API_URL}/fetchChapter?book=${book}&chapter=${chapter}`
-  );
-
   // Adds verse numbers to the chapter
+  // TODO: Extract, make more robust
   const Chapter = () => {
     if (!data || !data.chapter) {
       // TODO: Fix this so it doesn't throw on initial load
@@ -83,21 +74,6 @@ const BibleScreen = () => {
       </View>
     );
   };
-
-  useEffect(() => {
-    try {
-      getBibleChapter();
-    } catch (err) {
-      console.error(err);
-      setError((err as Error).message);
-    }
-  }, [book, chapter]);
-
-  function goToBook(book: string) {
-    setBook(book);
-    setChapter(1);
-    setShowToc(false);
-  }
 
   if (isLoading) {
     return <Loading />;
@@ -155,7 +131,7 @@ const BibleScreen = () => {
                       {Array.from(Array(BIBLE_BOOKS[book].chapters).keys()).map(
                         (chapter) => (
                           <TouchableOpacity
-                            key={chapter}
+                            key={`${book} ${chapter}`}
                             onPress={() => {
                               setBook(book);
                               setChapter(chapter + 1);

@@ -43,6 +43,7 @@
     "react-native-tab-view": "^3.5.0",
     "react-native-view-shot": "3.4",
     "react-native-web": "~0.18.9",
+    "react-query": "^3.39.3",
     "zustand": "^4.1.5"
   },
   "devDependencies": {
