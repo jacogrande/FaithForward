@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Container } from "@src/components/Container";
 import { Loading } from "@src/components/Loading";
 import { API_URL, BIBLE_BOOKS } from "@src/constants";
@@ -12,29 +12,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import useStore from "@src/store";
 
 interface IVerse {
   verse_nr: number;
   verse: string;
 }
 
-// TODO: Add buttons for previous and next chapter, as well as table of contents
+// TODO: Load chunks of chapters
 const BibleScreen = () => {
   const [book, setBook] = useState<string>("Genesis");
   const [chapter, setChapter] = useState(1);
-  const [error, setError] = useState<string | null>(null);
   const [showToc, setShowToc] = useState(false);
-
-  console.debug("*** BibleScreen ***")
-  console.debug("book: ", book)
-  console.debug("chapter: ", chapter)
-  console.debug("error: ", error)
-  console.debug("showToc: ", showToc)
+  const { setError } = useStore();
 
   const nextChapter = () => {
-    console.debug("nextChapter")
     const currentBook = BIBLE_BOOKS[book];
-    console.debug("currentBook: ", currentBook)
     if (chapter < currentBook.chapters) {
       setChapter(chapter + 1);
     } else {
@@ -47,9 +40,7 @@ const BibleScreen = () => {
   };
 
   const previousChapter = () => {
-    console.debug("previousChapter")
     const currentBook = BIBLE_BOOKS[book];
-    console.debug("currentBook: ", currentBook)
     if (chapter > 1) {
       setChapter(chapter - 1);
     } else {
@@ -71,17 +62,23 @@ const BibleScreen = () => {
   );
 
   // Adds verse numbers to the chapter
-  // const formatChapter = () => {
-  //   if (!data || !data.chapter) {
-  //     setError("Couldn't load chapter. Please try again later.");
-  //     return null;
-  //   }
-  //   let chapterText = "";
-  //   for (let verse of data.chapter) {
-  //     chapterText += `(${verse.verse_nr}) ${verse.verse.trim()} `;
-  //   }
-  //   return chapterText;
-  // };
+  const Chapter = () => {
+    if (!data || !data.chapter) {
+      setError("Couldn't load chapter. Please try again later.");
+      return <></>;
+    }
+
+    return (
+      <View style={styles.container}>
+        {data.chapter.map((verse: IVerse) => (
+          <View style={styles.verseContainer} key={verse.verse_nr}>
+            <Text style={styles.verseNr}>{verse.verse_nr}</Text>
+            <Text style={styles.verseText}>{verse.verse}</Text>
+          </View>
+        ))}
+      </View>
+    );
+  };
 
   useEffect(() => {
     try {
@@ -122,10 +119,23 @@ const BibleScreen = () => {
           <ScrollView style={[styles.scroll, { width: "100%" }]}>
             <View className="flex-1 px-6 mb-10 bg-ffPaper">
               {Object.keys(BIBLE_BOOKS).map((book) => (
-                <TouchableOpacity key={book} onPress={() => goToBook(book)}>
-                  <Text className="text-xl">
+                <TouchableOpacity
+                  key={book}
+                  onPress={() => goToBook(book)}
+                  className="flex flex-row items-center mt-4"
+                >
+                  <Text
+                    style={styles.header}
+                    className="text-xl font-bold text-gray-900 pr-2"
+                  >
                     {book}
                   </Text>
+                  <FontAwesome5
+                    name="chevron-right"
+                    size={16}
+                    color={colors.black}
+                    className="ml-auto"
+                  />
                 </TouchableOpacity>
               ))}
             </View>
@@ -140,10 +150,18 @@ const BibleScreen = () => {
             >
               <Ionicons name="ios-arrow-back" size={28} color={colors.black} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setShowToc(true)}>
-              <Text style={styles.header} className="font-bold text-xl">
+            <TouchableOpacity
+              onPress={() => setShowToc(true)}
+              className="flex flex-row items-center"
+            >
+              <Text style={styles.header} className="font-bold text-xl pr-1">
                 {book} {chapter}
               </Text>
+              <FontAwesome5
+                name="chevron-down"
+                size={14}
+                color={colors.black}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={nextChapter}
@@ -159,11 +177,7 @@ const BibleScreen = () => {
 
           <ScrollView style={styles.scroll}>
             <View className="flex-1 justify-center items-center bg-ffPaper">
-              <Text style={styles.text}>
-                {data?.chapter.map((verse) => (
-                  <Text key={verse.verse_nr}>{verse.verse}</Text>
-                ))}
-              </Text>
+              <Chapter />
             </View>
           </ScrollView>
         </>
@@ -194,6 +208,26 @@ const styles = StyleSheet.create({
   },
   verseNumber: {
     fontSize: 14,
+  },
+
+  container: {
+    flex: 1,
+    width: "100%",
+  },
+  verseContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 5,
+    marginHorizontal: "10%",
+  },
+  verseNr: {
+    fontWeight: "bold",
+    marginRight: 10,
+    fontSize: 16,
+  },
+  verseText: {
+    flex: 1,
+    fontSize: 16,
   },
 });
 

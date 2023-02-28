@@ -54,7 +54,7 @@ const BaseNavigator: React.FC = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome5 name="bible" size={size} color={color} />
+            <Ionicons name="book" size={size} color={color} />
           ),
         }}
       />
@@ -72,7 +72,7 @@ const BaseNavigator: React.FC = () => {
             fontSize: 18,
           },
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome5 name="book-reader" size={size} color={color} />
+            <FontAwesome5 name="church" size={size} color={color} />
           ),
         }}
       />
