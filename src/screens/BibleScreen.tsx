@@ -3,6 +3,7 @@ import { Container } from "@src/components/Container";
 import { Loading } from "@src/components/Loading";
 import { API_URL, BIBLE_BOOKS } from "@src/constants";
 import { useApi } from "@src/hooks/useApi";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,7 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import useStore from "@src/store";
 
 interface IVerse {
   verse_nr: number;
@@ -24,6 +24,9 @@ const BibleScreen = () => {
   const [book, setBook] = useState<string>("Genesis");
   const [chapter, setChapter] = useState(1);
   const [showToc, setShowToc] = useState(false);
+  const [showChapterSelection, setShowChapterSelection] = useState<
+    string | null
+  >(null);
   const { setError } = useStore();
 
   const nextChapter = () => {
@@ -120,24 +123,59 @@ const BibleScreen = () => {
           <ScrollView style={[styles.scroll, { width: "100%" }]}>
             <View className="flex-1 px-6 mb-10 bg-ffPaper">
               {Object.keys(BIBLE_BOOKS).map((book) => (
-                <TouchableOpacity
-                  key={book}
-                  onPress={() => goToBook(book)}
-                  className="flex flex-row items-center mt-4"
-                >
-                  <Text
-                    style={styles.header}
-                    className="text-xl font-bold text-gray-900 pr-2"
+                <>
+                  <TouchableOpacity
+                    key={book}
+                    onPress={() =>
+                      showChapterSelection === book
+                        ? setShowChapterSelection(null)
+                        : setShowChapterSelection(book)
+                    }
+                    className="flex flex-row items-center mt-4"
                   >
-                    {book}
-                  </Text>
-                  <FontAwesome5
-                    name="chevron-right"
-                    size={16}
-                    color={colors.black}
-                    className="ml-auto"
-                  />
-                </TouchableOpacity>
+                    <Text
+                      style={styles.header}
+                      className="text-xl font-bold text-gray-900 pr-2"
+                    >
+                      {book}
+                    </Text>
+                    <FontAwesome5
+                      name={
+                        showChapterSelection === book
+                          ? "chevron-up"
+                          : "chevron-down"
+                      }
+                      size={16}
+                      color={colors.black}
+                      className="ml-auto"
+                    />
+                  </TouchableOpacity>
+                  {showChapterSelection === book && (
+                    <View className="flex flex-row flex-wrap">
+                      {Array.from(Array(BIBLE_BOOKS[book].chapters).keys()).map(
+                        (chapter) => (
+                          <TouchableOpacity
+                            key={chapter}
+                            onPress={() => {
+                              setBook(book);
+                              setChapter(chapter + 1);
+                              setShowToc(false);
+                              setShowChapterSelection(null);
+                            }}
+                            className="flex flex-row items-center mt-2 mr-2 px-2 py-1 bg-gray-200 rounded"
+                          >
+                            <Text
+                              style={styles.header}
+                              className="text-lg font-bold text-gray-900 pr-2"
+                            >
+                              {chapter + 1}
+                            </Text>
+                          </TouchableOpacity>
+                        )
+                      )}
+                    </View>
+                  )}
+                </>
               ))}
             </View>
           </ScrollView>
