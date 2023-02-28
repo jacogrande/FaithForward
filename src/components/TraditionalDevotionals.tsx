@@ -1,19 +1,14 @@
 import { logFavoriteDevotional, logUnfavoriteDevotional } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
+import { Loading } from "@src/components/Loading";
 import { auth, favoriteTradDevo, unfavoriteTradDevo } from "@src/firebase";
 import { useFavorites } from "@src/hooks/useFavorites";
 import { useTradDevos } from "@src/hooks/useTradDevos";
 import useStore from "@src/store";
 import { TTradDevo } from "@src/types";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 
 function initOptimisticFaves(devos: TTradDevo[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user
@@ -71,18 +66,14 @@ export function TraditionalDevotionals() {
   }
 
   if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator />
-      </View>
-    );
+    return <Loading />;
   }
 
   return (
     <Container>
       <FlatList
         data={tradDevos}
-        renderItem={({ item, index }: { item: TTradDevo, index: number }) => (
+        renderItem={({ item, index }: { item: TTradDevo; index: number }) => (
           <DevotionalCard
             devotional={item}
             faves={optimisticFaves}

@@ -1,18 +1,13 @@
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
+import { Loading } from "@src/components/Loading";
 import { favoritePersonalDevo, unfavoritePersonalDevo } from "@src/firebase";
 import { useFavorites } from "@src/hooks/useFavorites";
 import { usePastDevos } from "@src/hooks/usePastDevos";
 import useStore from "@src/store";
 import { TPersonalDevo } from "@src/types";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 
 function initOptimisticFaves(devos: TPersonalDevo[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user
@@ -66,11 +61,7 @@ export function PastDevotionals() {
   }
 
   if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator />
-      </View>
-    );
+    return <Loading />;
   }
 
   return (
