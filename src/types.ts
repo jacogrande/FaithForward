@@ -35,3 +35,9 @@ export interface PlayableAudioObject {
   filename: string;
   title: string;
 }
+
+export type TBook = {
+  chapters: number;
+  nextBook: string | null;
+  prevBook: string | null;
+};

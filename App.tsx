@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import analytics from "@src/analytics";
+import { Loading } from "@src/components/Loading";
 import { PROJECT_ID } from "@src/constants";
 import { auth, syncPushToken } from "@src/firebase";
 import { useFavorites } from "@src/hooks/useFavorites";
@@ -15,7 +16,6 @@ import * as Localization from "expo-localization";
 import * as Notifications from "expo-notifications";
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
 
 const Stack = createStackNavigator();
 
@@ -130,11 +130,7 @@ export default function App() {
   }, [loading, user]);
 
   if (loading || loadingAutoSignIn) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <Loading />;
   }
 
   // Recursively find the current screen name

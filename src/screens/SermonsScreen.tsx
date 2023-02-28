@@ -4,6 +4,7 @@ import {
   logUnfavoriteSermon,
 } from "@src/analytics";
 import { Container } from "@src/components/Container";
+import { Loading } from "@src/components/Loading";
 import { Sermon } from "@src/components/Sermon";
 import { auth, favoriteSermon, unfavoriteSermon } from "@src/firebase";
 import { useAudio } from "@src/hooks/useAudio";
@@ -13,14 +14,7 @@ import useStore, { useAudioStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { TSermon } from "@src/types";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 
 function initOptimisticFaves(sermons: TSermon[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user
@@ -93,38 +87,36 @@ export default function SermonsScreen() {
     }
   }
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <Container>
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator />
-        </View>
-      ) : (
-        <FlatList
-          style={styles.sermonsContainer}
-          data={sermons}
-          keyExtractor={(sermon: TSermon) => sermon.id}
-          renderItem={({ item: sermon }: { item: TSermon }) => (
-            <Sermon
-              sermon={sermon}
-              faves={optimisticFaves}
-              sound={sound}
-              playingSermonId={playingAudioObject?.id || null}
-              startPlayingSermon={startPlayingSermon}
-              handleFavoritingSermon={handleFavoritingSermon}
-              handleUnfavoritingSermon={handleUnfavoritingSermon}
-            />
-          )}
-          ListEmptyComponent={<Text>No sermons to display.</Text>}
-          ListFooterComponent={<View style={{ height: 100 }} />}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => setRefreshing(true)}
-            />
-          }
-        />
-      )}
+      <FlatList
+        style={styles.sermonsContainer}
+        data={sermons}
+        keyExtractor={(sermon: TSermon) => sermon.id}
+        renderItem={({ item: sermon }: { item: TSermon }) => (
+          <Sermon
+            sermon={sermon}
+            faves={optimisticFaves}
+            sound={sound}
+            playingSermonId={playingAudioObject?.id || null}
+            startPlayingSermon={startPlayingSermon}
+            handleFavoritingSermon={handleFavoritingSermon}
+            handleUnfavoritingSermon={handleUnfavoritingSermon}
+          />
+        )}
+        ListEmptyComponent={<Text>No sermons to display.</Text>}
+        ListFooterComponent={<View style={{ height: 100 }} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => setRefreshing(true)}
+          />
+        }
+      />
     </Container>
   );
 }

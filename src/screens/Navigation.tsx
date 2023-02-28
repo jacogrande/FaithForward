@@ -5,9 +5,12 @@ import ProfileNavigator from "@src/screens/ProfileNavigator";
 import SermonsScreen from "@src/screens/SermonsScreen";
 import colors from "@src/styles/colors";
 import * as React from "react";
+import BibleScreen from "./BibleScreen";
 
 const Tab = createBottomTabNavigator();
 
+// TODO: Use stack navigator for Bible screen
+//       Cover: reader, table of contents
 const BaseNavigator: React.FC = () => {
   return (
     <Tab.Navigator
@@ -46,6 +49,16 @@ const BaseNavigator: React.FC = () => {
         }}
       />
       <Tab.Screen
+        name="Bible"
+        component={BibleScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Sermons"
         component={SermonsScreen}
         options={{
@@ -59,7 +72,7 @@ const BaseNavigator: React.FC = () => {
             fontSize: 18,
           },
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome5 name="book-reader" size={size} color={color} />
+            <FontAwesome5 name="church" size={size} color={color} />
           ),
         }}
       />
