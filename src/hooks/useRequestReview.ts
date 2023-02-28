@@ -1,7 +1,7 @@
+import { auth, db } from "@src/firebase";
+import { ensureDate } from "@src/utils";
 import * as StoreReview from "expo-store-review";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase";
-import { ensureDate } from "../utils";
 
 type Signature = {
   requestReview: () => void;
@@ -29,9 +29,14 @@ export const useRequestReview = (): Signature => {
       const userRef = doc(db, "users", auth.currentUser.uid);
       const userDoc = await getDoc(userRef);
       if (!userDoc.exists()) {
-        console.warn("User doc does not exist.");
+        // Create user doc
+        await setDoc(userRef, {
+          lastReviewRequestCheck: new Date(),
+          reviewRequestCheckCount: 1,
+        });
         return;
       }
+
       const user = userDoc.data();
       if (!user) {
         console.warn("User doc is empty.");

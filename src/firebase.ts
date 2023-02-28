@@ -1,3 +1,4 @@
+import { TPersonalDevo, TSermon, TTradDevo } from "@src/types";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
@@ -16,7 +17,6 @@ import {
   where,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { TSermon } from "./types";
 
 const firebaseProdConfig = {
   apiKey: "AIzaSyDgj0UDgTub38VuhVjUFIe9Sc5U_ODJK1c",
@@ -221,6 +221,171 @@ export const unfavoriteSermon = async (sermon: TSermon) => {
     // Remove user from sermon's favoritedBy
     await updateDoc(sermonRef, {
       favoritedBy: arrayRemove(auth.currentUser.uid),
+    });
+  }
+};
+
+export const favoriteTradDevo = async (devo: TTradDevo) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const devoRef = doc(db, "devotionals", devo.id);
+
+  // Handle the users/favorites subcollection
+  // If the user has already favorited the devo, do nothing
+  const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+  const favoritesQuery = query(
+    collection(userDoc.ref, "favorites"),
+    where("type", "==", "tradDevo"),
+    where("docId", "==", devo.id)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  if (favoritesQuerySnapshot.docs.length > 0) {
+    console.warn("User has already favorited this trad devo");
+  } else {
+    await addDoc(collection(userRef, "favorites"), {
+      type: "tradDevo",
+      docId: devoRef.id,
+      docData: devo,
+      createdAt: new Date(),
+    });
+  }
+
+  // Handle the devotionals.favoritedBy field
+  // If the devo has already been favorited by the user, do nothing
+  const devoDoc = await getDoc(doc(db, "devotionals", devo.id));
+  const devoFavoritedBy = devoDoc.data()?.favoritedBy;
+  if (devoFavoritedBy?.some((user: any) => user.id === auth.currentUser?.uid)) {
+    console.warn("Devo has already been favorited by user");
+  } else {
+    // Add user to devo's favoritedBy
+    await updateDoc(devoRef, {
+      favoritedBy: arrayUnion(auth.currentUser.uid),
+    });
+  }
+};
+
+export const unfavoriteTradDevo = async (devo: TTradDevo) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const devoRef = doc(db, "devotionals", devo.id);
+
+  // Handle users/favorites subcollection
+  // If the user has not favorited the devo, do nothing
+  const favoritesQuery = query(
+    collection(userRef, "favorites"),
+    where("type", "==", "tradDevo"),
+    where("docId", "==", devo.id)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  // Get document ID of favorite
+  if (favoritesQuerySnapshot.docs.length === 0) {
+    console.warn("User has not favorited this devo");
+  } else {
+    const favoriteDocId = favoritesQuerySnapshot.docs[0].id;
+    const favoriteRef = await getDoc(doc(userRef, "favorites", favoriteDocId));
+    await deleteDoc(favoriteRef.ref);
+  }
+
+  // Handle devotional.favoritedBy field
+  // If the devo has not been favorited by the user, do nothing
+  const devoDoc = await getDoc(doc(db, "devotionals", devo.id));
+  const devoFavoritedBy = devoDoc.data()?.favoritedBy;
+  if (
+    !devoFavoritedBy?.some((userId: string) => userId === auth.currentUser?.uid)
+  ) {
+    console.warn("Devo has not been favorited by user");
+  } else {
+    // Remove user from devo's favoritedBy
+    await updateDoc(devoRef, {
+      favoritedBy: arrayRemove(auth.currentUser.uid),
+    });
+  }
+};
+
+export const favoritePersonalDevo = async (
+  devo: TPersonalDevo
+): Promise<void> => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const devoRef = doc(userRef, "prompts", devo.id);
+
+  // Handle the users/favorites subcollection
+  // If the user has already favorited the devo, do nothing
+  const favoritesQuery = query(
+    collection(userRef, "favorites"),
+    where("type", "==", "personalDevo"),
+    where("docId", "==", devo.id)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  if (favoritesQuerySnapshot.docs.length > 0) {
+    console.warn("User has already favorited this personal devo");
+  } else {
+    await addDoc(collection(userRef, "favorites"), {
+      type: "personalDevo",
+      docId: devoRef.id,
+      docData: devo,
+      createdAt: new Date(),
+    });
+  }
+
+  // Handle the prompts.favorited field
+  // If the devo has already been favorited by the user, do nothing
+  const devoDoc = await getDoc(devoRef);
+  const devoFavorited = devoDoc.data()?.favorited;
+  if (devoFavorited) {
+    console.warn("Devo has already been favorited by user");
+  } else {
+    // Update favorited to true
+    await updateDoc(devoRef, {
+      favorited: true,
+    });
+  }
+};
+
+export const unfavoritePersonalDevo = async (devo: TPersonalDevo) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const devoRef = doc(userRef, "prompts", devo.id);
+
+  // Handle users/favorites subcollection
+  // If the user has not favorited the devo, do nothing
+  const favoritesQuery = query(
+    collection(userRef, "favorites"),
+    where("type", "==", "personalDevo"),
+    where("docId", "==", devo.id)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  // Get document ID of favorite
+  if (favoritesQuerySnapshot.docs.length === 0) {
+    console.warn("User has not favorited this devo");
+  } else {
+    const favoriteDocId = favoritesQuerySnapshot.docs[0].id;
+    const favoriteRef = await getDoc(doc(userRef, "favorites", favoriteDocId));
+    await deleteDoc(favoriteRef.ref);
+  }
+
+  // Handle prompts.favorited field
+  // If the devo has not been favorited by the user, do nothing
+  const devoDoc = await getDoc(devoRef);
+  const devoFavorited = devoDoc.data()?.favorited;
+  if (!devoFavorited) {
+    console.warn("Devo has not been favorited by user");
+  } else {
+    // Remove user from devo's favoritedBy
+    await updateDoc(devoRef, {
+      favorited: false,
     });
   }
 };

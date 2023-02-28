@@ -1,4 +1,7 @@
 import { AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { storage } from "@src/firebase";
+import colors from "@src/styles/colors";
+import { TSermon } from "@src/types";
 import { Audio } from "expo-av";
 import { getDownloadURL, ref } from "firebase/storage";
 import humanizeDuration from "humanize-duration";
@@ -11,9 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { storage } from "../../firebase";
-import { TSermon } from "../../types";
-import colors from "../styles/colors";
 
 interface SermonProps {
   sermon: TSermon;
@@ -42,28 +42,23 @@ export function Sermon(props: SermonProps) {
     const uri = await getDownloadURL(filename);
     await Share.share({
       message: `Check out this Faith Forward sermon!\n\n${sermon.title}`,
-      url: uri
+      url: uri,
     });
   }
 
   return (
     <View style={styles.sermonSection}>
       <View>
-        <Text style={styles.sermonTitle}>{sermon.title}</Text>
+        <Text className="text-lg text-ffBlack font-bold leading-tight mb-2">
+          {sermon.title}
+        </Text>
         <Text style={styles.sermonDescription}>{sermon.description}</Text>
       </View>
-      <View style={styles.actionButtons}>
+      <View className="flex flex-row items-center mt-4">
         <Text style={styles.sermonSpeaker}>
           {formatDuration(sermon.duration || null)} with {sermon.speaker}
         </Text>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-end",
-          }}
-        >
+        <View className="flex-1 flex flex-row items-center justify-end">
           <View style={{ marginRight: 20 }}>
             {playingSermonId === sermon.id && !!sound ? (
               <SermonPauseButton />
@@ -129,21 +124,18 @@ const styles = StyleSheet.create({
   sermonSection: {
     borderBottomColor: colors.lightBlue,
     borderBottomWidth: 2,
-    paddingVertical: 24,
-  },
-  sermonTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    paddingBottom: 10,
+    padding: 24,
+    backgroundColor: colors.paper,
   },
   sermonDescription: {
     fontSize: 16,
     paddingBottom: 10,
+    color: "#333",
   },
   sermonSpeaker: {
     fontSize: 14,
     fontStyle: "italic",
-    marginTop: 12,
+    color: "#999",
   },
   button: {
     backgroundColor: colors.blue,
@@ -169,9 +161,5 @@ const styles = StyleSheet.create({
   },
   buttonActive: {
     backgroundColor: colors.orange,
-  },
-  actionButtons: {
-    flexDirection: "row",
-    alignItems: "center",
   },
 });

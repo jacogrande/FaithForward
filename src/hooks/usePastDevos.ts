@@ -4,7 +4,7 @@ import { collection, doc, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 type Signature = {
-  favorites: any[];
+  pastDevos: any[];
   loading: boolean;
   refreshing: boolean;
   setRefreshing: (refreshing: boolean) => void;
@@ -12,36 +12,40 @@ type Signature = {
   setQuietlyRefreshing: (quietlyRefreshing: boolean) => void;
 };
 
-export const useFavorites = (): Signature => {
+export const usePastDevos = (): Signature => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [quietlyRefreshing, setQuietlyRefreshing] = useState(false);
   const { setError } = useStore();
-  const { favorites, setFavorites } = useContentStore();
+  const { pastDevos, setPastDevos } = useContentStore();
 
-  // Fetch favorites from Firestore
-  const fetchFavorites = async () => {
+  // Fetch pastDevos from Firestore
+  const fetchPastDevos = async () => {
     try {
+      // Get user ref
       if (!auth.currentUser) {
-        console.warn("No user is logged in.");
+        console.warn("No user found.");
         return;
       }
 
-      // Get favorites
       const userRef = doc(db, "users", auth.currentUser.uid);
-      const favoritesQuery = query(
-        collection(userRef, "favorites"),
+
+      let devos: any[] = [];
+      const pastDevosQuery = query(
+        collection(userRef, "prompts"),
         orderBy("createdAt", "desc")
       );
-      const favoritesQuerySnap = await getDocs(favoritesQuery);
-      const faves = favoritesQuerySnap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setFavorites(faves);
+      const snapshot = await getDocs(pastDevosQuery);
+      if (snapshot.empty) {
+        console.log("No pastDevos found.");
+      }
+      snapshot.forEach((snap: any) => {
+        devos.push({ id: snap.id, ...snap.data() });
+      });
+      setPastDevos(devos);
     } catch (error: any) {
-      console.error(error);
-      setError(error.toString());
+      console.error(error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -51,12 +55,12 @@ export const useFavorites = (): Signature => {
 
   useEffect(() => {
     if (loading || refreshing || quietlyRefreshing) {
-      fetchFavorites();
+      fetchPastDevos();
     }
   }, [refreshing, quietlyRefreshing]);
 
   return {
-    favorites,
+    pastDevos,
     loading,
     refreshing,
     setRefreshing,

@@ -1,16 +1,11 @@
-import React from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-} from "react-native";
-import apiConfig from "../../apiConfig";
-import { auth } from "../../firebase";
-import { useApi } from "../hooks/useApi";
-import useStore from "../Store";
-import colors from "../styles/colors";
+import { Loading } from "@src/components/Loading";
+import { API_URL } from "@src/constants";
+import { auth } from "@src/firebase";
+import { useApi } from "@src/hooks/useApi";
+import useStore from "@src/store";
+import colors from "@src/styles/colors";
+import React, { useEffect } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 interface IVerse {
   verse_nr: number;
@@ -23,6 +18,7 @@ const getVerseReference = (verse: string | null) => {
   return reference;
 };
 
+// TODO: use BibleScreen
 const BibleReaderScreen: React.FC = () => {
   const selectedVerse = useStore((state) => state.selectedVerse);
   const promptId = useStore((state) => state.promptId);
@@ -31,7 +27,7 @@ const BibleReaderScreen: React.FC = () => {
     isLoading,
     data,
     fetchData: getBibleChapter,
-  } = useApi<{ verses: IVerse[] }>(`${apiConfig.apiUrl}/getBiblePassage`, {
+  } = useApi<{ verses: IVerse[] }>(`${API_URL}/getBiblePassage`, {
     method: "POST",
     body: JSON.stringify({
       verse: getVerseReference(selectedVerse),
@@ -41,18 +37,11 @@ const BibleReaderScreen: React.FC = () => {
     headers: { "Content-Type": "application/json" },
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedVerse) {
       getBibleChapter();
     }
   }, [selectedVerse]);
-
-  if (isLoading)
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color={colors.blue} />
-      </View>
-    );
 
   // Adds verse numbers to the chapter
   const formatChapter = () => {
@@ -63,6 +52,10 @@ const BibleReaderScreen: React.FC = () => {
     }
     return chapter;
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <ScrollView style={styles.scroll}>

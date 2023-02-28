@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import {
-  getRandomMessage,
-  initialLoadingMessage,
-} from "../data/loadingMessages";
-import colors from "../styles/colors";
+import { LOADING_MESSAGES } from "@src/constants";
+import colors from "@src/styles/colors";
+import { getRandomLoadingMessage } from "@src/utils";
 
 const LoadingMessages = () => {
   const [ellipsis, setEllipsis] = useState("   ");
   const [counter, setCounter] = useState(0);
-  const [message, setMessage] = useState(initialLoadingMessage);
+  const [message, setMessage] = useState(LOADING_MESSAGES.INITIAL);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -33,7 +31,7 @@ const LoadingMessages = () => {
 
   useEffect(() => {
     const messageInterval = setInterval(() => {
-      setMessage(getRandomMessage());
+      setMessage(getRandomLoadingMessage());
     }, 5000);
     return () => clearInterval(messageInterval);
   }, []);

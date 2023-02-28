@@ -1,17 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { logGoToChapter } from "@src/analytics";
+import useStore from "@src/store";
+import colors from "@src/styles/colors";
 import React from "react";
 import {
-  View,
-  Text,
-  Button,
+  Keyboard,
   Modal,
   StyleSheet,
+  Text,
   TouchableWithoutFeedback,
-  Keyboard,
+  View,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import colors from "../styles/colors";
 
 interface VerseActionModalProps {
   isModalVisible: boolean;
@@ -20,8 +21,9 @@ interface VerseActionModalProps {
 }
 
 const VerseActionModal: React.FC<VerseActionModalProps> = (props) => {
+  const selectedVerse = useStore((state) => state.selectedVerse);
   const navigation =
-    useNavigation<StackNavigationProp<{ Analysis: {}; Reader: {} }>>();
+    useNavigation<StackNavigationProp<{ Exegesis: {}; Reader: {} }>>();
   const handleOutsideClick = () => {
     Keyboard.dismiss();
     props.onClose();
@@ -29,11 +31,13 @@ const VerseActionModal: React.FC<VerseActionModalProps> = (props) => {
 
   const goDepeer = () => {
     props.onClose();
-    navigation.navigate("Analysis", {});
+
+    navigation.navigate("Exegesis", {});
   };
 
   const goToChapter = () => {
     props.onClose();
+    logGoToChapter(selectedVerse);
     navigation.navigate("Reader", {});
   };
 

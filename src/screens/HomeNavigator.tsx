@@ -1,83 +1,36 @@
-import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import BibleReaderScreen from "@src/screens/BibleReaderScreen";
+import DevoNavigator from "@src/screens/DevoNavigator";
+import { PastDevotionals } from "@src/screens/PastDevotionals";
+import VerseAnalysisScreen from "@src/screens/VerseAnalysisScreen";
+import colors from "@src/styles/colors";
 import * as React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import colors from "../styles/colors";
-import BibleReaderScreen from "./BibleReaderScreen";
-import HomeScreen from "./HomeScreen";
-import VerseAnalysisScreen from "./VerseAnalysisScreen";
 
 const Stack = createStackNavigator();
 
-export const BackButton = () => {
-  const navigation = useNavigation();
-  return (
-    <View
-      style={{
-        marginLeft: "10%",
-        height: 88,
-        width: "100%",
-        justifyContent: "flex-end",
-        paddingBottom: 8,
-      }}
-    >
-      <TouchableOpacity
-        style={{ flexDirection: "row", alignItems: "center" }}
-        onPress={() => navigation.goBack()}
-      >
-        <MaterialIcons name="arrow-back" size={24} color={colors.blue} />
-        <Text
-          style={{
-            fontWeight: "500",
-            color: colors.blue,
-            marginLeft: 4,
-            fontSize: 16,
-          }}
-        >
-          Back
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
 const BaseNavigator: React.FC = () => {
   return (
-    <Stack.Navigator initialRouteName="Prompt">
-      <Stack.Screen
-        name="Prompt"
-        component={HomeScreen}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="Analysis"
-        component={VerseAnalysisScreen}
-        options={{
-          headerTitle: "",
-          headerStyle: {
-            height: 80,
-            backgroundColor: colors.paper,
-            shadowColor: "transparent",
-          },
-          headerLeft: BackButton,
-        }}
-      />
-      <Stack.Screen
-        name="Reader"
-        component={BibleReaderScreen}
-        options={{
-          headerTitle: "",
-          headerStyle: {
-            height: 80,
-            backgroundColor: colors.paper,
-            shadowColor: "transparent",
-          },
-          headerLeft: BackButton,
-        }}
-      />
+    <Stack.Navigator
+      initialRouteName="Devotionals"
+      screenOptions={{
+        headerBackTitleVisible: false,
+        headerTintColor: colors.blue,
+        headerStyle: {
+          backgroundColor: colors.paper,
+          shadowColor: "transparent",
+        },
+        headerTitleStyle: {
+          color: colors.black,
+          fontWeight: "600",
+          fontSize: 18,
+        },
+        headerTitleAlign: "center",
+      }}
+    >
+      <Stack.Screen name="Devotionals" component={DevoNavigator} />
+      <Stack.Screen name="Past Devotionals" component={PastDevotionals} />
+      <Stack.Screen name="Exegesis" component={VerseAnalysisScreen} />
+      <Stack.Screen name="Reader" component={BibleReaderScreen} />
     </Stack.Navigator>
   );
 };

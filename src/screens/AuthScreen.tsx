@@ -1,5 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { logLogin, logSignup } from "@src/analytics";
+import { auth } from "@src/firebase";
+import useStore from "@src/store";
+import colors from "@src/styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   createUserWithEmailAndPassword,
@@ -24,9 +28,6 @@ import {
   View,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
-import { auth } from "../../firebase";
-import useStore from "../Store";
-import colors from "../styles/colors";
 
 export const AuthScreen = () => {
   const [email, setEmail] = useState("");
@@ -36,6 +37,10 @@ export const AuthScreen = () => {
 
   const navigation =
     useNavigation<StackNavigationProp<{ "Faith Forward": undefined }>>();
+
+  // React.useEffect(() => {
+  //   analytics.screen("Auth");
+  // }, []);
 
   const handleError = (err: any): void => {
     console.error(err);
@@ -67,6 +72,7 @@ export const AuthScreen = () => {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
+      logSignup("email");
       setError("");
       navigation.navigate("Faith Forward");
     } catch (err) {
@@ -81,6 +87,7 @@ export const AuthScreen = () => {
       setLoading(true);
       Keyboard.dismiss();
       await signInWithEmailAndPassword(auth, email, password);
+      logLogin("email");
       setError("");
       navigation.navigate("Faith Forward");
     } catch (err) {
@@ -106,27 +113,26 @@ export const AuthScreen = () => {
       {/* I could not for the life of me color the entire screen without using this. */}
       <LinearGradient
         colors={[colors.paper, colors.paper]}
-        style={styles.linearGradient}
+        className="flex-1"
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <SafeAreaView style={styles.container}>
-          <View style={styles.brandContainer}>
+        <SafeAreaView className="flex-1 justify-center items-center">
+          <View className="flex-1 items-center">
             <Image
-              source={require("../../assets/church.png")}
+              source={require("@assets/church.png")}
               resizeMode="contain"
               style={styles.logo}
             />
-            <View style={styles.faithForward}>
-              <Text style={styles.faithForwardText}>Faith Forward</Text>
+            <View className="mt-5">
+              <Text className="text-4xl font-semibold">Faith Forward</Text>
             </View>
           </View>
           <KeyboardAvoidingView
-            style={styles.content}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <View style={styles.authCard}>
-              <View style={styles.inputs}>
+            <View className="pt-10 pb-5 bg-ffPaper">
+              <View className="pb-5">
                 <TextInput
                   value={email}
                   onChangeText={setEmail}
@@ -172,7 +178,7 @@ export const AuthScreen = () => {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <View style={styles.forgotPasswordView}>
+              <View>
                 <TouchableOpacity
                   style={[
                     styles.forgotPasswordButton,
@@ -231,37 +237,10 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     backgroundColor: colors.paper,
   },
-  brandContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 50,
-  },
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 40,
-    backgroundColor: colors.paper,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    // minHeight: height,
-  },
   error: {
     color: "red",
     textAlign: "center",
   },
-  faithForward: {
-    marginBottom: 40,
-  },
-  faithForwardText: {
-    fontSize: 36,
-    fontWeight: "600",
-    // fontFamily: "Avenir",
-  },
-  forgotPassword: {},
   forgotPasswordButton: {
     marginVertical: 10,
   },
@@ -271,7 +250,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     color: "#808080",
   },
-  forgotPasswordView: {},
   input: {
     height: 50,
     width: width * 0.8,
@@ -286,9 +264,6 @@ const styles = StyleSheet.create({
   inputs: {
     paddingBottom: 10,
   },
-  linearGradient: {
-    flex: 1,
-  },
   logInButton: {
     backgroundColor: "white",
     borderWidth: 1,
@@ -301,8 +276,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: width * 0.7,
     height: width * 0.7,
-    /* width: 200, */
-    /* height: 200, */
   },
 });
 

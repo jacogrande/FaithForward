@@ -1,8 +1,8 @@
+import { db } from "@src/firebase";
+import useStore, { useContentStore } from "@src/store";
+import { TSermon } from "@src/types";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase";
-import { TSermon } from "../../types";
-import useStore from "../Store";
 
 type Signature = {
   sermons: TSermon[];
@@ -14,15 +14,14 @@ type Signature = {
 };
 
 export const useSermons = (): Signature => {
-  const [sermons, setSermons] = useState<TSermon[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [quietlyRefreshing, setQuietlyRefreshing] = useState(false);
   const { setError } = useStore();
+  const { sermons, setSermons } = useContentStore();
 
   // Fetch sermons from Firestore
   const fetchSermons = async () => {
-    console.log("Fetching sermons...");
     try {
       let ss: TSermon[] = [];
       const sermonsQuery = query(
@@ -41,8 +40,8 @@ export const useSermons = (): Signature => {
       });
       setSermons(ss);
     } catch (error: any) {
-      console.error(error);
-      setError(error.toString());
+      console.error(error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
       setRefreshing(false);

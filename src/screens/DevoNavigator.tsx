@@ -1,12 +1,12 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import FavoritesScreen from "@src/screens/FavoritesScreen";
-import ProfileScreen from "@src/screens/ProfileScreen";
+import { PersonalizedDevotional } from "@src/components/PersonalizedDevotional";
+import { TraditionalDevotionals } from "@src/components/TraditionalDevotionals";
 import colors from "@src/styles/colors";
 import * as React from "react";
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function ProfileNavigator() {
+export default function DevoNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -22,8 +22,8 @@ export default function ProfileNavigator() {
         tabBarActiveTintColor: colors.black,
       }}
     >
-      <Tab.Screen name="Account" component={ProfileScreen} />
-      <Tab.Screen name="Favorites" component={FavoritesScreen} />
+      <Tab.Screen name="Daily" component={TraditionalDevotionals} />
+      <Tab.Screen name="For You" component={PersonalizedDevotional} />
     </Tab.Navigator>
   );
 }

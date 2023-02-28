@@ -1,18 +1,21 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import analytics from "@src/analytics";
+import { Loading } from "@src/components/Loading";
+import { PROJECT_ID } from "@src/constants";
+import { auth, syncPushToken } from "@src/firebase";
+import { useFavorites } from "@src/hooks/useFavorites";
+import { useSermons } from "@src/hooks/useSermons";
+import { useTradDevos } from "@src/hooks/useTradDevos";
+import AuthScreen from "@src/screens/AuthScreen";
+import Navigation from "@src/screens/Navigation";
+import useStore from "@src/store";
+import colors from "@src/styles/colors";
 import * as Device from "expo-device";
 import * as Localization from "expo-localization";
 import * as Notifications from "expo-notifications";
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
-import { auth, syncPushToken } from "./firebase";
-import { PROJECT_ID } from "./src/constants";
-import AuthScreen from "./src/screens/AuthScreen";
-import { BackButton } from "./src/screens/HomeNavigator";
-import Navigation from "./src/screens/Navigation";
-import useStore from "./src/Store";
-import colors from "./src/styles/colors";
 
 const Stack = createStackNavigator();
 
@@ -54,9 +57,14 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
   const [loadingAutoSignIn, setLoadingAutoSignIn] = useState(false);
   const [notification, setNotification] = useState<any>(false);
+  const [currentRoute, setCurrentRoute] = useState<string>("Unknown");
   const { pushToken, setPushToken } = useStore();
   const notificationListener = useRef();
   const responseListener = useRef();
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites();
+  const { setQuietlyRefreshing: setQuietlyRefreshingTradDevos } =
+    useTradDevos();
+  const { setQuietlyRefreshing: setQuietlyRefreshingSermons } = useSermons();
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
@@ -90,8 +98,16 @@ export default function App() {
     }
   }, [user, pushToken]);
 
-  onAuthStateChanged(auth, (user) => {
-    setUser(user);
+  onAuthStateChanged(auth, (u) => {
+    if (u && u !== user) {
+      setUser(u);
+      if (u && analytics.userInfo.get().userId !== u.uid) {
+        analytics.identify(u.uid);
+      }
+      setQuietlyRefreshingFaves(true);
+      setQuietlyRefreshingTradDevos(true);
+      setQuietlyRefreshingSermons(true);
+    }
     setLoading(false);
   });
 
@@ -114,35 +130,62 @@ export default function App() {
   }, [loading, user]);
 
   if (loading || loadingAutoSignIn) {
-    return (
-      <View style={{ flex: 1 }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <Loading />;
   }
 
+  // Recursively find the current screen name
+  const getRouteName = (state: any): string => {
+    if (!state || typeof state.index !== "number") {
+      return "Unknown";
+    }
+    const route = state.routes[state.index];
+    if (route.state) {
+      return getRouteName(route.state);
+    }
+
+    return route.name;
+  };
+
+  const handleNavigationStateChange = (state: any) => {
+    const newRoute = getRouteName(state);
+    if (currentRoute !== newRoute) {
+      analytics.screen(newRoute);
+      setCurrentRoute(newRoute);
+    }
+  };
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Faith Forward">
+    <NavigationContainer onStateChange={handleNavigationStateChange}>
+      <Stack.Navigator
+        initialRouteName="Faith Forward"
+        screenOptions={{
+          headerBackTitleVisible: false,
+          headerTintColor: colors.blue,
+          headerStyle: {
+            backgroundColor: colors.paper,
+            shadowColor: "transparent",
+            height: 70,
+          },
+          headerTitleStyle: {
+            color: colors.black,
+            fontWeight: "bold",
+            fontSize: 18,
+          },
+          headerTitleAlign: "center",
+          headerLeftContainerStyle: {
+            paddingLeft: 24,
+          },
+        }}
+      >
         <Stack.Screen
           name="Faith Forward"
           component={Navigation}
-          options={{
-            header: () => null,
-          }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Sign Up"
           component={AuthScreen}
-          options={{
-            headerTitle: "",
-            headerStyle: {
-              backgroundColor: colors.paper,
-              shadowColor: "transparent",
-              height: 0,
-            },
-            headerLeft: BackButton,
-          }}
+          options={{ headerTitle: "" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

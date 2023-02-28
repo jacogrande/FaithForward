@@ -1,25 +1,27 @@
+import { db } from "@src/firebase";
+import useStore, { useContentStore } from "@src/store";
+import { TTradDevo } from "@src/types";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase";
-import { TTradDevo } from "../../types";
-import useStore from "../Store";
 
 type Signature = {
   tradDevos: TTradDevo[];
   loading: boolean;
   refreshing: boolean;
   setRefreshing: (refreshing: boolean) => void;
+  quietlyRefreshing: boolean;
+  setQuietlyRefreshing: (quietlyRefreshing: boolean) => void;
 };
 
 export const useTradDevos = (): Signature => {
-  const [tradDevos, setTradDevos] = useState<TTradDevo[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [quietlyRefreshing, setQuietlyRefreshing] = useState(false);
   const { setError } = useStore();
+  const { tradDevos, setTradDevos } = useContentStore();
 
   // Fetch tradDevos from Firestore
   const fetchTradDevos = async () => {
-    console.log("Fetching tradDevos...");
     try {
       let devos: TTradDevo[] = [];
       const tradDevosQuery = query(
@@ -35,19 +37,27 @@ export const useTradDevos = (): Signature => {
       });
       setTradDevos(devos);
     } catch (error: any) {
-      console.error(error);
-      setError(error.message || error.toString());
+      console.error(error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
       setRefreshing(false);
+      setQuietlyRefreshing(false);
     }
   };
 
   useEffect(() => {
-    if (loading || refreshing) {
+    if (loading || refreshing || quietlyRefreshing) {
       fetchTradDevos();
     }
-  }, [refreshing]);
+  }, [refreshing, quietlyRefreshing]);
 
-  return { tradDevos, loading, refreshing, setRefreshing };
+  return {
+    tradDevos,
+    loading,
+    refreshing,
+    setRefreshing,
+    quietlyRefreshing,
+    setQuietlyRefreshing,
+  };
 };
