@@ -16,6 +16,9 @@ import * as Localization from "expo-localization";
 import * as Notifications from "expo-notifications";
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useRef, useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 const Stack = createStackNavigator();
 
@@ -155,39 +158,41 @@ export default function App() {
   };
 
   return (
-    <NavigationContainer onStateChange={handleNavigationStateChange}>
-      <Stack.Navigator
-        initialRouteName="Faith Forward"
-        screenOptions={{
-          headerBackTitleVisible: false,
-          headerTintColor: colors.blue,
-          headerStyle: {
-            backgroundColor: colors.paper,
-            shadowColor: "transparent",
-            height: 70,
-          },
-          headerTitleStyle: {
-            color: colors.black,
-            fontWeight: "bold",
-            fontSize: 18,
-          },
-          headerTitleAlign: "center",
-          headerLeftContainerStyle: {
-            paddingLeft: 24,
-          },
-        }}
-      >
-        <Stack.Screen
-          name="Faith Forward"
-          component={Navigation}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Sign Up"
-          component={AuthScreen}
-          options={{ headerTitle: "" }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer onStateChange={handleNavigationStateChange}>
+        <Stack.Navigator
+          initialRouteName="Faith Forward"
+          screenOptions={{
+            headerBackTitleVisible: false,
+            headerTintColor: colors.blue,
+            headerStyle: {
+              backgroundColor: colors.paper,
+              shadowColor: "transparent",
+              height: 70,
+            },
+            headerTitleStyle: {
+              color: colors.black,
+              fontWeight: "bold",
+              fontSize: 18,
+            },
+            headerTitleAlign: "center",
+            headerLeftContainerStyle: {
+              paddingLeft: 24,
+            },
+          }}
+        >
+          <Stack.Screen
+            name="Faith Forward"
+            component={Navigation}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Sign Up"
+            component={AuthScreen}
+            options={{ headerTitle: "" }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
