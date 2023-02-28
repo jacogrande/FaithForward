@@ -22,7 +22,7 @@
       "infoPlist": {
         "UIBackgroundModes": ["audio"]
       },
-      "buildNumber": "29"
+      "buildNumber": "30"
     },
     "android": {
       "adaptiveIcon": {
