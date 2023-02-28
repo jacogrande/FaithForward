@@ -64,7 +64,8 @@ const BibleScreen = () => {
   // Adds verse numbers to the chapter
   const Chapter = () => {
     if (!data || !data.chapter) {
-      setError("Couldn't load chapter. Please try again later.");
+      // TODO: Fix this so it doesn't throw on initial load
+      /* setError("Couldn't load chapter. Please try again later."); */
       return <></>;
     }
 
