@@ -1,10 +1,11 @@
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { logViewBibleChapter } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { Loading } from "@src/components/Loading";
 import { BIBLE_BOOKS } from "@src/constants";
 import { useBibleChapter } from "@src/hooks/useBibleChapter";
 import colors from "@src/styles/colors";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -27,6 +28,12 @@ const BibleScreen = () => {
     string | null
   >(null);
   const { isLoading, data } = useBibleChapter(book, chapter);
+
+  useEffect(() => {
+    if (book && chapter) {
+      logViewBibleChapter(book, chapter);
+    }
+  }, [book, chapter]);
 
   const nextChapter = () => {
     const currentBook = BIBLE_BOOKS[book];

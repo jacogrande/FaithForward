@@ -142,6 +142,17 @@ export const logSermonPause = () => {
   }
 };
 
+export const logViewBibleChapter = (book: string, chapter: number) => {
+  try {
+    analytics.track("View Bible Chapter", {
+      book,
+      chapter,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export const logGoToChapter = (chapter: string | null) => {
   try {
     analytics.track("Go To Chapter", {
