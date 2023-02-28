@@ -106,7 +106,7 @@ const BibleScreen = () => {
   return (
     <Container>
       {showToc ? (
-        <View className="flex-1 justify-center items-center py-4 px-6 bg-ffPaper">
+        <>
           <View className="flex flex-row justify-between items-center py-4 px-6 bg-ffPaper">
             <TouchableOpacity
               onPress={() => setShowToc(false)}
@@ -117,9 +117,10 @@ const BibleScreen = () => {
             <Text style={styles.header} className="font-bold text-xl">
               Table of Contents
             </Text>
+            <View />
           </View>
           <ScrollView style={[styles.scroll, { width: "100%" }]}>
-            <View className="bg-ffPaper">
+            <View className="flex-1 px-6 mb-10 bg-ffPaper">
               {Object.keys(BIBLE_BOOKS).map((book) => (
                 <TouchableOpacity key={book} onPress={() => goToBook(book)}>
                   <Text className="text-xl">
@@ -129,7 +130,7 @@ const BibleScreen = () => {
               ))}
             </View>
           </ScrollView>
-        </View>
+        </>
       ) : (
         <>
           <View className="flex flex-row justify-between items-center py-4 px-6 bg-ffPaper">
