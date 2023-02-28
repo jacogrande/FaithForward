@@ -16,7 +16,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "simulator": true
+        "simulator": true,
         "resourceClass": "m1-medium"
       }
     },
