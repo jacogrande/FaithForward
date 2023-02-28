@@ -6,6 +6,7 @@ import humanizeDuration from "humanize-duration";
 import React from "react";
 import {
   ActivityIndicator,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -22,6 +23,8 @@ interface SermonProps {
   handleUnfavoritingSermon: (sermon: TSermon) => void;
 }
 
+const SERMON_MARKETING_URL = "https://faithforward.app/sermons";
+
 export function Sermon(props: SermonProps) {
   const {
     sound,
@@ -32,6 +35,14 @@ export function Sermon(props: SermonProps) {
     handleFavoritingSermon,
     handleUnfavoritingSermon,
   } = props;
+
+  async function shareSermon() {
+    const uri = `${SERMON_MARKETING_URL}/?sermonID=${sermon.id}`;
+    await Share.share({
+      message: `Check out this Faith Forward sermon!\n\n${sermon.title}`,
+      url: uri,
+    });
+  }
 
   return (
     <View style={styles.sermonSection}>
@@ -55,15 +66,28 @@ export function Sermon(props: SermonProps) {
               <SermonPlayButton onPress={() => startPlayingSermon(sermon)} />
             )}
           </View>
-          {faves.includes(sermon.id) ? (
-            <TouchableOpacity onPress={() => handleUnfavoritingSermon(sermon)}>
-              <Ionicons name="heart-sharp" size={24} color={colors.red} />
+          <View style={{ marginRight: 20 }}>
+            {faves.includes(sermon.id) ? (
+              <TouchableOpacity
+                onPress={() => handleUnfavoritingSermon(sermon)}
+              >
+                <Ionicons name="heart-sharp" size={24} color={colors.red} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => handleFavoritingSermon(sermon)}>
+                <Ionicons name="heart-outline" size={24} color={colors.red} />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View>
+            <TouchableOpacity onPress={shareSermon}>
+              <Ionicons
+                name="ios-share-outline"
+                size={24}
+                color={colors.blue}
+              />
             </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => handleFavoritingSermon(sermon)}>
-              <Ionicons name="heart-outline" size={24} color={colors.red} />
-            </TouchableOpacity>
-          )}
+          </View>
         </View>
       </View>
     </View>
@@ -110,7 +134,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: "italic",
     color: "#999",
-    // marginTop: 8,
   },
   button: {
     backgroundColor: colors.blue,
