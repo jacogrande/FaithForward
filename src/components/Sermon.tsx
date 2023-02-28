@@ -1,9 +1,7 @@
 import { AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { storage } from "@src/firebase";
 import colors from "@src/styles/colors";
 import { TSermon } from "@src/types";
 import { Audio } from "expo-av";
-import { getDownloadURL, ref } from "firebase/storage";
 import humanizeDuration from "humanize-duration";
 import React from "react";
 import {
@@ -25,6 +23,8 @@ interface SermonProps {
   handleUnfavoritingSermon: (sermon: TSermon) => void;
 }
 
+const SERMON_MARKETING_URL = "https://faithforward.app/sermons";
+
 export function Sermon(props: SermonProps) {
   const {
     sound,
@@ -36,10 +36,8 @@ export function Sermon(props: SermonProps) {
     handleUnfavoritingSermon,
   } = props;
 
-  // TODO: Use the marketing site URL for the sermon in the share message
   async function shareSermon() {
-    const filename = ref(storage, sermon.filename);
-    const uri = await getDownloadURL(filename);
+    const uri = `${SERMON_MARKETING_URL}/?sermonID=${sermon.id}`;
     await Share.share({
       message: `Check out this Faith Forward sermon!\n\n${sermon.title}`,
       url: uri,
