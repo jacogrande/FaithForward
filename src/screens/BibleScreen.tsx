@@ -4,8 +4,9 @@ import { logViewBibleChapter } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { Loading } from "@src/components/Loading";
 import { API_URL, BIBLE_BOOKS } from "@src/constants";
-import { auth } from "@src/firebase";
+import { auth, favoriteVerse, unfavoriteVerse } from "@src/firebase";
 import { useBibleChapter } from "@src/hooks/useBibleChapter";
+import { useFavorites } from "@src/hooks/useFavorites";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { getVerseRefs } from "@src/utils";
@@ -211,6 +212,9 @@ function Chapter({
   chapter: number;
   verses: string[];
 }) {
+  const { favorites, setQuietlyRefreshing } = useFavorites();
+  const favoriteVerses = favorites.filter((fave) => fave.type === "verse");
+
   if (!verses) {
     return <></>;
   }
@@ -224,6 +228,13 @@ function Chapter({
           chapter={chapter}
           verse={verse}
           num={index}
+          favorited={favoriteVerses.some(
+            (fave) =>
+              fave.docData.book === book &&
+              fave.docData.chapter === chapter &&
+              fave.docData.verseNumber === index + 1
+          )}
+          onFaveToggle={() => setQuietlyRefreshing(true)}
         />
       ))}
     </View>
@@ -235,17 +246,23 @@ function Verse({
   chapter,
   verse,
   num,
+  favorited,
+  onFaveToggle,
 }: {
   book: string;
   chapter: number;
   verse: string;
   num: number;
+  favorited: boolean;
+  onFaveToggle: () => void;
 }) {
   const navigation = useNavigation<any>();
   const { setBook, setChapter, setVerseNumber, setVerse, setExegesis } =
     useBibleStore();
+  const { setError } = useStore();
   const [showActions, setShowActions] = useState(false);
   const [isLoadingExegesis, setIsLoadingExegesis] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(favorited);
 
   // TODO: Add analytics
   async function shareVerse() {
@@ -257,11 +274,30 @@ Sent with Faith Forward`,
     });
   }
 
-  // TODO: Add fave/unfave handling
   // TODO: Show on Favorites Screen
   // TODO: Add analytics
-  async function favoriteVerse() {
-    console.log("STUB");
+  async function handleFavoritingVerse() {
+    try {
+      setIsFavorited(true);
+      await favoriteVerse("kjv", book, chapter, num + 1, verse);
+      onFaveToggle();
+    } catch (err: any) {
+      console.warn("Error favoriting verse:");
+      console.error(err);
+      setError(err.message);
+    }
+  }
+
+  async function handleUnfavoritingVerse() {
+    try {
+      setIsFavorited(false);
+      await unfavoriteVerse("kjv", book, chapter, num + 1);
+      onFaveToggle();
+    } catch (err: any) {
+      console.warn("Error unfavoriting verse:");
+      console.error(err);
+      setError(err.message);
+    }
   }
 
   // TODO: Add analytics
@@ -309,9 +345,21 @@ Sent with Faith Forward`,
       </View>
       {showActions && (
         <View style={styles.actionsContainer}>
-          <TouchableOpacity onPress={favoriteVerse} style={styles.actionButton}>
-            <Ionicons name="heart-outline" size={24} color={colors.red} />
-          </TouchableOpacity>
+          {isFavorited ? (
+            <TouchableOpacity
+              onPress={handleUnfavoritingVerse}
+              style={styles.actionButton}
+            >
+              <Ionicons name="heart-sharp" size={24} color={colors.red} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={handleFavoritingVerse}
+              style={styles.actionButton}
+            >
+              <Ionicons name="heart-outline" size={24} color={colors.red} />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity onPress={shareVerse} style={styles.actionButton}>
             <Feather name="share" size={20} color={colors.blue} />
           </TouchableOpacity>

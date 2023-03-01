@@ -389,3 +389,77 @@ export const unfavoritePersonalDevo = async (devo: TPersonalDevo) => {
     });
   }
 };
+
+export const favoriteVerse = async (
+  bible: string,
+  book: string,
+  chapter: number,
+  verseNumber: number,
+  verse: string
+): Promise<void> => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+
+  // Handle the users/favorites subcollection
+  // If the user has already favorited the verse, do nothing
+  const favoritesQuery = query(
+    collection(userRef, "favorites"),
+    where("type", "==", "verse"),
+    where("docData.bible", "==", bible),
+    where("docData.book", "==", book),
+    where("docData.chapter", "==", chapter),
+    where("docData.verseNumber", "==", verseNumber)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  if (favoritesQuerySnapshot.docs.length > 0) {
+    console.warn("User has already favorited this verse");
+  } else {
+    await addDoc(collection(userRef, "favorites"), {
+      type: "verse",
+      docData: {
+        bible,
+        book,
+        chapter,
+        verseNumber,
+        verse,
+      },
+      createdAt: new Date(),
+    });
+  }
+};
+
+export const unfavoriteVerse = async (
+  bible: string,
+  book: string,
+  chapter: number,
+  verseNumber: number,
+): Promise<void> => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+
+  // Handle users/favorites subcollection
+  // If the user has not favorited the verse, do nothing
+  const favoritesQuery = query(
+    collection(userRef, "favorites"),
+    where("type", "==", "verse"),
+    where("docData.bible", "==", bible),
+    where("docData.book", "==", book),
+    where("docData.chapter", "==", chapter),
+    where("docData.verseNumber", "==", verseNumber)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  // Get document ID of favorite
+  if (favoritesQuerySnapshot.docs.length === 0) {
+    console.warn("User has not favorited this verse");
+  } else {
+    const favoriteDocId = favoritesQuerySnapshot.docs[0].id;
+    const favoriteRef = await getDoc(doc(userRef, "favorites", favoriteDocId));
+    await deleteDoc(favoriteRef.ref);
+  }
+};

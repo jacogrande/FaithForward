@@ -41,3 +41,10 @@ export type TBook = {
   nextBook: string | null;
   prevBook: string | null;
 };
+
+export type TVerseRef = {
+  bible: string;
+  book: string;
+  chapter: number;
+  verseNumber: number;
+};
