@@ -14,12 +14,6 @@ import {
   View,
 } from "react-native";
 
-interface IVerse {
-  verse_nr: number;
-  verse: string;
-}
-
-// TODO: Load chunks of chapters
 const BibleScreen = () => {
   const [book, setBook] = useState<string>("Genesis");
   const [chapter, setChapter] = useState(1);
@@ -64,18 +58,16 @@ const BibleScreen = () => {
   // Adds verse numbers to the chapter
   // TODO: Extract, make more robust
   const Chapter = () => {
-    if (!data || !data.chapter) {
-      // TODO: Fix this so it doesn't throw on initial load
-      /* setError("Couldn't load chapter. Please try again later."); */
+    if (!data) {
       return <></>;
     }
 
     return (
       <View style={styles.container}>
-        {data.chapter.map((verse: IVerse) => (
-          <View style={styles.verseContainer} key={verse.verse_nr}>
-            <Text style={styles.verseNr}>{verse.verse_nr}</Text>
-            <Text style={styles.verseText}>{verse.verse}</Text>
+        {data.map((verse: string, index: number) => (
+          <View style={styles.verseContainer} key={index}>
+            <Text style={styles.verseNum}>{index+1}</Text>
+            <Text style={styles.verseText}>{verse}</Text>
           </View>
         ))}
       </View>
@@ -239,17 +231,20 @@ const styles = StyleSheet.create({
   verseContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 5,
+    marginBottom: 10,
     marginHorizontal: "10%",
   },
-  verseNr: {
+  verseNum: {
     fontWeight: "bold",
     marginRight: 10,
     fontSize: 16,
+    width: '8%',
+    lineHeight: 28,
   },
   verseText: {
     flex: 1,
     fontSize: 16,
+    lineHeight: 28,
   },
 });
 

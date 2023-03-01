@@ -3,7 +3,7 @@ import { TBook } from '@src/types';
 export const FLAGGED_INPUT_RESPONSES = {
   HATE: `I am deeply troubled to hear that you are making hateful remarks. Such behavior is not in alignment with the teachings of our faith and goes against the principles of love, compassion, and respect for all human beings.
 
-Hate speech and discrimination have no place in our community of faith, and it's important to remember that we are all created equal in the eyes of God. We are called to love and respect one another, regardless of our differences. The Bible reminds us in 1 John 4:20 that "If anyone says, 'I love God,' and hates his brother, he is a liar; for he who does not love his brother whom he has seen, cannot love God whom he has not seen."
+Hate speech and discrimination have no place in our community of faith, and it's important to remember that we are all created equal in the eyes of God. We are called to love and respect one another, regardless of our differences. The Bible reminds us in I John 4:20 that "If anyone says, 'I love God,' and hates his brother, he is a liar; for he who does not love his brother whom he has seen, cannot love God whom he has not seen."
 
 I would strongly encourage you to seek guidance and reflection on the reasons behind these hateful thoughts and behaviours, and to work towards understanding and empathy. It's important to educate yourself and to challenge any biases or prejudices you may have.
 
@@ -12,7 +12,7 @@ Additionally, I would urge you to seek forgiveness and to make amends for any ha
 It's important to understand that such behavior is not acceptable and that it goes against the teachings of our faith and the well-being of our community. Let us pray for guidance, healing and peace, and let us work towards creating a safe and healthy community for all.`,
   HATE_THREATENING: `I am deeply troubled to hear that you are making hateful remarks. Such behavior is not in alignment with the teachings of our faith and goes against the principles of love, compassion, and respect for all human beings.
 
-Hate speech and discrimination have no place in our community of faith, and it's important to remember that we are all created equal in the eyes of God. We are called to love and respect one another, regardless of our differences. The Bible reminds us in 1 John 4:20 that "If anyone says, 'I love God,' and hates his brother, he is a liar; for he who does not love his brother whom he has seen, cannot love God whom he has not seen."
+Hate speech and discrimination have no place in our community of faith, and it's important to remember that we are all created equal in the eyes of God. We are called to love and respect one another, regardless of our differences. The Bible reminds us in I John 4:20 that "If anyone says, 'I love God,' and hates his brother, he is a liar; for he who does not love his brother whom he has seen, cannot love God whom he has not seen."
 
 I would strongly encourage you to seek guidance and reflection on the reasons behind these hateful thoughts and behaviours, and to work towards understanding and empathy. It's important to educate yourself and to challenge any biases or prejudices you may have.
 
@@ -24,7 +24,7 @@ It's important to understand that such behavior is not acceptable and that it go
 Self-harm is a serious issue and it is important to seek help as soon as possible. I would encourage you to speak with a mental health professional or counselor who can provide you with the support and guidance you need. They can help you understand the underlying causes of your distress and develop strategies for coping.
 
 In addition to seeking professional help, I would encourage you to reach out to your loved ones, friends, and the community of faith for support and understanding. Remember that God loves you and cares for you, and that you are not alone in this difficult time. Let us pray together for strength, guidance, and healing, and let us remember that with God, all things are possible.`,
-  SEXUAL: `It is important to remember that our bodies are temples of the Holy Spirit, and we should treat them with respect and dignity. The Bible reminds us in 1 Thessalonians 4:3-4 "It is God's will that you should be sanctified: that you should avoid sexual immorality; that each of you should learn to control your own body in a way that is holy and honorable."
+  SEXUAL: `It is important to remember that our bodies are temples of the Holy Spirit, and we should treat them with respect and dignity. The Bible reminds us in I Thessalonians 4:3-4 "It is God's will that you should be sanctified: that you should avoid sexual immorality; that each of you should learn to control your own body in a way that is holy and honorable."
 
 Sexual behavior that is not consensual, or that is exploitative, or disrespectful is not acceptable, and it is important to seek help and guidance.
 
@@ -182,43 +182,43 @@ export const BIBLE_BOOKS: { [key: string]: TBook } = {
   },
   Ruth: {
     chapters: 4,
-    nextBook: "1 Samuel",
+    nextBook: "I Samuel",
     prevBook: "Judges",
   },
-  "1 Samuel": {
+  "I Samuel": {
     chapters: 31,
-    nextBook: "2 Samuel",
+    nextBook: "II Samuel",
     prevBook: "Ruth",
   },
-  "2 Samuel": {
+  "II Samuel": {
     chapters: 24,
-    nextBook: "1 Kings",
-    prevBook: "1 Samuel",
+    nextBook: "I Kings",
+    prevBook: "I Samuel",
   },
-  "1 Kings": {
+  "I Kings": {
     chapters: 22,
-    nextBook: "2 Kings",
-    prevBook: "2 Samuel",
+    nextBook: "II Kings",
+    prevBook: "II Samuel",
   },
-  "2 Kings": {
+  "II Kings": {
     chapters: 25,
-    nextBook: "1 Chronicles",
-    prevBook: "1 Kings",
+    nextBook: "I Chronicles",
+    prevBook: "I Kings",
   },
-  "1 Chronicles": {
+  "I Chronicles": {
     chapters: 29,
-    nextBook: "2 Chronicles",
-    prevBook: "2 Kings",
+    nextBook: "II Chronicles",
+    prevBook: "II Kings",
   },
-  "2 Chronicles": {
+  "II Chronicles": {
     chapters: 36,
     nextBook: "Ezra",
-    prevBook: "1 Chronicles",
+    prevBook: "I Chronicles",
   },
   Ezra: {
     chapters: 10,
     nextBook: "Nehemiah",
-    prevBook: "2 Chronicles",
+    prevBook: "II Chronicles",
   },
   Nehemiah: {
     chapters: 13,
@@ -367,18 +367,18 @@ export const BIBLE_BOOKS: { [key: string]: TBook } = {
   },
   Romans: {
     chapters: 16,
-    nextBook: "1 Corinthians",
+    nextBook: "I Corinthians",
     prevBook: "Acts",
   },
-  "1 Corinthians": {
+  "I Corinthians": {
     chapters: 16,
-    nextBook: "2 Corinthians",
+    nextBook: "II Corinthians",
     prevBook: "Romans",
   },
-  "2 Corinthians": {
+  "II Corinthians": {
     chapters: 13,
     nextBook: "Galatians",
-    prevBook: "1 Corinthians",
+    prevBook: "I Corinthians",
   },
   Galatians: {
     chapters: 6,
@@ -397,33 +397,33 @@ export const BIBLE_BOOKS: { [key: string]: TBook } = {
   },
   Colossians: {
     chapters: 4,
-    nextBook: "1 Thessalonians",
+    nextBook: "I Thessalonians",
     prevBook: "Philippians",
   },
-  "1 Thessalonians": {
+  "I Thessalonians": {
     chapters: 5,
-    nextBook: "2 Thessalonians",
+    nextBook: "II Thessalonians",
     prevBook: "Colossians",
   },
-  "2 Thessalonians": {
+  "II Thessalonians": {
     chapters: 3,
-    nextBook: "1 Timothy",
-    prevBook: "1 Thessalonians",
+    nextBook: "I Timothy",
+    prevBook: "I Thessalonians",
   },
-  "1 Timothy": {
+  "I Timothy": {
     chapters: 6,
-    nextBook: "2 Timothy",
-    prevBook: "2 Thessalonians",
+    nextBook: "II Timothy",
+    prevBook: "II Thessalonians",
   },
-  "2 Timothy": {
+  "II Timothy": {
     chapters: 4,
     nextBook: "Titus",
-    prevBook: "1 Timothy",
+    prevBook: "I Timothy",
   },
   Titus: {
     chapters: 3,
     nextBook: "Philemon",
-    prevBook: "2 Timothy",
+    prevBook: "II Timothy",
   },
   Philemon: {
     chapters: 1,
@@ -437,38 +437,38 @@ export const BIBLE_BOOKS: { [key: string]: TBook } = {
   },
   James: {
     chapters: 5,
-    nextBook: "1 Peter",
+    nextBook: "I Peter",
     prevBook: "Hebrews",
   },
-  "1 Peter": {
+  "I Peter": {
     chapters: 5,
-    nextBook: "2 Peter",
+    nextBook: "II Peter",
     prevBook: "James",
   },
-  "2 Peter": {
+  "II Peter": {
     chapters: 3,
-    nextBook: "1 John",
-    prevBook: "1 Peter",
+    nextBook: "I John",
+    prevBook: "I Peter",
   },
-  "1 John": {
+  "I John": {
     chapters: 5,
-    nextBook: "2 John",
-    prevBook: "2 Peter",
+    nextBook: "II John",
+    prevBook: "II Peter",
   },
-  "2 John": {
+  "II John": {
     chapters: 1,
-    nextBook: "3 John",
-    prevBook: "1 John",
+    nextBook: "III John",
+    prevBook: "I John",
   },
-  "3 John": {
+  "III John": {
     chapters: 1,
     nextBook: "Jude",
-    prevBook: "2 John",
+    prevBook: "II John",
   },
   Jude: {
     chapters: 1,
     nextBook: "Revelation",
-    prevBook: "3 John",
+    prevBook: "III John",
   },
   Revelation: {
     chapters: 22,

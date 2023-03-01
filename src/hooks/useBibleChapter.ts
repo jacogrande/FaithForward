@@ -1,31 +1,51 @@
-import { API_URL } from "@src/constants";
+import { db } from "@src/firebase";
 import useStore from "@src/store";
-import { useQuery } from "react-query";
+import { collection, getDocs, query } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 export function useBibleChapter(book: string, chapter: number) {
+  const [data, setData] = useState<any>();
+  const [isLoading, setIsLoading] = useState(false);
   const { setError } = useStore();
 
-  const { isLoading, error, data, refetch } = useQuery(
-    ["bible", book, chapter],
-    async () => {
-      const response = await fetch(
-        `${API_URL}/fetchChapter?book=${book}&chapter=${chapter}`
+  const fetchChapter = async () => {
+    try {
+      setIsLoading(true);
+      const q = query(
+        collection(db, "bibles", "kjv", "books", book, "chapters")
       );
-      if (response.status === 200) {
-        return await response.json();
-      } else {
-        const err = await response.json();
-        throw new Error(err.error);
-      }
-    },
-    {
-      onError: (err: any) => {
-        console.error(err);
-        setError(err.message);
-      },
-      enabled: !!book && !!chapter,
-    }
-  );
+      const querySnapshot = await getDocs(q);
 
-  return { isLoading, error, data, refetch };
+      // Get all the chapters
+      const chapters = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+
+      // Get the chapter we're looking for
+      const chapterData = chapters.find((c) => c.id === chapter.toString());
+      if (!chapterData) {
+        throw new Error(`Chapter ${chapter} not found in book ${book}`);
+      }
+
+      // Convert data object into array, ordered by Number(key)
+      const verses = Object.keys(chapterData.data).map(
+        (key) => chapterData.data[key]
+      );
+      setData(verses);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (book && chapter) {
+      fetchChapter();
+    }
+  }, [book, chapter]);
+
+  return { isLoading, data };
 }
