@@ -1,5 +1,4 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import BibleReaderScreen from "@src/screens/BibleReaderScreen";
 import DevoNavigator from "@src/screens/DevoNavigator";
 import { PastDevotionals } from "@src/screens/PastDevotionals";
 import VerseAnalysisScreen from "@src/screens/VerseAnalysisScreen";
@@ -30,7 +29,6 @@ const BaseNavigator: React.FC = () => {
       <Stack.Screen name="Devotionals" component={DevoNavigator} />
       <Stack.Screen name="Past Devotionals" component={PastDevotionals} />
       <Stack.Screen name="Exegesis" component={VerseAnalysisScreen} />
-      <Stack.Screen name="Reader" component={BibleReaderScreen} />
     </Stack.Navigator>
   );
 };

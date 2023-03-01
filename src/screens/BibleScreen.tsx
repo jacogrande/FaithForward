@@ -13,21 +13,46 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import useStore from "@src/store";
 
 const BibleScreen = () => {
-  const [book, setBook] = useState<string>("Genesis");
-  const [chapter, setChapter] = useState(1);
+  const selectedVerse = useStore((state) => state.selectedVerse);
+
+  const [book, setBook] = useState<string>(
+    selectedVerse ? getBookAndChapter(selectedVerse).book : "Genesis"
+  );
+  const [chapter, setChapter] = useState(
+    selectedVerse ? parseInt(getBookAndChapter(selectedVerse).chapter) : 1
+  );
   const [showToc, setShowToc] = useState(false);
   const [showChapterSelection, setShowChapterSelection] = useState<
     string | null
   >(null);
   const { isLoading, data } = useBibleChapter(book, chapter);
 
+  // Extract book and chapter from selectedVerse, which is formatted like "verse" (book chapter:versenum)
+  function getBookAndChapter(verse: string) {
+    const splits = verse.split("(");
+    const reference = splits[splits.length - 1].replace(")", "");
+    const [book, chapterAndVerse] = reference.split(" ");
+    const chapter = chapterAndVerse.split(":")[0];
+    return { book, chapter };
+  }
+
   useEffect(() => {
     if (book && chapter) {
       logViewBibleChapter(book, chapter);
     }
   }, [book, chapter]);
+
+  useEffect(() => {
+    if (selectedVerse) {
+      const { book, chapter } = getBookAndChapter(selectedVerse);
+      setBook(book);
+      setChapter(parseInt(chapter));
+      /* setSelectedVerse(null) */
+    }
+  }, [selectedVerse])
 
   const nextChapter = () => {
     const currentBook = BIBLE_BOOKS[book];
@@ -66,7 +91,7 @@ const BibleScreen = () => {
       <View style={styles.container}>
         {data.map((verse: string, index: number) => (
           <View style={styles.verseContainer} key={index}>
-            <Text style={styles.verseNum}>{index+1}</Text>
+            <Text style={styles.verseNum}>{index + 1}</Text>
             <Text style={styles.verseText}>{verse}</Text>
           </View>
         ))}
@@ -98,9 +123,8 @@ const BibleScreen = () => {
           <ScrollView style={[styles.scroll, { width: "100%" }]}>
             <View className="flex-1 px-6 mb-10 bg-ffPaper">
               {Object.keys(BIBLE_BOOKS).map((book) => (
-                <>
+                <View key={book}>
                   <TouchableOpacity
-                    key={book}
                     onPress={() =>
                       showChapterSelection === book
                         ? setShowChapterSelection(null)
@@ -150,7 +174,7 @@ const BibleScreen = () => {
                       )}
                     </View>
                   )}
-                </>
+                </View>
               ))}
             </View>
           </ScrollView>
@@ -238,7 +262,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginRight: 10,
     fontSize: 16,
-    width: '8%',
+    width: "8%",
     lineHeight: 28,
   },
   verseText: {
