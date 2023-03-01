@@ -37,7 +37,7 @@ export function Sermon(props: SermonProps) {
   } = props;
 
   async function shareSermon() {
-    const uri = `${SERMON_MARKETING_URL}/?sermonID=${sermon.id}`;
+    const uri = `${SERMON_MARKETING_URL}?sermonID=${sermon.id}`;
     await Share.share({
       message: `Check out this Faith Forward sermon!\n\n${sermon.title}`,
       url: uri,
