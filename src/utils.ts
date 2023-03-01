@@ -49,11 +49,39 @@ export function getVerseRefs(verse: string): {
     return { book: "", chapter: 0, verseNum: 0 };
   }
 
-  const splits = verse.split("(");
-  const reference = splits[splits.length - 1].replace(")", "");
-  const [book, chapterAndVerse] = reference.split(" ");
-  const chapter = parseInt(chapterAndVerse.split(":")[0]);
-  const verseNum = parseInt(chapterAndVerse.split(":")[1]);
+  // Strip the parens
+  const verseRef = verse.substring(verse.indexOf("(") + 1, verse.indexOf(")"));
+
+  // Split the string into book, chapter, and verse
+  // Note: the book is sometimes two words, so split on colon first for chapter and verse
+  // The last element of the array is the verse number, and the one before that is the chapter
+  const verseRefArray = verseRef.split(":");
+  const verseNum = parseInt(verseRefArray[verseRefArray.length - 1]);
+  // Then split the first element on spaces, and the last element is the chapter
+  const chapter = parseInt(
+    verseRefArray[0].split(" ")[verseRefArray[0].split(" ").length - 1]
+  );
+  // The rest of the elements are the book
+  let book = verseRefArray[0].substring(
+    0,
+    verseRefArray[0].indexOf(chapter.toString())
+  ).trim();
+
+  // Convert 1s, 2s, and 3s to roman numerals
+  if (book.includes("1")) {
+    book = book.replace("1", "I");
+  }
+  if (book.includes("2")) {
+    book = book.replace("2", "II");
+  }
+  if (book.includes("3")) {
+    book = book.replace("3", "III");
+  }
+
+  if (book.trim() === "Psalm") {
+    book = "Psalms"
+  }
+
   return { book, chapter, verseNum };
 }
 

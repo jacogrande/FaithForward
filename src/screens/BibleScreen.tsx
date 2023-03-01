@@ -9,7 +9,6 @@ import { useBibleChapter } from "@src/hooks/useBibleChapter";
 import { useFavorites } from "@src/hooks/useFavorites";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
-import { getVerseRefs } from "@src/utils";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -21,16 +20,9 @@ import {
   View,
 } from "react-native";
 
-// TODO: Refactor all selectedVerse handlers to useBibleStore
-const BibleScreen = () => {
-  const selectedVerse = useStore((state) => state.selectedVerse);
-
-  const [book, setBook] = useState<string>(
-    selectedVerse ? getVerseRefs(selectedVerse).book : "Genesis"
-  );
-  const [chapter, setChapter] = useState(
-    selectedVerse ? getVerseRefs(selectedVerse).chapter : 1
-  );
+const BibleScreen = ({ route }: { route: any }) => {
+  const [book, setBook] = useState<string>(route.params?.book || "Genesis");
+  const [chapter, setChapter] = useState(route.params?.chapter || 1);
   const [showToc, setShowToc] = useState(false);
   const [showChapterSelection, setShowChapterSelection] = useState<
     string | null
@@ -44,12 +36,13 @@ const BibleScreen = () => {
   }, [book, chapter]);
 
   useEffect(() => {
-    if (selectedVerse) {
-      const { book, chapter } = getVerseRefs(selectedVerse);
-      setBook(book);
-      setChapter(chapter);
+    if (route.params?.book) {
+      setBook(route.params.book);
     }
-  }, [selectedVerse]);
+    if (route.params?.chapter) {
+      setChapter(route.params.chapter);
+    }
+  }, [JSON.stringify(route.params)]);
 
   const nextChapter = () => {
     const currentBook = BIBLE_BOOKS[book];

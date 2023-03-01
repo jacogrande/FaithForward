@@ -1,8 +1,9 @@
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { logShareDevotional, logViewDevotional } from "@src/analytics";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
-import { formatDate, getVerseRef } from "@src/utils";
+import { formatDate, getVerseRef, getVerseRefs } from "@src/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ViewShot from "react-native-view-shot";
@@ -12,7 +13,7 @@ export function DevotionalCard({
   faves,
   handleFavoritingDevo,
   handleUnfavoritingDevo,
-  initExpanded
+  initExpanded,
 }: {
   devotional: any;
   faves: string[];
@@ -20,6 +21,7 @@ export function DevotionalCard({
   handleUnfavoritingDevo: (devo: any) => void;
   initExpanded?: boolean;
 }) {
+  const navigation = useNavigation<any>();
   const [isSharing, setIsSharing] = useState(false);
   const [isExpanded, setIsExpanded] = useState(initExpanded || false);
   const verseRef = useRef<ViewShot | null>(null);
@@ -60,6 +62,13 @@ export function DevotionalCard({
       );
     }
   }, [isExpanded]);
+
+  function goToVerse(book: string, chapter: number) {
+    navigation.navigate("Reader", {
+      book,
+      chapter,
+    });
+  }
 
   return (
     <View
@@ -102,7 +111,7 @@ export function DevotionalCard({
                 lineHeight: 28,
               }}
             >
-              {formatVerse(devotional.response, () => {})}
+              {formatVerse(devotional.response, goToVerse)}
             </Text>
           </View>
         </View>
@@ -156,7 +165,7 @@ export function DevotionalCard({
 
 export const formatVerse = (
   devotional: string,
-  onVersePress: (quote: string) => void
+  onVersePress: (book: string, chapter: number) => void
 ) => {
   if (!devotional) return null;
   // convert all quotation marks to double quotes
@@ -174,6 +183,8 @@ export const formatVerse = (
       if (i % 2 === 0) return quote;
       // style all biblical quotes
       const verseRef = getVerseRef(quote, devotional);
+      const fullVerse = `${quote} (${verseRef})`;
+      const { book, chapter } = getVerseRefs(fullVerse || "");
       if (verseRef)
         return (
           <Text
@@ -183,7 +194,7 @@ export const formatVerse = (
               fontFamily: "Baskerville",
             }}
             key={quote}
-            onPress={() => onVersePress(quote)}
+            onPress={() => onVersePress(book, chapter)}
             accessibilityHint="Tap to open the verse action menu."
           >
             {quote}
@@ -243,10 +254,5 @@ const styles = StyleSheet.create({
     zIndex: -2,
     alignItems: "flex-start",
     backgroundColor: colors.paper,
-  },
-  highlight: {
-    backgroundColor: "#fff3a8",
-    fontWeight: "600",
-    fontFamily: "Baskerville",
   },
 });

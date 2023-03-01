@@ -1,7 +1,7 @@
+import { useNavigation } from "@react-navigation/native";
 import { logShareDevotional } from "@src/analytics";
 import { formatVerse } from "@src/components/DevotionalCard";
 import LoadingMessages from "@src/components/LoadingMessages";
-import VerseActionModal from "@src/components/VerseActionModal";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { getVerseRef, getVerseRefs } from "@src/utils";
@@ -17,17 +17,16 @@ import {
 import ViewShot from "react-native-view-shot";
 
 const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
+  const navigation = useNavigation<any>();
   let devotional = useStore((state) => state.devotional);
   const { setBook, setChapter, setVerseNumber, setVerse } = useBibleStore();
   const verseRef = useRef<ViewShot | null>(null);
-  const { input, selectedVerse, setSelectedVerse } = useStore();
+  const { input } = useStore();
   const [sharing, setSharing] = useState<boolean>(false);
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const handleVersePress = (pressedVerse: string) => {
     const verseRef = getVerseRef(pressedVerse, devotional);
     const fullVerse = `${pressedVerse} (${verseRef})`;
-    setSelectedVerse(fullVerse);
     const { book, chapter, verseNum } = getVerseRefs(fullVerse || "");
 
     if (book === "" || chapter === 0 || verseNum === 0) {
@@ -39,10 +38,12 @@ const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
     setChapter(chapter);
     setVerseNumber(verseNum);
     setVerse(pressedVerse);
-    setModalOpen(true);
-  };
 
-  const closeVerseModal = () => setModalOpen(false);
+    navigation.navigate("Reader", {
+      book,
+      chapter,
+    });
+  };
 
   const share = async () => {
     setSharing(true);
@@ -99,11 +100,6 @@ const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
         )}
         {isLoading && <LoadingMessages />}
       </ScrollView>
-      <VerseActionModal
-        isModalVisible={modalOpen}
-        verse={selectedVerse}
-        onClose={closeVerseModal}
-      />
     </View>
   );
 };
