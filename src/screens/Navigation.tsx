@@ -1,16 +1,14 @@
 import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import BibleNavigator from "@src/screens/BibleNavigator";
 import HomeNavigator from "@src/screens/HomeNavigator";
 import ProfileNavigator from "@src/screens/ProfileNavigator";
 import SermonsScreen from "@src/screens/SermonsScreen";
 import colors from "@src/styles/colors";
 import * as React from "react";
-import BibleScreen from "./BibleScreen";
 
 const Tab = createBottomTabNavigator();
 
-// TODO: Use stack navigator for Bible screen
-//       Cover: reader, table of contents
 const BaseNavigator: React.FC = () => {
   return (
     <Tab.Navigator
@@ -50,7 +48,7 @@ const BaseNavigator: React.FC = () => {
       />
       <Tab.Screen
         name="Bible"
-        component={BibleScreen}
+        component={BibleNavigator}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (

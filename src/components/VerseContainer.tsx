@@ -2,9 +2,9 @@ import { logShareDevotional } from "@src/analytics";
 import { formatVerse } from "@src/components/DevotionalCard";
 import LoadingMessages from "@src/components/LoadingMessages";
 import VerseActionModal from "@src/components/VerseActionModal";
-import useStore from "@src/store";
+import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
-import { getVerseRef } from "@src/utils";
+import { getVerseRef, getVerseRefs } from "@src/utils";
 import { useEffect, useRef, useState } from "react";
 import {
   ScrollView,
@@ -18,6 +18,7 @@ import ViewShot from "react-native-view-shot";
 
 const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
   let devotional = useStore((state) => state.devotional);
+  const { setBook, setChapter, setVerseNumber, setVerse } = useBibleStore();
   const verseRef = useRef<ViewShot | null>(null);
   const { input, selectedVerse, setSelectedVerse } = useStore();
   const [sharing, setSharing] = useState<boolean>(false);
@@ -25,7 +26,19 @@ const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
 
   const handleVersePress = (pressedVerse: string) => {
     const verseRef = getVerseRef(pressedVerse, devotional);
-    setSelectedVerse(`${pressedVerse} (${verseRef})`);
+    const fullVerse = `${pressedVerse} (${verseRef})`;
+    setSelectedVerse(fullVerse);
+    const { book, chapter, verseNum } = getVerseRefs(fullVerse || "");
+
+    if (book === "" || chapter === 0 || verseNum === 0) {
+      console.warn("Invalid verse reference");
+      return;
+    }
+
+    setBook(book);
+    setChapter(chapter);
+    setVerseNumber(verseNum);
+    setVerse(pressedVerse);
     setModalOpen(true);
   };
 

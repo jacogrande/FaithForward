@@ -1,10 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { logGoToChapter } from "@src/analytics";
-import useStore from "@src/store";
+import { API_URL } from "@src/constants";
+import { auth } from "@src/firebase";
+import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
-import React from "react";
+import React, { useState } from "react";
 import {
+  ActivityIndicator,
   Keyboard,
   Modal,
   StyleSheet,
@@ -21,7 +24,9 @@ interface VerseActionModalProps {
 }
 
 const VerseActionModal: React.FC<VerseActionModalProps> = (props) => {
+  const [isLoadingExegesis, setIsLoadingExegesis] = useState<boolean>(false);
   const selectedVerse = useStore((state) => state.selectedVerse);
+  const { book, chapter, verseNumber, verse, setExegesis } = useBibleStore();
   const navigation =
     useNavigation<StackNavigationProp<{ Exegesis: {}; Bible: {} }>>();
   const handleOutsideClick = () => {
@@ -29,9 +34,35 @@ const VerseActionModal: React.FC<VerseActionModalProps> = (props) => {
     props.onClose();
   };
 
-  const goDepeer = () => {
-    props.onClose();
+  const goDeeper = async () => {
+    try {
+      setIsLoadingExegesis(true);
+      const userId = auth.currentUser?.uid;
 
+      const response = await fetch(`${API_URL}/getExegesis`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          book,
+          chapter,
+          verseNumber: verseNumber,
+          verse: verse,
+        }),
+      });
+
+      const data = await response.json();
+      setExegesis(data.response);
+
+      navigation.navigate("Exegesis", {});
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setIsLoadingExegesis(false);
+      props.onClose();
+    }
     navigation.navigate("Exegesis", {});
   };
 
@@ -63,9 +94,15 @@ const VerseActionModal: React.FC<VerseActionModalProps> = (props) => {
           <TouchableOpacity style={styles.closeButton} onPress={goToChapter}>
             <Text style={styles.closeButtonText}>Go to Chapter</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={goDepeer}>
-            <Text style={styles.buttonText}>Go Deeper</Text>
-          </TouchableOpacity>
+          {isLoadingExegesis ? (
+            <View style={styles.button}>
+              <ActivityIndicator color={colors.blue} />
+            </View>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={goDeeper}>
+              <Text style={styles.buttonText}>Go Deeper</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </Modal>

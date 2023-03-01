@@ -93,3 +93,32 @@ export const useContentStore = create<ContentStore>((set) => ({
   favorites: [],
   setFavorites: (favorites: any[]) => set((state) => ({ ...state, favorites })),
 }));
+
+type BibleStore = {
+  book: string | null;
+  setBook: (book: string | null) => void;
+  chapter: number | null;
+  setChapter: (chapter: number | null) => void;
+  verseNumber: number | null;
+  setVerseNumber: (verseNumber: number | null) => void;
+  verse: string | null;
+  setVerse: (verse: string | null) => void;
+  exegesis: string | null;
+  setExegesis: (exegesis: string | null) => void;
+};
+
+export const useBibleStore = create<BibleStore>((set) => ({
+  book: null,
+  setBook: (book: string | null) => set((state) => ({ ...state, book })),
+  chapter: null,
+  setChapter: (chapter: number | null) =>
+    set((state) => ({ ...state, chapter })),
+  verseNumber: null,
+  setVerseNumber: (verseNumber: number | null) =>
+    set((state) => ({ ...state, verseNumber })),
+  verse: null,
+  setVerse: (verse: string | null) => set((state) => ({ ...state, verse })),
+  exegesis: null,
+  setExegesis: (exegesis: string | null) =>
+    set((state) => ({ ...state, exegesis })),
+}));

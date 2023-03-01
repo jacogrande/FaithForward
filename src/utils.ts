@@ -37,6 +37,26 @@ export const formatTime = (date: Date | Timestamp): string => {
   });
 };
 
+// Given a verse string, return the book, chapter number, and verse number
+// Assumes the verse contains refs in the format: (book chapterNum:verseNum)
+// TODO: Improve validation
+export function getVerseRefs(verse: string): {
+  book: string;
+  chapter: number;
+  verseNum: number;
+} {
+  if (!verse.includes("(") || !verse.includes(")")) {
+    return { book: "", chapter: 0, verseNum: 0 };
+  }
+
+  const splits = verse.split("(");
+  const reference = splits[splits.length - 1].replace(")", "");
+  const [book, chapterAndVerse] = reference.split(" ");
+  const chapter = parseInt(chapterAndVerse.split(":")[0]);
+  const verseNum = parseInt(chapterAndVerse.split(":")[1]);
+  return { book, chapter, verseNum };
+}
+
 export const getVerseRef = (verse: string, fullResponse: string) => {
   // insert spaces after each opening parenthesis and before each closing parenthesis
   const match = new RegExp(

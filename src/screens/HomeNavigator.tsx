@@ -1,7 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import DevoNavigator from "@src/screens/DevoNavigator";
 import { PastDevotionals } from "@src/screens/PastDevotionals";
-import VerseAnalysisScreen from "@src/screens/VerseAnalysisScreen";
 import colors from "@src/styles/colors";
 import * as React from "react";
 
@@ -28,7 +27,6 @@ const BaseNavigator: React.FC = () => {
     >
       <Stack.Screen name="Devotionals" component={DevoNavigator} />
       <Stack.Screen name="Past Devotionals" component={PastDevotionals} />
-      <Stack.Screen name="Exegesis" component={VerseAnalysisScreen} />
     </Stack.Navigator>
   );
 };

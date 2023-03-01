@@ -1,43 +1,40 @@
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { logViewBibleChapter } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { Loading } from "@src/components/Loading";
-import { BIBLE_BOOKS } from "@src/constants";
+import { API_URL, BIBLE_BOOKS } from "@src/constants";
+import { auth } from "@src/firebase";
 import { useBibleChapter } from "@src/hooks/useBibleChapter";
+import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
+import { getVerseRefs } from "@src/utils";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import useStore from "@src/store";
 
+// TODO: Refactor all selectedVerse handlers to useBibleStore
 const BibleScreen = () => {
   const selectedVerse = useStore((state) => state.selectedVerse);
 
   const [book, setBook] = useState<string>(
-    selectedVerse ? getBookAndChapter(selectedVerse).book : "Genesis"
+    selectedVerse ? getVerseRefs(selectedVerse).book : "Genesis"
   );
   const [chapter, setChapter] = useState(
-    selectedVerse ? parseInt(getBookAndChapter(selectedVerse).chapter) : 1
+    selectedVerse ? getVerseRefs(selectedVerse).chapter : 1
   );
   const [showToc, setShowToc] = useState(false);
   const [showChapterSelection, setShowChapterSelection] = useState<
     string | null
   >(null);
   const { isLoading, data } = useBibleChapter(book, chapter);
-
-  // Extract book and chapter from selectedVerse, which is formatted like "verse" (book chapter:versenum)
-  function getBookAndChapter(verse: string) {
-    const splits = verse.split("(");
-    const reference = splits[splits.length - 1].replace(")", "");
-    const [book, chapterAndVerse] = reference.split(" ");
-    const chapter = chapterAndVerse.split(":")[0];
-    return { book, chapter };
-  }
 
   useEffect(() => {
     if (book && chapter) {
@@ -47,12 +44,11 @@ const BibleScreen = () => {
 
   useEffect(() => {
     if (selectedVerse) {
-      const { book, chapter } = getBookAndChapter(selectedVerse);
+      const { book, chapter } = getVerseRefs(selectedVerse);
       setBook(book);
-      setChapter(parseInt(chapter));
-      /* setSelectedVerse(null) */
+      setChapter(chapter);
     }
-  }, [selectedVerse])
+  }, [selectedVerse]);
 
   const nextChapter = () => {
     const currentBook = BIBLE_BOOKS[book];
@@ -80,30 +76,12 @@ const BibleScreen = () => {
     }
   };
 
-  // Adds verse numbers to the chapter
-  // TODO: Extract, make more robust
-  const Chapter = () => {
-    if (!data) {
-      return <></>;
-    }
-
-    return (
-      <View style={styles.container}>
-        {data.map((verse: string, index: number) => (
-          <View style={styles.verseContainer} key={index}>
-            <Text style={styles.verseNum}>{index + 1}</Text>
-            <Text style={styles.verseText}>{verse}</Text>
-          </View>
-        ))}
-      </View>
-    );
-  };
-
   if (isLoading) {
     return <Loading />;
   }
 
   // TODO: Refactor into separate stack nav screens
+  // TODO: Refactor into subcomponents
   return (
     <Container>
       {showToc ? (
@@ -215,7 +193,7 @@ const BibleScreen = () => {
 
           <ScrollView style={styles.scroll}>
             <View className="flex-1 justify-center items-center bg-ffPaper">
-              <Chapter />
+              <Chapter book={book} chapter={chapter} verses={data} />
             </View>
           </ScrollView>
         </>
@@ -224,7 +202,147 @@ const BibleScreen = () => {
   );
 };
 
+function Chapter({
+  book,
+  chapter,
+  verses,
+}: {
+  book: string;
+  chapter: number;
+  verses: string[];
+}) {
+  if (!verses) {
+    return <></>;
+  }
+
+  return (
+    <View style={styles.container}>
+      {verses.map((verse: string, index: number) => (
+        <Verse
+          key={index}
+          book={book}
+          chapter={chapter}
+          verse={verse}
+          num={index}
+        />
+      ))}
+    </View>
+  );
+}
+
+function Verse({
+  book,
+  chapter,
+  verse,
+  num,
+}: {
+  book: string;
+  chapter: number;
+  verse: string;
+  num: number;
+}) {
+  const navigation = useNavigation<any>();
+  const { setBook, setChapter, setVerseNumber, setVerse, setExegesis } =
+    useBibleStore();
+  const [showActions, setShowActions] = useState(false);
+  const [isLoadingExegesis, setIsLoadingExegesis] = useState(false);
+
+  // TODO: Add analytics
+  async function shareVerse() {
+    await Share.share({
+      message: `"${verse}"
+- ${book} ${chapter}:${num + 1}
+
+Sent with Faith Forward`,
+    });
+  }
+
+  // TODO: Add fave/unfave handling
+  // TODO: Show on Favorites Screen
+  // TODO: Add analytics
+  async function favoriteVerse() {
+    console.log("STUB");
+  }
+
+  // TODO: Add analytics
+  async function getExegesis() {
+    try {
+      setIsLoadingExegesis(true);
+
+      const userId = auth.currentUser?.uid;
+
+      const response = await fetch(`${API_URL}/getExegesis`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          book,
+          chapter,
+          verseNumber: num + 1,
+          verse: verse,
+        }),
+      });
+
+      const data = await response.json();
+
+      setBook(book);
+      setChapter(chapter);
+      setVerseNumber(num + 1);
+      setVerse(verse);
+      setExegesis(data.response);
+
+      navigation.navigate("Exegesis", {});
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setIsLoadingExegesis(false);
+    }
+  }
+
+  return (
+    <TouchableOpacity onPress={() => setShowActions(!showActions)}>
+      <View style={styles.verseContainer}>
+        <Text style={styles.verseNum}>{num + 1}</Text>
+        <Text style={styles.verseText}>{verse}</Text>
+      </View>
+      {showActions && (
+        <View style={styles.actionsContainer}>
+          <TouchableOpacity onPress={favoriteVerse} style={styles.actionButton}>
+            <Ionicons name="heart-outline" size={24} color={colors.red} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={shareVerse} style={styles.actionButton}>
+            <Feather name="share" size={20} color={colors.blue} />
+          </TouchableOpacity>
+          {isLoadingExegesis ? (
+            <View style={styles.actionButton}>
+              <ActivityIndicator size="small" color={colors.blue} />
+            </View>
+          ) : (
+            <TouchableOpacity onPress={getExegesis} style={styles.actionButton}>
+              <FontAwesome5 name="scroll" size={20} color={colors.blue} />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+}
+
 const styles = StyleSheet.create({
+  actionsContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginBottom: 25,
+    borderRadius: 5,
+    marginHorizontal: "12%",
+  },
+  actionButton: {
+    paddingHorizontal: 10,
+  },
+
   scroll: {
     backgroundColor: colors.paper,
     flex: 1,
