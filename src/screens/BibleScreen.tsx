@@ -274,7 +274,6 @@ Sent with Faith Forward`,
     });
   }
 
-  // TODO: Show on Favorites Screen
   // TODO: Add analytics
   async function handleFavoritingVerse() {
     try {

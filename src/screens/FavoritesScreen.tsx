@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import {
   logSermonPlay,
   logUnfavoriteDevotional,
@@ -11,6 +12,7 @@ import {
   unfavoritePersonalDevo,
   unfavoriteSermon,
   unfavoriteTradDevo,
+  unfavoriteVerse,
 } from "@src/firebase";
 import { useAudio } from "@src/hooks/useAudio";
 import { useFavorites } from "@src/hooks/useFavorites";
@@ -18,6 +20,7 @@ import { usePastDevos } from "@src/hooks/usePastDevos";
 import { useSermons } from "@src/hooks/useSermons";
 import { useTradDevos } from "@src/hooks/useTradDevos";
 import useStore, { useAudioStore } from "@src/store";
+import colors from "@src/styles/colors";
 import { TPersonalDevo, TSermon, TTradDevo } from "@src/types";
 import { onIdTokenChanged } from "firebase/auth";
 import React, { useEffect, useState } from "react";
@@ -25,6 +28,7 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  Share,
   Text,
   TouchableOpacity,
   View,
@@ -48,7 +52,10 @@ export default function FavoritesScreen() {
   const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
   const [favoriteSermons, setFavoriteSermons] = useState<TSermon[]>([]);
   const [favoriteDevos, setFavoriteDevos] = useState<any[]>([]);
-  const [viewType, setViewType] = useState<"sermons" | "devos">("sermons");
+  const [favoriteVerses, setFavoriteVerses] = useState<any[]>([]);
+  const [viewType, setViewType] = useState<"sermons" | "devos" | "verses">(
+    "devos"
+  );
   const { setError } = useStore();
 
   onIdTokenChanged(auth, (user) => {
@@ -59,7 +66,7 @@ export default function FavoritesScreen() {
     }
   });
 
-  // Set favoriteSermons when favorites updates
+  // Set favorites when favorites updates
   useEffect(() => {
     setFavoriteSermons(
       favorites
@@ -81,6 +88,21 @@ export default function FavoritesScreen() {
         .filter(
           (fave) => fave.type === "tradDevo" || fave.type === "personalDevo"
         )
+        .sort((a, b) => {
+          // Sort by createdAt
+          if (a.createdAt > b.createdAt) {
+            return -1;
+          }
+          if (a.createdAt < b.createdAt) {
+            return 1;
+          }
+          return 0;
+        })
+        .map((fave) => ({ ...fave.docData }))
+    );
+    setFavoriteVerses(
+      favorites
+        .filter((fave) => fave.type === "verse")
         .sort((a, b) => {
           // Sort by createdAt
           if (a.createdAt > b.createdAt) {
@@ -172,6 +194,32 @@ export default function FavoritesScreen() {
     }
   }
 
+  // TODO: Add analytics
+  async function handleUnfavoritingVerse(
+    book: string,
+    chapter: number,
+    verseNumber: number
+  ): Promise<void> {
+    try {
+      setFavoriteVerses(
+        favoriteVerses.filter(
+          (fave) =>
+            fave.book !== book &&
+            fave.chapter !== chapter &&
+            fave.verseNumber !== verseNumber
+        )
+      );
+      await unfavoriteVerse("kjv", book, chapter, verseNumber);
+      /* logUnfavoriteDevotional(devo.id, "Personal Devo"); */
+      setQuietlyRefreshing(true);
+      /* setQuietlyRefreshingPastDevos(true); */
+    } catch (err: any) {
+      console.warn("Error unfavoriting verse:");
+      console.error(err);
+      setError(err.message);
+    }
+  }
+
   function viewSermons() {
     setViewType("sermons");
     setQuietlyRefreshing(true);
@@ -179,6 +227,11 @@ export default function FavoritesScreen() {
 
   function viewDevos() {
     setViewType("devos");
+    setQuietlyRefreshing(true);
+  }
+
+  function viewVerses() {
+    setViewType("verses");
     setQuietlyRefreshing(true);
   }
 
@@ -194,6 +247,20 @@ export default function FavoritesScreen() {
           }}
         >
           <TouchableOpacity
+            onPress={viewDevos}
+            className={`px-6 py-2 mr-4 rounded-full ${
+              viewType === "devos" ? "bg-ffBlue" : "bg-ffDarkPaper"
+            }`}
+          >
+            <Text
+              className={`${
+                viewType === "devos" ? "text-white" : "text-ffBlack"
+              } font-semibold`}
+            >
+              Devotionals
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={viewSermons}
             className={`px-6 py-2 mr-4 rounded-full ${
               viewType === "sermons" ? "bg-ffBlue" : "bg-ffDarkPaper"
@@ -208,17 +275,17 @@ export default function FavoritesScreen() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={viewDevos}
-            className={`px-6 py-2 rounded-full ${
-              viewType === "devos" ? "bg-ffBlue" : "bg-ffDarkPaper"
+            onPress={viewVerses}
+            className={`px-6 py-2 mr-4 rounded-full ${
+              viewType === "verses" ? "bg-ffBlue" : "bg-ffDarkPaper"
             }`}
           >
             <Text
               className={`${
-                viewType === "devos" ? "text-white" : "text-ffBlack"
+                viewType === "verses" ? "text-white" : "text-ffBlack"
               } font-semibold`}
             >
-              Devotionals
+              Verses
             </Text>
           </TouchableOpacity>
         </View>
@@ -279,6 +346,31 @@ export default function FavoritesScreen() {
                   />
                 }
               />
+            ) : viewType === "verses" ? (
+              <FlatList
+                data={favoriteVerses}
+                renderItem={({ item: verse }: { item: any }) => (
+                  <VerseCard
+                    book={verse.book}
+                    chapter={verse.chapter}
+                    verseNumber={verse.verseNumber}
+                    verse={verse.verse}
+                    handleUnfavoritingVerse={handleUnfavoritingVerse}
+                  />
+                )}
+                keyExtractor={(item) =>
+                  `${item.book}${item.chapter}${item.verseNumber}`
+                }
+                style={{ height: "100%" }}
+                ListEmptyComponent={<EmptyFavorites />}
+                ListFooterComponent={<View style={{ height: 100 }} />}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={() => setRefreshing(true)}
+                  />
+                }
+              />
             ) : (
               <Text>
                 Unrecognized view type for favorites screen, {viewType}.
@@ -288,6 +380,91 @@ export default function FavoritesScreen() {
         )}
       </View>
     </Container>
+  );
+}
+
+function VerseCard({
+  book,
+  chapter,
+  verseNumber,
+  verse,
+  handleUnfavoritingVerse,
+}: {
+  book: string;
+  chapter: number;
+  verseNumber: number;
+  verse: string;
+  handleUnfavoritingVerse: (
+    book: string,
+    chapter: number,
+    verseNumber: number
+  ) => void;
+}) {
+  // TODO: Implement
+  // TODO: Add analytics
+  function goToVerse() {}
+
+  // TODO: Add analytics
+  async function shareVerse() {
+    await Share.share({
+      message: `"${verse}"
+- ${book} ${chapter}:${verseNumber}
+
+Sent with Faith Forward`,
+    });
+  }
+
+  return (
+    <View
+      style={{
+        borderRadius: 12,
+        padding: 24,
+        borderBottomColor: colors.lightBlue,
+        borderBottomWidth: 2,
+      }}
+    >
+      <TouchableOpacity onPress={goToVerse}>
+        <Text
+          style={{
+            fontSize: 16,
+            lineHeight: 28,
+            color: "#333",
+            fontFamily: "Baskerville",
+            fontWeight: "600",
+            backgroundColor: "#fff3a8",
+            padding: 8,
+          }}
+        >
+          "{verse.trim()}"
+        </Text>
+        <Text
+          style={{
+            fontSize: 16,
+            lineHeight: 28,
+            color: "#333",
+            fontFamily: "Baskerville",
+            fontWeight: "600",
+            backgroundColor: "#fff3a8",
+            padding: 8,
+          }}
+        >
+          - {book} {chapter}:{verseNumber}
+        </Text>
+      </TouchableOpacity>
+      <View className="flex-row justify-end items-center py-2 mt-2">
+        <View className="flex-row">
+          <TouchableOpacity
+            onPress={() => handleUnfavoritingVerse(book, chapter, verseNumber)}
+            style={{ paddingRight: 20 }}
+          >
+            <Ionicons name="heart-sharp" size={24} color={colors.red} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={shareVerse}>
+            <Ionicons name="ios-share-outline" size={24} color={colors.blue} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 }
 
