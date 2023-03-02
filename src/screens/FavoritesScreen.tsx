@@ -2,8 +2,11 @@ import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {
   logSermonPlay,
+  logShareVerse,
   logUnfavoriteDevotional,
+  logUnfavoriteExegesis,
   logUnfavoriteSermon,
+  logUnfavoriteVerse,
 } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
@@ -161,8 +164,8 @@ export default function FavoritesScreen() {
       setFavoriteSermons(
         favoriteSermons.filter((fave) => fave.id !== sermon.id)
       );
-      await unfavoriteSermon(sermon);
       logUnfavoriteSermon(sermon.id, sermon.title);
+      await unfavoriteSermon(sermon);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingSermons(true);
     } catch (err: any) {
@@ -191,8 +194,8 @@ export default function FavoritesScreen() {
   async function handleUnfavoritingTradDevo(tradDevo: TTradDevo) {
     try {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== tradDevo.id));
-      await unfavoriteTradDevo(tradDevo);
       logUnfavoriteDevotional(tradDevo.id, tradDevo.title);
+      await unfavoriteTradDevo(tradDevo);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingTradDevos(true);
     } catch (err: any) {
@@ -205,8 +208,8 @@ export default function FavoritesScreen() {
   async function handleUnfavoritingPersonalDevo(devo: TPersonalDevo) {
     try {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== devo.id));
-      await unfavoritePersonalDevo(devo);
       logUnfavoriteDevotional(devo.id, "Personal Devo");
+      await unfavoritePersonalDevo(devo);
       setQuietlyRefreshing(true);
       setQuietlyRefreshingPastDevos(true);
     } catch (err: any) {
@@ -216,7 +219,6 @@ export default function FavoritesScreen() {
     }
   }
 
-  // TODO: Add analytics
   async function handleUnfavoritingVerse(
     book: string,
     chapter: number,
@@ -231,6 +233,7 @@ export default function FavoritesScreen() {
             fave.verseNumber !== verseNumber
         )
       );
+      logUnfavoriteVerse(book, chapter, verseNumber);
       await unfavoriteVerse("kjv", book, chapter, verseNumber);
       setQuietlyRefreshing(true);
     } catch (err: any) {
@@ -240,11 +243,16 @@ export default function FavoritesScreen() {
     }
   }
 
-  // TODO: Add analytics
   async function handleUnfavoritingExegesis(exegesis: TExegesis) {
     try {
       setFavoriteExegeses(
         favoriteExegeses.filter((fave) => fave.id !== exegesis.id)
+      );
+      logUnfavoriteExegesis(
+        exegesis.id,
+        exegesis.book,
+        exegesis.chapter,
+        exegesis.verseNumber
       );
       await unfavoriteExegesis(exegesis);
       setQuietlyRefreshing(true);
@@ -282,14 +290,14 @@ export default function FavoritesScreen() {
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "flex-start",
+            justifyContent: "space-between",
             paddingHorizontal: 24,
             marginVertical: 24,
           }}
         >
           <TouchableOpacity
             onPress={viewDevos}
-            className={`px-6 py-2 mr-4 rounded-full ${
+            className={`px-6 py-2  rounded-full ${
               viewType === "devos" ? "bg-ffBlue" : "bg-ffDarkPaper"
             }`}
           >
@@ -300,20 +308,8 @@ export default function FavoritesScreen() {
             />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={viewSermons}
-            className={`px-6 py-2 mr-4 rounded-full ${
-              viewType === "sermons" ? "bg-ffBlue" : "bg-ffDarkPaper"
-            }`}
-          >
-            <FontAwesome5
-              name="church"
-              size={24}
-              color={viewType === "sermons" ? colors.paper : colors.blue}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
             onPress={viewVerses}
-            className={`px-6 py-2 mr-4 rounded-full ${
+            className={`px-6 py-2  rounded-full ${
               viewType === "verses" ? "bg-ffBlue" : "bg-ffDarkPaper"
             }`}
           >
@@ -324,8 +320,20 @@ export default function FavoritesScreen() {
             />
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={viewSermons}
+            className={`px-6 py-2  rounded-full ${
+              viewType === "sermons" ? "bg-ffBlue" : "bg-ffDarkPaper"
+            }`}
+          >
+            <FontAwesome5
+              name="church"
+              size={24}
+              color={viewType === "sermons" ? colors.paper : colors.blue}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={viewExegeses}
-            className={`px-6 py-2 mr-4 rounded-full ${
+            className={`px-6 py-2  rounded-full ${
               viewType === "exegeses" ? "bg-ffBlue" : "bg-ffDarkPaper"
             }`}
           >
@@ -458,7 +466,6 @@ function VerseCard({
 }) {
   const navigation = useNavigation<any>();
 
-  // TODO: Add analytics
   function goToVerse() {
     navigation.navigate("Reader", {
       book,
@@ -466,14 +473,18 @@ function VerseCard({
     });
   }
 
-  // TODO: Add analytics
   async function shareVerse() {
-    await Share.share({
-      message: `"${verse}"
+    try {
+      const shareAction = await Share.share({
+        message: `"${verse}"
 - ${book} ${chapter}:${verseNumber}
 
 Sent with Faith Forward`,
-    });
+      });
+      logShareVerse(book, chapter, verseNumber, shareAction.action);
+    } catch (err: any) {
+      console.error(err);
+    }
   }
 
   return (

@@ -1,6 +1,12 @@
 import { Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { logViewBibleChapter } from "@src/analytics";
+import {
+  logViewBibleChapter,
+  logShareVerse,
+  logFavoriteVerse,
+  logUnfavoriteVerse,
+  logGetExegesis,
+} from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { Loading } from "@src/components/Loading";
 import { API_URL, BIBLE_BOOKS } from "@src/constants";
@@ -257,20 +263,26 @@ function Verse({
   const [isLoadingExegesis, setIsLoadingExegesis] = useState(false);
   const [isFavorited, setIsFavorited] = useState(favorited);
 
-  // TODO: Add analytics
   async function shareVerse() {
-    await Share.share({
-      message: `"${verse}"
-- ${book} ${chapter}:${num + 1}
+    try {
+      const verseNumber = num + 1;
+      const shareAction = await Share.share({
+        message: `"${verse}"
+- ${book} ${chapter}:${verseNumber}
 
 Sent with Faith Forward`,
-    });
+      });
+      logShareVerse(book, chapter, verseNumber, shareAction.action);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+    }
   }
 
-  // TODO: Add analytics
   async function handleFavoritingVerse() {
     try {
       setIsFavorited(true);
+      logFavoriteVerse(book, chapter, num + 1);
       await favoriteVerse("kjv", book, chapter, num + 1, verse);
       onFaveToggle();
     } catch (err: any) {
@@ -283,6 +295,7 @@ Sent with Faith Forward`,
   async function handleUnfavoritingVerse() {
     try {
       setIsFavorited(false);
+      logUnfavoriteVerse(book, chapter, num + 1);
       await unfavoriteVerse("kjv", book, chapter, num + 1);
       onFaveToggle();
     } catch (err: any) {
@@ -292,10 +305,10 @@ Sent with Faith Forward`,
     }
   }
 
-  // TODO: Add analytics
   async function getExegesis() {
     try {
       setIsLoadingExegesis(true);
+      logGetExegesis(book, chapter, num + 1);
 
       const userId = auth.currentUser?.uid;
 

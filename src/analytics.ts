@@ -53,6 +53,24 @@ export const logShareDevotional = (
   }
 };
 
+export const logShareVerse = (
+  book: string,
+  chapter: number,
+  verseNumber: number,
+  shareAction: "sharedAction" | "dismissedAction"
+) => {
+  try {
+    analytics.track("Share Verse", {
+      book,
+      chapter,
+      verseNumber,
+      dismissed: shareAction === "dismissedAction",
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export const logLogin = (loginMethod: "email") => {
   try {
     analytics.track("Login", {
@@ -101,11 +119,61 @@ export const logUnfavoriteDevotional = (
   }
 };
 
+export const logUnfavoriteExegesis = (
+  exegesisId: string,
+  book: string,
+  chapter: number,
+  verseNumber: number
+) => {
+  try {
+    analytics.track("Unfavorite Exegesis", {
+      exegesisId,
+      book,
+      chapter,
+      verseNumber,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 export const logFavoriteSermon = (sermonID: string, sermonName: string) => {
   try {
     analytics.track("Favorite Sermon", {
       sermonID,
       sermonName,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const logFavoriteVerse = (
+  book: string,
+  chapter: number,
+  verseNumber: number
+) => {
+  try {
+    analytics.track("Favorite Verse", {
+      book,
+      chapter,
+      verseNumber,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const logUnfavoriteVerse = (
+  book: string,
+  chapter: number,
+  verseNumber: number
+) => {
+  try {
+    analytics.track("Unfavorite Verse", {
+      book,
+      chapter,
+      verseNumber,
     });
   } catch (err) {
     console.error(err);
@@ -163,15 +231,40 @@ export const logGoToChapter = (chapter: string | null) => {
   }
 };
 
-export const logGetExegesis = (chapter: string | null, promptID: string) => {
+export const logGetExegesis = (
+  book: string,
+  chapter: number,
+  verseNumber: number
+) => {
   try {
     analytics.track("Get Exegesis", {
+      book,
       chapter,
-      promptID,
+      verseNumber,
     });
   } catch (err) {
     console.error(err);
   }
 };
+
+export const logShareExegesis = (
+  exegesisId: string,
+  book: string,
+  chapter: number,
+  verseNumber: number,
+  shareAction: "sharedAction" | "dismissedAction"
+) => {
+  try {
+    analytics.track("Share Exegesis", {
+      exegesisId,
+      book,
+      chapter,
+      verseNumber,
+      dismissed: shareAction === "dismissedAction",
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 export default analytics;

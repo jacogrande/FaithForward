@@ -38,10 +38,6 @@ export const AuthScreen = () => {
   const navigation =
     useNavigation<StackNavigationProp<{ "Faith Forward": undefined }>>();
 
-  // React.useEffect(() => {
-  //   analytics.screen("Auth");
-  // }, []);
-
   const handleError = (err: any): void => {
     console.error(err);
     if (err.message.includes("email-already-in-use")) {

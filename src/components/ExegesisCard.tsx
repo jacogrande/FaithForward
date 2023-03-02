@@ -1,4 +1,5 @@
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { logShareExegesis } from "@src/analytics";
 import colors from "@src/styles/colors";
 import { TExegesis } from "@src/types";
 import { formatDate } from "@src/utils";
@@ -18,17 +19,27 @@ export function ExegesisCard({
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // TODO: Add analytics
   async function shareExegesis() {
-    await Share.share({
-      message: `"${exegesis.verse}"
+    try {
+      const shareAction = await Share.share({
+        message: `"${exegesis.verse}"
 - ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}
 
 ${exegesis.response}
 
 
 Sent with Faith Forward`,
-    });
+      });
+      logShareExegesis(
+        exegesis.id,
+        exegesis.book,
+        exegesis.chapter,
+        exegesis.verseNumber,
+        shareAction.action
+      );
+    } catch (err: any) {
+      console.error(err);
+    }
   }
 
   return (
