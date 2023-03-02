@@ -1,4 +1,4 @@
-import { TPersonalDevo, TSermon, TTradDevo } from "@src/types";
+import { TExegesis, TPersonalDevo, TSermon, TTradDevo } from "@src/types";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
@@ -435,7 +435,7 @@ export const unfavoriteVerse = async (
   bible: string,
   book: string,
   chapter: number,
-  verseNumber: number,
+  verseNumber: number
 ): Promise<void> => {
   if (!auth.currentUser) {
     throw new Error("Not logged in");
@@ -461,5 +461,85 @@ export const unfavoriteVerse = async (
     const favoriteDocId = favoritesQuerySnapshot.docs[0].id;
     const favoriteRef = await getDoc(doc(userRef, "favorites", favoriteDocId));
     await deleteDoc(favoriteRef.ref);
+  }
+};
+
+export const favoriteExegesis = async (exegesis: TExegesis): Promise<void> => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const exegesisRef = doc(userRef, "exegeses", exegesis.id);
+
+  // Handle the users/favorites subcollection
+  // If the user has already favorited the exegesis, do nothing
+  const favoritesQuery = query(
+    collection(userRef, "favorites"),
+    where("type", "==", "exegesis"),
+    where("docId", "==", exegesis.id)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  if (favoritesQuerySnapshot.docs.length > 0) {
+    console.warn("User has already favorited this exegesis");
+  } else {
+    await addDoc(collection(userRef, "favorites"), {
+      type: "exegesis",
+      docId: exegesisRef.id,
+      docData: exegesis,
+      createdAt: new Date(),
+    });
+  }
+
+  // Handle the exegesis.favorited field
+  // If the exegesis has already been favorited by the user, do nothing
+  const exegesisDoc = await getDoc(exegesisRef);
+  const exegesisFavorited = exegesisDoc.data()?.favorited;
+  if (exegesisFavorited) {
+    console.warn("Exegesis has already been favorited by user");
+  } else {
+    // Update favorited to true
+    await updateDoc(exegesisRef, {
+      favorited: true,
+    });
+  }
+};
+
+export const unfavoriteExegesis = async (exegesis: TExegesis) => {
+  if (!auth.currentUser) {
+    throw new Error("Not logged in");
+  }
+
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const exegesisRef = doc(userRef, "exegeses", exegesis.id);
+
+  // Handle users/favorites subcollection
+  // If the user has not favorited the exegesis, do nothing
+  const favoritesQuery = query(
+    collection(userRef, "favorites"),
+    where("type", "==", "exegesis"),
+    where("docId", "==", exegesis.id)
+  );
+  const favoritesQuerySnapshot = await getDocs(favoritesQuery);
+  // Get document ID of favorite
+  if (favoritesQuerySnapshot.docs.length === 0) {
+    console.warn("User has not favorited this exegesis");
+  } else {
+    const favoriteDocId = favoritesQuerySnapshot.docs[0].id;
+    const favoriteRef = await getDoc(doc(userRef, "favorites", favoriteDocId));
+    await deleteDoc(favoriteRef.ref);
+  }
+
+  // Handle prompts.favorited field
+  // If the exegesis has not been favorited by the user, do nothing
+  const exegesisDoc = await getDoc(exegesisRef);
+  const exegesisFavorited = exegesisDoc.data()?.favorited;
+  if (!exegesisFavorited) {
+    console.warn("Devo has not been favorited by user");
+  } else {
+    // Remove user from exegesis's favoritedBy
+    await updateDoc(exegesisRef, {
+      favorited: false,
+    });
   }
 };

@@ -74,6 +74,8 @@ type ContentStore = {
   setPastDevos: (pastDevos: TPersonalDevo[]) => void;
   favorites: any[];
   setFavorites: (favorites: any[]) => void;
+  pastExegeses: any[];
+  setPastExegeses: (pastExegeses: any[]) => void;
 };
 
 export const useContentStore = create<ContentStore>((set) => ({
@@ -87,6 +89,9 @@ export const useContentStore = create<ContentStore>((set) => ({
     set((state) => ({ ...state, pastDevos })),
   favorites: [],
   setFavorites: (favorites: any[]) => set((state) => ({ ...state, favorites })),
+  pastExegeses: [],
+  setPastExegeses: (pastExegeses: any[]) =>
+    set((state) => ({ ...state, pastExegeses })),
 }));
 
 type BibleStore = {

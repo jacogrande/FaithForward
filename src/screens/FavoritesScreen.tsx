@@ -1,4 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import {
   logSermonPlay,
   logUnfavoriteDevotional,
@@ -6,9 +7,11 @@ import {
 } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
+import { ExegesesList } from "@src/components/ExegesesList";
 import { Sermon } from "@src/components/Sermon";
 import {
   auth,
+  unfavoriteExegesis,
   unfavoritePersonalDevo,
   unfavoriteSermon,
   unfavoriteTradDevo,
@@ -17,11 +20,12 @@ import {
 import { useAudio } from "@src/hooks/useAudio";
 import { useFavorites } from "@src/hooks/useFavorites";
 import { usePastDevos } from "@src/hooks/usePastDevos";
+import { usePastExegeses } from "@src/hooks/usePastExegeses";
 import { useSermons } from "@src/hooks/useSermons";
 import { useTradDevos } from "@src/hooks/useTradDevos";
 import useStore, { useAudioStore } from "@src/store";
 import colors from "@src/styles/colors";
-import { TPersonalDevo, TSermon, TTradDevo } from "@src/types";
+import { TExegesis, TPersonalDevo, TSermon, TTradDevo } from "@src/types";
 import { onIdTokenChanged } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import {
@@ -48,14 +52,17 @@ export default function FavoritesScreen() {
     useTradDevos();
   const { setQuietlyRefreshing: setQuietlyRefreshingPastDevos } =
     usePastDevos();
+  const { setQuietlyRefreshing: setQuietlyRefreshingPastExegeses } =
+    usePastExegeses();
   const { stopSound, playSound } = useAudio();
   const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
   const [favoriteSermons, setFavoriteSermons] = useState<TSermon[]>([]);
   const [favoriteDevos, setFavoriteDevos] = useState<any[]>([]);
   const [favoriteVerses, setFavoriteVerses] = useState<any[]>([]);
-  const [viewType, setViewType] = useState<"sermons" | "devos" | "verses">(
-    "devos"
-  );
+  const [favoriteExegeses, setFavoriteExegeses] = useState<any[]>([]);
+  const [viewType, setViewType] = useState<
+    "sermons" | "devos" | "verses" | "exegeses"
+  >("devos");
   const { setError } = useStore();
 
   onIdTokenChanged(auth, (user) => {
@@ -103,6 +110,21 @@ export default function FavoritesScreen() {
     setFavoriteVerses(
       favorites
         .filter((fave) => fave.type === "verse")
+        .sort((a, b) => {
+          // Sort by createdAt
+          if (a.createdAt > b.createdAt) {
+            return -1;
+          }
+          if (a.createdAt < b.createdAt) {
+            return 1;
+          }
+          return 0;
+        })
+        .map((fave) => ({ ...fave.docData }))
+    );
+    setFavoriteExegeses(
+      favorites
+        .filter((fave) => fave.type === "exegesis")
         .sort((a, b) => {
           // Sort by createdAt
           if (a.createdAt > b.createdAt) {
@@ -210,11 +232,25 @@ export default function FavoritesScreen() {
         )
       );
       await unfavoriteVerse("kjv", book, chapter, verseNumber);
-      /* logUnfavoriteDevotional(devo.id, "Personal Devo"); */
       setQuietlyRefreshing(true);
-      /* setQuietlyRefreshingPastDevos(true); */
     } catch (err: any) {
       console.warn("Error unfavoriting verse:");
+      console.error(err);
+      setError(err.message);
+    }
+  }
+
+  // TODO: Add analytics
+  async function handleUnfavoritingExegesis(exegesis: TExegesis) {
+    try {
+      setFavoriteExegeses(
+        favoriteExegeses.filter((fave) => fave.id !== exegesis.id)
+      );
+      await unfavoriteExegesis(exegesis);
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingPastExegeses(true);
+    } catch (err: any) {
+      console.warn("Error unfavoriting exegesis:");
       console.error(err);
       setError(err.message);
     }
@@ -235,6 +271,11 @@ export default function FavoritesScreen() {
     setQuietlyRefreshing(true);
   }
 
+  function viewExegeses() {
+    setViewType("exegeses");
+    setQuietlyRefreshing(true);
+  }
+
   return (
     <Container>
       <View className="flex-1">
@@ -252,13 +293,11 @@ export default function FavoritesScreen() {
               viewType === "devos" ? "bg-ffBlue" : "bg-ffDarkPaper"
             }`}
           >
-            <Text
-              className={`${
-                viewType === "devos" ? "text-white" : "text-ffBlack"
-              } font-semibold`}
-            >
-              Devotionals
-            </Text>
+            <Ionicons
+              name="md-sunny"
+              size={24}
+              color={viewType === "devos" ? colors.paper : colors.blue}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={viewSermons}
@@ -266,13 +305,11 @@ export default function FavoritesScreen() {
               viewType === "sermons" ? "bg-ffBlue" : "bg-ffDarkPaper"
             }`}
           >
-            <Text
-              className={`${
-                viewType === "sermons" ? "text-white" : "text-ffBlack"
-              } font-semibold`}
-            >
-              Sermons
-            </Text>
+            <FontAwesome5
+              name="church"
+              size={24}
+              color={viewType === "sermons" ? colors.paper : colors.blue}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={viewVerses}
@@ -280,13 +317,23 @@ export default function FavoritesScreen() {
               viewType === "verses" ? "bg-ffBlue" : "bg-ffDarkPaper"
             }`}
           >
-            <Text
-              className={`${
-                viewType === "verses" ? "text-white" : "text-ffBlack"
-              } font-semibold`}
-            >
-              Verses
-            </Text>
+            <Ionicons
+              name="book"
+              size={24}
+              color={viewType === "verses" ? colors.paper : colors.blue}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={viewExegeses}
+            className={`px-6 py-2 mr-4 rounded-full ${
+              viewType === "exegeses" ? "bg-ffBlue" : "bg-ffDarkPaper"
+            }`}
+          >
+            <FontAwesome5
+              name="scroll"
+              size={24}
+              color={viewType === "exegeses" ? colors.paper : colors.blue}
+            />
           </TouchableOpacity>
         </View>
         {isAnonymous ? (
@@ -371,6 +418,15 @@ export default function FavoritesScreen() {
                   />
                 }
               />
+            ) : viewType === "exegeses" ? (
+              <ExegesesList
+                exegeses={favoriteExegeses}
+                faves={favoriteExegeses.map((fave) => fave.id)}
+                handleUnfavoritingExegesis={handleUnfavoritingExegesis}
+                handleFavoritingExegesis={null}
+                refreshing={refreshing}
+                onRefresh={() => setRefreshing(true)}
+              />
             ) : (
               <Text>
                 Unrecognized view type for favorites screen, {viewType}.
@@ -400,9 +456,15 @@ function VerseCard({
     verseNumber: number
   ) => void;
 }) {
-  // TODO: Implement
+  const navigation = useNavigation<any>();
+
   // TODO: Add analytics
-  function goToVerse() {}
+  function goToVerse() {
+    navigation.navigate("Reader", {
+      book,
+      chapter,
+    });
+  }
 
   // TODO: Add analytics
   async function shareVerse() {

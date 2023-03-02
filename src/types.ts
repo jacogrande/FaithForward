@@ -18,7 +18,7 @@ export type TTradDevo = {
   response: string;
   favoritedBy: string[];
   createdAt: Date | Timestamp;
-}
+};
 
 export type TPersonalDevo = {
   id: string;
@@ -26,7 +26,7 @@ export type TPersonalDevo = {
   response: string;
   favorited: boolean;
   createdAt: Date | Timestamp;
-}
+};
 
 export type TDevo = TTradDevo | TPersonalDevo;
 
@@ -47,4 +47,14 @@ export type TVerseRef = {
   book: string;
   chapter: number;
   verseNumber: number;
+};
+
+export type TExegesis = {
+  id: string;
+  book: string;
+  chapter: number;
+  verseNumber: number;
+  verse: string;
+  response: string;
+  createdAt: Date | Timestamp;
 };
