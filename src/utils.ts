@@ -62,10 +62,9 @@ export function getVerseRefs(verse: string): {
     verseRefArray[0].split(" ")[verseRefArray[0].split(" ").length - 1]
   );
   // The rest of the elements are the book
-  let book = verseRefArray[0].substring(
-    0,
-    verseRefArray[0].indexOf(chapter.toString())
-  ).trim();
+  let book = verseRefArray[0]
+    .substring(0, verseRefArray[0].indexOf(chapter.toString()))
+    .trim();
 
   // Convert 1s, 2s, and 3s to roman numerals
   if (book.includes("1")) {
@@ -79,7 +78,7 @@ export function getVerseRefs(verse: string): {
   }
 
   if (book.trim() === "Psalm") {
-    book = "Psalms"
+    book = "Psalms";
   }
 
   return { book, chapter, verseNum };
@@ -115,3 +114,19 @@ export const getRandomLoadingMessage = () => {
   const randomIndex = Math.floor(Math.random() * LOADING_MESSAGES.PILE.length);
   return LOADING_MESSAGES.PILE[randomIndex];
 };
+
+// Truncate a string to a certain number of characters
+// But round to a word boundary
+export function truncateString(str: string, maxLength: number): string {
+  if (str.length <= maxLength) {
+    return str;
+  }
+
+  const lastSpace = str.substring(0, maxLength).lastIndexOf(" ");
+
+  if (lastSpace !== -1) {
+    return str.substring(0, lastSpace) + "...";
+  }
+
+  return str.substring(0, maxLength) + "...";
+}

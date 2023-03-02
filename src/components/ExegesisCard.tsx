@@ -2,7 +2,7 @@ import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { logShareExegesis } from "@src/analytics";
 import colors from "@src/styles/colors";
 import { TExegesis } from "@src/types";
-import { formatDate } from "@src/utils";
+import { formatDate, truncateString } from "@src/utils";
 import React, { useState } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -56,6 +56,13 @@ Sent with Faith Forward`,
           exegesis.verse
         )}
 - ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}`}</Text>
+        {!isExpanded && (
+          <View>
+            <Text style={styles.text}>
+              {truncateString(exegesis.response, 140)}
+            </Text>
+          </View>
+        )}
       </TouchableOpacity>
       {isExpanded && (
         <View>
@@ -123,14 +130,14 @@ function formatVerse(verse: string): string {
 
 const styles = StyleSheet.create({
   highlight: {
-    backgroundColor: "#fff3a8",
+    /* backgroundColor: "#fff3a8", */
     fontWeight: "600",
     fontFamily: "Baskerville",
-    marginVertical: 15,
+    /* marginVertical: 15, */
   },
   text: {
     fontSize: 16,
-    marginHorizontal: "10%",
+    /* marginHorizontal: "10%", */
     padding: 8,
     color: "#333",
     lineHeight: 28,

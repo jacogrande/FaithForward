@@ -57,26 +57,27 @@ Sent with Faith Forward`,
       <TouchableOpacity onPress={goToVerse}>
         <Text
           style={{
-            fontSize: 16,
+            fontSize: 18,
             lineHeight: 28,
             color: "#333",
             fontFamily: "Baskerville",
             fontWeight: "600",
-            backgroundColor: "#fff3a8",
-            padding: 8,
+            /* backgroundColor: "#fff3a8", */
+            paddingHorizontal: 8,
           }}
         >
           "{verse.trim()}"
         </Text>
         <Text
           style={{
-            fontSize: 16,
+            fontSize: 18,
             lineHeight: 28,
             color: "#333",
             fontFamily: "Baskerville",
-            fontWeight: "600",
-            backgroundColor: "#fff3a8",
-            padding: 8,
+            fontWeight: "400",
+            /* backgroundColor: "#fff3a8", */
+            paddingHorizontal: 8,
+            paddingTop: 8,
           }}
         >
           - {book} {chapter}:{verseNumber}
