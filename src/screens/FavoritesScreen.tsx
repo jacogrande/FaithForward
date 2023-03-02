@@ -1,8 +1,6 @@
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import {
   logSermonPlay,
-  logShareVerse,
   logUnfavoriteDevotional,
   logUnfavoriteExegesis,
   logUnfavoriteSermon,
@@ -12,6 +10,7 @@ import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { ExegesesList } from "@src/components/ExegesesList";
 import { Sermon } from "@src/components/Sermon";
+import { VersesList } from "@src/components/VersesList";
 import {
   auth,
   unfavoriteExegesis,
@@ -35,7 +34,6 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  Share,
   Text,
   TouchableOpacity,
   View,
@@ -402,29 +400,11 @@ export default function FavoritesScreen() {
                 }
               />
             ) : viewType === "verses" ? (
-              <FlatList
-                data={favoriteVerses}
-                renderItem={({ item: verse }: { item: any }) => (
-                  <VerseCard
-                    book={verse.book}
-                    chapter={verse.chapter}
-                    verseNumber={verse.verseNumber}
-                    verse={verse.verse}
-                    handleUnfavoritingVerse={handleUnfavoritingVerse}
-                  />
-                )}
-                keyExtractor={(item) =>
-                  `${item.book}${item.chapter}${item.verseNumber}`
-                }
-                style={{ height: "100%" }}
-                ListEmptyComponent={<EmptyFavorites />}
-                ListFooterComponent={<View style={{ height: 100 }} />}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={() => setRefreshing(true)}
-                  />
-                }
+              <VersesList
+                verses={favoriteVerses}
+                handleUnfavoritingVerse={handleUnfavoritingVerse}
+                refreshing={refreshing}
+                onRefresh={() => setRefreshing(true)}
               />
             ) : viewType === "exegeses" ? (
               <ExegesesList
@@ -444,100 +424,6 @@ export default function FavoritesScreen() {
         )}
       </View>
     </Container>
-  );
-}
-
-function VerseCard({
-  book,
-  chapter,
-  verseNumber,
-  verse,
-  handleUnfavoritingVerse,
-}: {
-  book: string;
-  chapter: number;
-  verseNumber: number;
-  verse: string;
-  handleUnfavoritingVerse: (
-    book: string,
-    chapter: number,
-    verseNumber: number
-  ) => void;
-}) {
-  const navigation = useNavigation<any>();
-
-  function goToVerse() {
-    navigation.navigate("Reader", {
-      book,
-      chapter,
-    });
-  }
-
-  async function shareVerse() {
-    try {
-      const shareAction = await Share.share({
-        message: `"${verse}"
-- ${book} ${chapter}:${verseNumber}
-
-Sent with Faith Forward`,
-      });
-      logShareVerse(book, chapter, verseNumber, shareAction.action);
-    } catch (err: any) {
-      console.error(err);
-    }
-  }
-
-  return (
-    <View
-      style={{
-        borderRadius: 12,
-        padding: 24,
-        borderBottomColor: colors.lightBlue,
-        borderBottomWidth: 2,
-      }}
-    >
-      <TouchableOpacity onPress={goToVerse}>
-        <Text
-          style={{
-            fontSize: 16,
-            lineHeight: 28,
-            color: "#333",
-            fontFamily: "Baskerville",
-            fontWeight: "600",
-            backgroundColor: "#fff3a8",
-            padding: 8,
-          }}
-        >
-          "{verse.trim()}"
-        </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            lineHeight: 28,
-            color: "#333",
-            fontFamily: "Baskerville",
-            fontWeight: "600",
-            backgroundColor: "#fff3a8",
-            padding: 8,
-          }}
-        >
-          - {book} {chapter}:{verseNumber}
-        </Text>
-      </TouchableOpacity>
-      <View className="flex-row justify-end items-center py-2 mt-2">
-        <View className="flex-row">
-          <TouchableOpacity
-            onPress={() => handleUnfavoritingVerse(book, chapter, verseNumber)}
-            style={{ paddingRight: 20 }}
-          >
-            <Ionicons name="heart-sharp" size={24} color={colors.red} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={shareVerse}>
-            <Ionicons name="ios-share-outline" size={24} color={colors.blue} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
   );
 }
 
