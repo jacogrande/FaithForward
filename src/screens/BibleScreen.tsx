@@ -29,7 +29,7 @@ import {
 const BibleScreen = ({ route }: { route: any }) => {
   const [book, setBook] = useState<string>(route.params?.book || "Genesis");
   const [chapter, setChapter] = useState(route.params?.chapter || 1);
-  const [showToc, setShowToc] = useState(false);
+  const [showToc, setShowToc] = useState(route.params?.book ? false : true);
   const [showChapterSelection, setShowChapterSelection] = useState<
     string | null
   >(null);

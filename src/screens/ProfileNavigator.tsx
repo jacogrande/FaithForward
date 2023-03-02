@@ -22,8 +22,8 @@ export default function ProfileNavigator() {
         tabBarActiveTintColor: colors.black,
       }}
     >
-      <Tab.Screen name="Account" component={ProfileScreen} />
       <Tab.Screen name="Favorites" component={FavoritesScreen} />
+      <Tab.Screen name="Account" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
