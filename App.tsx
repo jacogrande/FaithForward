@@ -4,9 +4,6 @@ import analytics from "@src/analytics";
 import { Loading } from "@src/components/Loading";
 import { PROJECT_ID } from "@src/constants";
 import { auth, syncPushToken } from "@src/firebase";
-import { useFavorites } from "@src/hooks/useFavorites";
-import { useSermons } from "@src/hooks/useSermons";
-import { useTradDevos } from "@src/hooks/useTradDevos";
 import AuthScreen from "@src/screens/AuthScreen";
 import Navigation from "@src/screens/Navigation";
 import useStore from "@src/store";
@@ -64,10 +61,6 @@ export default function App() {
   const { pushToken, setPushToken } = useStore();
   const notificationListener = useRef();
   const responseListener = useRef();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites();
-  const { setQuietlyRefreshing: setQuietlyRefreshingTradDevos } =
-    useTradDevos();
-  const { setQuietlyRefreshing: setQuietlyRefreshingSermons } = useSermons();
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
