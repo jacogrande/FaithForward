@@ -139,8 +139,8 @@ export const deletePushToken = async (pushToken: string) => {
 };
 
 export const favoriteSermon = async (sermon: TSermon) => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -183,8 +183,8 @@ export const favoriteSermon = async (sermon: TSermon) => {
 };
 
 export const unfavoriteSermon = async (sermon: TSermon) => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -226,8 +226,8 @@ export const unfavoriteSermon = async (sermon: TSermon) => {
 };
 
 export const favoriteTradDevo = async (devo: TTradDevo) => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -268,8 +268,8 @@ export const favoriteTradDevo = async (devo: TTradDevo) => {
 };
 
 export const unfavoriteTradDevo = async (devo: TTradDevo) => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -311,8 +311,8 @@ export const unfavoriteTradDevo = async (devo: TTradDevo) => {
 export const favoritePersonalDevo = async (
   devo: TPersonalDevo
 ): Promise<void> => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -352,8 +352,8 @@ export const favoritePersonalDevo = async (
 };
 
 export const unfavoritePersonalDevo = async (devo: TPersonalDevo) => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -397,8 +397,8 @@ export const favoriteVerse = async (
   verseNumber: number,
   verse: string
 ): Promise<void> => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -437,8 +437,8 @@ export const unfavoriteVerse = async (
   chapter: number,
   verseNumber: number
 ): Promise<void> => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -465,8 +465,8 @@ export const unfavoriteVerse = async (
 };
 
 export const favoriteExegesis = async (exegesis: TExegesis): Promise<void> => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);
@@ -506,8 +506,8 @@ export const favoriteExegesis = async (exegesis: TExegesis): Promise<void> => {
 };
 
 export const unfavoriteExegesis = async (exegesis: TExegesis) => {
-  if (!auth.currentUser) {
-    throw new Error("Not logged in");
+  if (!auth.currentUser || auth.currentUser.isAnonymous) {
+    throw new Error("You must be logged in to do that.");
   }
 
   const userRef = doc(db, "users", auth.currentUser.uid);

@@ -37,12 +37,13 @@ export function PastExegeses() {
     try {
       setOptimisticFaves([...optimisticFaves, exegesis.id]);
       await favoriteExegesis(exegesis);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error favoriting exegesis:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     }
   }
 
@@ -50,12 +51,13 @@ export function PastExegeses() {
     try {
       setOptimisticFaves(optimisticFaves.filter((id) => id !== exegesis.id));
       await unfavoriteExegesis(exegesis);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error unfavoriting exegesis:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     }
   }
 

@@ -284,11 +284,12 @@ Sent with Faith Forward`,
       setIsFavorited(true);
       logFavoriteVerse(book, chapter, num + 1);
       await favoriteVerse("kjv", book, chapter, num + 1, verse);
-      onFaveToggle();
     } catch (err: any) {
       console.warn("Error favoriting verse:");
       console.error(err);
       setError(err.message);
+    } finally {
+      onFaveToggle();
     }
   }
 
@@ -297,11 +298,12 @@ Sent with Faith Forward`,
       setIsFavorited(false);
       logUnfavoriteVerse(book, chapter, num + 1);
       await unfavoriteVerse("kjv", book, chapter, num + 1);
-      onFaveToggle();
     } catch (err: any) {
       console.warn("Error unfavoriting verse:");
       console.error(err);
       setError(err.message);
+    } finally {
+      onFaveToggle();
     }
   }
 

@@ -164,12 +164,13 @@ export default function FavoritesScreen() {
       );
       logUnfavoriteSermon(sermon.id, sermon.title);
       await unfavoriteSermon(sermon);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingSermons(true);
     } catch (err: any) {
       console.warn("Error unfavoriting sermon:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingSermons(true);
     }
   }
 
@@ -194,12 +195,13 @@ export default function FavoritesScreen() {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== tradDevo.id));
       logUnfavoriteDevotional(tradDevo.id, tradDevo.title);
       await unfavoriteTradDevo(tradDevo);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingTradDevos(true);
     } catch (err: any) {
       console.warn("Error unfavoriting tradDevo:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingTradDevos(true);
     }
   }
 
@@ -208,12 +210,13 @@ export default function FavoritesScreen() {
       setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== devo.id));
       logUnfavoriteDevotional(devo.id, "Personal Devo");
       await unfavoritePersonalDevo(devo);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingPastDevos(true);
     } catch (err: any) {
       console.warn("Error unfavoriting devo:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingPastDevos(true);
     }
   }
 
@@ -233,11 +236,12 @@ export default function FavoritesScreen() {
       );
       logUnfavoriteVerse(book, chapter, verseNumber);
       await unfavoriteVerse("kjv", book, chapter, verseNumber);
-      setQuietlyRefreshing(true);
     } catch (err: any) {
       console.warn("Error unfavoriting verse:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
     }
   }
 
@@ -253,12 +257,13 @@ export default function FavoritesScreen() {
         exegesis.verseNumber
       );
       await unfavoriteExegesis(exegesis);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingPastExegeses(true);
     } catch (err: any) {
       console.warn("Error unfavoriting exegesis:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingPastExegeses(true);
     }
   }
 

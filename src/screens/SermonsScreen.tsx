@@ -62,12 +62,13 @@ export default function SermonsScreen() {
       setOptimisticFaves((optimisticFaves) => [...optimisticFaves, sermon.id]);
       await favoriteSermon(sermon);
       logFavoriteSermon(sermon.id, sermon.title);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error favoriting sermon:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     }
   }
 
@@ -78,12 +79,13 @@ export default function SermonsScreen() {
       );
       await unfavoriteSermon(sermon);
       logUnfavoriteSermon(sermon.id, sermon.title);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error unfavoriting sermon:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     }
   }
 

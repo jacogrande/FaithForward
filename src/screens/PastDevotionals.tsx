@@ -38,12 +38,13 @@ export function PastDevotionals() {
     try {
       setOptimisticFaves([...optimisticFaves, devo.id]);
       await favoritePersonalDevo(devo);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error favoriting devo:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     }
   }
 
@@ -51,12 +52,13 @@ export function PastDevotionals() {
     try {
       setOptimisticFaves(optimisticFaves.filter((id) => id !== devo.id));
       await unfavoritePersonalDevo(devo);
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingFaves(true);
     } catch (err: any) {
       console.warn("Error unfavoriting devo:");
       console.error(err);
       setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingFaves(true);
     }
   }
 
