@@ -13,9 +13,11 @@ export const useApi = <T>(url: string, data?: RequestInit) => {
     const startTime = Date.now();
     try {
       const response = await fetch(url, data);
+
       setRequestTime(Date.now() - startTime);
       if (response.status === 200) {
-        setResponseData(await response.json());
+        const responseJson = await response.json();
+        setResponseData(responseJson);
       } else {
         console.debug("non-200 status code returned");
         const err = await response.json();

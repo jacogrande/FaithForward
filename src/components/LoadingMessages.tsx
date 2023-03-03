@@ -1,40 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { LOADING_MESSAGES } from "@src/constants";
+import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import colors from "@src/styles/colors";
-import { getRandomLoadingMessage } from "@src/utils";
+import React from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 const LoadingMessages = () => {
-  const [ellipsis, setEllipsis] = useState("   ");
-  const [counter, setCounter] = useState(0);
-  const [message, setMessage] = useState(LOADING_MESSAGES.INITIAL);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (counter === 0) {
-        setEllipsis("   ");
-        setCounter(counter + 1);
-      } else if (counter === 1) {
-        setEllipsis(".  ");
-        setCounter(counter + 1);
-      } else if (counter === 2) {
-        setEllipsis(".. ");
-        setCounter(counter + 1);
-      } else if (counter === 3) {
-        setEllipsis("...");
-        setCounter(0);
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, [counter]);
-
-  useEffect(() => {
-    const messageInterval = setInterval(() => {
-      setMessage(getRandomLoadingMessage());
-    }, 5000);
-    return () => clearInterval(messageInterval);
-  }, []);
+  const loadingMessage = useLoadingMessage(LOADING_MESSAGES.INITIAL);
 
   return (
     <View style={{ display: "flex", alignItems: "center" }}>
@@ -43,9 +14,7 @@ const LoadingMessages = () => {
         size={"large"}
         style={{ marginTop: 48 }}
       />
-      <Text style={styles.text}>
-        {message} {ellipsis}
-      </Text>
+      <Text style={styles.text}>{loadingMessage}</Text>
     </View>
   );
 };

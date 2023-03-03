@@ -1,11 +1,11 @@
 import { Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {
-  logViewBibleChapter,
-  logShareVerse,
   logFavoriteVerse,
-  logUnfavoriteVerse,
   logGetExegesis,
+  logShareVerse,
+  logUnfavoriteVerse,
+  logViewBibleChapter,
 } from "@src/analytics";
 import { Container } from "@src/components/Container";
 import { Loading } from "@src/components/Loading";
@@ -13,6 +13,7 @@ import { API_URL, BIBLE_BOOKS } from "@src/constants";
 import { auth, favoriteVerse, unfavoriteVerse } from "@src/firebase";
 import { useBibleChapter } from "@src/hooks/useBibleChapter";
 import { useFavorites } from "@src/hooks/useFavorites";
+import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import React, { useEffect, useState } from "react";
@@ -379,37 +380,59 @@ Sent with Faith Forward`,
         <Text style={styles.verseText}>{verse}</Text>
       </View>
       {showActions && (
-        <View style={styles.actionsContainer}>
-          {isFavorited ? (
-            <TouchableOpacity
-              onPress={handleUnfavoritingVerse}
-              style={styles.actionButton}
-            >
-              <Ionicons name="heart-sharp" size={24} color={colors.red} />
+        <>
+          <View
+            className={`${isLoadingExegesis ? "mb-2" : "mb-5"}`}
+            style={styles.actionsContainer}
+          >
+            {isFavorited ? (
+              <TouchableOpacity
+                onPress={handleUnfavoritingVerse}
+                style={styles.actionButton}
+              >
+                <Ionicons name="heart-sharp" size={24} color={colors.red} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={handleFavoritingVerse}
+                style={styles.actionButton}
+              >
+                <Ionicons name="heart-outline" size={24} color={colors.red} />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity onPress={shareVerse} style={styles.actionButton}>
+              <Feather name="share" size={20} color={colors.blue} />
             </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={handleFavoritingVerse}
-              style={styles.actionButton}
-            >
-              <Ionicons name="heart-outline" size={24} color={colors.red} />
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity onPress={shareVerse} style={styles.actionButton}>
-            <Feather name="share" size={20} color={colors.blue} />
-          </TouchableOpacity>
-          {isLoadingExegesis ? (
-            <View style={styles.actionButton}>
-              <ActivityIndicator size="small" color={colors.blue} />
-            </View>
-          ) : (
-            <TouchableOpacity onPress={getExegesis} style={styles.actionButton}>
-              <FontAwesome5 name="scroll" size={20} color={colors.blue} />
-            </TouchableOpacity>
-          )}
-        </View>
+            {isLoadingExegesis ? (
+              <View style={styles.actionButton}>
+                <ActivityIndicator size="small" color={colors.blue} />
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={getExegesis}
+                style={styles.actionButton}
+              >
+                <FontAwesome5 name="scroll" size={20} color={colors.blue} />
+              </TouchableOpacity>
+            )}
+          </View>
+          {isLoadingExegesis && <ExegesisLoadingMessage />}
+        </>
       )}
     </TouchableOpacity>
+  );
+}
+
+function ExegesisLoadingMessage() {
+  const loadingMessage = useLoadingMessage("Writing exegesis");
+
+  return (
+    <View
+      className="flex-1 justify-end items-end mb-5"
+      style={{ marginHorizontal: "12%" }}
+    >
+      <Text className="color-ffBlack italic">{loadingMessage}</Text>
+    </View>
   );
 }
 
@@ -418,7 +441,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    marginBottom: 25,
     borderRadius: 5,
     marginHorizontal: "12%",
   },
@@ -453,6 +475,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
+    paddingBottom: 40,
   },
   verseContainer: {
     flexDirection: "row",

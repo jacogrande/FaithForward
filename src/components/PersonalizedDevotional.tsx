@@ -29,7 +29,6 @@ export function PersonalizedDevotional() {
     input,
     setInput,
     setDevotional,
-    setPromptId,
     error,
     setError,
   } = useStore();
@@ -55,8 +54,10 @@ export function PersonalizedDevotional() {
   useEffect(() => {
     let requestReviewTimeout: any;
 
-    if (data && data.response && data.promptId) {
-      setPromptId(data.promptId);
+    if (data && data.response) {
+      if (!data.promptId) {
+        console.warn("No promptId returned from API")
+      }
       setDevotional(data.response);
       logCreateDevotional(data.promptId, input, requestTime || 0);
       requestReviewTimeout = setTimeout(() => {
