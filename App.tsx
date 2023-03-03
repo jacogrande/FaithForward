@@ -104,13 +104,8 @@ export default function App() {
   // TODO: Clean this up, not sure why identify analytics runs like a million times per auth change
   onAuthStateChanged(auth, (u) => {
     setUser(u);
-    if (u && u !== user) {
-      if (u && analytics.userInfo.get().userId !== u.uid) {
-        analytics.identify(u.uid);
-      }
-      setQuietlyRefreshingFaves(true);
-      setQuietlyRefreshingTradDevos(true);
-      setQuietlyRefreshingSermons(true);
+    if (u && analytics.userInfo.get().userId !== u.uid) {
+      analytics.identify(u.uid);
     }
     setLoading(false);
   });
