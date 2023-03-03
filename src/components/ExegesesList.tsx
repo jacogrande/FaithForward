@@ -32,8 +32,9 @@ export function ExegesesList({
       keyExtractor={(item: any) => item.id}
       style={{ width: "100%" }}
       ListEmptyComponent={() => (
-        <View style={{ alignItems: "center", marginTop: 24 }}>
+        <View style={{ alignItems: "center", marginTop: 24, marginHorizontal: '15%' }}>
           <Text style={{ fontSize: 18, color: "#999" }}>No exegeses found</Text>
+          <Text style={{ fontSize: 16, color: "#999", marginTop: 20 }}>Get one by tapping a Bible verse and then tapping the scroll icon.</Text>
         </View>
       )}
       ListFooterComponent={() => <View style={{ height: 48 }} />}
