@@ -104,7 +104,7 @@ export function DevotionalCard({
             <Text
               style={{
                 fontSize: 16,
-                paddingHorizontal: 20,
+                paddingHorizontal: 0,
                 paddingBottom: 20,
                 paddingTop: 8,
                 color: "#333",

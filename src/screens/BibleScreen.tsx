@@ -18,6 +18,7 @@ import colors from "@src/styles/colors";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Dimensions,
   ScrollView,
   Share,
   StyleSheet,
@@ -76,6 +77,50 @@ const BibleScreen = ({ route }: { route: any }) => {
     }
   };
 
+  // width of the window minus the margins
+  const containerWidth = Dimensions.get("window").width - 40;
+
+  // width of the chapter buttons
+  const chapterButtonWidth = containerWidth / 6;
+
+  // width of each button margin
+  const buttonMargin = containerWidth / 6 / 5;
+
+  const getChapterButtons = (bookName: string) => {
+    const chapters = Array.from(Array(BIBLE_BOOKS[bookName].chapters).keys());
+    // split up the chapters into groups of 5
+    const chapterGroups = [];
+    for (let i = 0; i < chapters.length; i += 5) {
+      chapterGroups.push(chapters.slice(i, i + 5));
+    }
+    // return a view row for each group
+    return chapterGroups.map((group) => (
+      <View key={group[0]} className="flex flex-row w-full">
+        {group.map((chapter, i) => (
+          <TouchableOpacity
+            key={`${bookName} ${chapter}`}
+            onPress={() => {
+              setBook(bookName);
+              setChapter(chapter + 1);
+              setShowToc(false);
+              setShowChapterSelection(null);
+            }}
+            className="flex items-center justify-center mt-4 bg-ffDarkPaper rounded"
+            style={{
+              width: chapterButtonWidth,
+              height: chapterButtonWidth,
+              marginRight: i === group.length - 1 ? 0 : buttonMargin,
+            }}
+          >
+            <Text className="text-lg font-bold text-ffBlack">
+              {chapter + 1}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    ));
+  };
+
   if (isLoading) {
     return <Loading />;
   }
@@ -89,16 +134,20 @@ const BibleScreen = ({ route }: { route: any }) => {
           <View className="flex flex-row justify-between items-center py-4 px-6 bg-ffPaper">
             <TouchableOpacity
               onPress={() => setShowToc(false)}
-              className="text-gray-700 hover:text-gray-900"
+              className="text-gray-700 hover:text-gray-900 absolute left-[20px] z-10"
             >
               <Ionicons name="ios-arrow-back" size={28} color={colors.black} />
             </TouchableOpacity>
-            <Text style={styles.header} className="font-bold text-xl">
+            <Text
+              style={styles.header}
+              className="text-xl text-center flex-1 text-ffBlack font-bold"
+            >
               Table of Contents
             </Text>
             <View />
           </View>
           <ScrollView style={[styles.scroll, { width: "100%" }]}>
+            {/* view with bottom border */}
             <View className="flex-1 px-6 mb-10 bg-ffPaper">
               {Object.keys(BIBLE_BOOKS).map((book) => (
                 <View key={book}>
@@ -111,8 +160,9 @@ const BibleScreen = ({ route }: { route: any }) => {
                     className="flex flex-row items-center mt-4"
                   >
                     <Text
-                      style={styles.header}
-                      className="text-xl font-bold text-gray-900 pr-2"
+                      className={`text-lg text-[#333] font-${
+                        showChapterSelection === book ? "bold" : "medium"
+                      } pr-2`}
                     >
                       {book}
                     </Text>
@@ -122,35 +172,13 @@ const BibleScreen = ({ route }: { route: any }) => {
                           ? "chevron-up"
                           : "chevron-down"
                       }
-                      size={16}
-                      color={colors.black}
+                      size={12}
+                      color="#333"
                       className="ml-auto"
                     />
                   </TouchableOpacity>
                   {showChapterSelection === book && (
-                    <View className="flex flex-row flex-wrap">
-                      {Array.from(Array(BIBLE_BOOKS[book].chapters).keys()).map(
-                        (chapter) => (
-                          <TouchableOpacity
-                            key={`${book} ${chapter}`}
-                            onPress={() => {
-                              setBook(book);
-                              setChapter(chapter + 1);
-                              setShowToc(false);
-                              setShowChapterSelection(null);
-                            }}
-                            className="flex flex-row items-center mt-2 mr-2 px-2 py-1 bg-gray-200 rounded"
-                          >
-                            <Text
-                              style={styles.header}
-                              className="text-lg font-bold text-gray-900 pr-2"
-                            >
-                              {chapter + 1}
-                            </Text>
-                          </TouchableOpacity>
-                        )
-                      )}
-                    </View>
+                    <View className="flex">{getChapterButtons(book)}</View>
                   )}
                 </View>
               ))}
@@ -162,7 +190,7 @@ const BibleScreen = ({ route }: { route: any }) => {
           <View className="flex flex-row justify-between items-center py-4 px-6 bg-ffPaper">
             <TouchableOpacity
               onPress={previousChapter}
-              className="text-gray-700 hover:text-gray-900"
+              className="text-ffBlack hover:text-gray-900"
             >
               <Ionicons name="ios-arrow-back" size={28} color={colors.black} />
             </TouchableOpacity>
@@ -175,13 +203,13 @@ const BibleScreen = ({ route }: { route: any }) => {
               </Text>
               <FontAwesome5
                 name="chevron-down"
-                size={14}
+                size={12}
                 color={colors.black}
               />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={nextChapter}
-              className="text-gray-700 hover:text-gray-900"
+              className="text-ffBlack hover:text-gray-900"
             >
               <Ionicons
                 name="ios-arrow-forward"
@@ -416,6 +444,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontFamily: "Baskerville",
+    color: colors.black,
   },
   verseNumber: {
     fontSize: 14,
@@ -437,6 +466,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: "8%",
     lineHeight: 28,
+    color: colors.black,
   },
   verseText: {
     flex: 1,
