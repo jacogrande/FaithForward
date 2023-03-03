@@ -4,13 +4,13 @@
     "slug": "faith-forward",
     "version": "2.7.0",
     "orientation": "portrait",
-    "icon": "./assets/icon-dark-blue.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "owner": "sisyphus-labs",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-002.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#5eb5d1"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -26,7 +26,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon-dark-blue.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       }
     },
