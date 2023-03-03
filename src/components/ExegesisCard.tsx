@@ -76,9 +76,15 @@ Sent with Faith Forward`,
           alignItems: "center",
           paddingVertical: 10,
           marginTop: 10,
+          paddingHorizontal: 8,
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
           <FontAwesome name="calendar-o" size={20} color="#999" />
           <Text style={{ fontSize: 14, color: "#999", paddingLeft: 10 }}>
             {formatDate(exegesis.createdAt)}
