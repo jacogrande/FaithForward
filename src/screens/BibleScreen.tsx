@@ -8,12 +8,12 @@ import {
   logViewBibleChapter,
 } from "@src/analytics";
 import { Container } from "@src/components/Container";
+import { ExegesisLoadingMessage } from "@src/components/ExegesisLoadingMessage";
 import { Loading } from "@src/components/Loading";
 import { API_URL, BIBLE_BOOKS } from "@src/constants";
 import { auth, favoriteVerse, unfavoriteVerse } from "@src/firebase";
 import { useBibleChapter } from "@src/hooks/useBibleChapter";
 import { useFavorites } from "@src/hooks/useFavorites";
-import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import React, { useEffect, useState } from "react";
@@ -432,19 +432,6 @@ Sent with Faith Forward`,
         </>
       )}
     </TouchableOpacity>
-  );
-}
-
-function ExegesisLoadingMessage() {
-  const loadingMessage = useLoadingMessage("Writing exegesis");
-
-  return (
-    <View
-      className="flex-1 justify-end items-end mb-5"
-      style={{ marginHorizontal: "12%" }}
-    >
-      <Text className="color-ffBlack italic">{loadingMessage}</Text>
-    </View>
   );
 }
 

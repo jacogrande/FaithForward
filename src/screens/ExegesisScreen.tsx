@@ -13,7 +13,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 function ExegesisScreen() {
@@ -76,24 +76,39 @@ function ExegesisScreen() {
 
   async function shareExegesis() {
     try {
-      const shareAction = await Share.share({
-        message: `"${verse}"
-- ${book} ${chapter}:${verseNumber}
-
-${exegesis}
-
-
-Sent with Faith Forward`,
-      });
       if (!firestoreExegesis) {
         throw new Error("Missing firestoreExegesis");
       }
 
+      let shareAction;
+      // Build message differently for general exegeses vs verse exegeses
+      if (firestoreExegesis.type === "general") {
+        shareAction = await Share.share({
+          message: `"${firestoreExegesis.input}"
+
+${firestoreExegesis.response}
+
+
+Sent with Faith Forward`,
+        });
+      } else {
+        shareAction = await Share.share({
+          message: `"${firestoreExegesis.verse}"
+- ${firestoreExegesis.book} ${firestoreExegesis.chapter}:${firestoreExegesis.verseNumber}
+
+${firestoreExegesis.response}
+
+
+Sent with Faith Forward`,
+        });
+      }
+
       logShareExegesis(
         firestoreExegesis.id,
-        firestoreExegesis.book,
-        firestoreExegesis.chapter,
-        firestoreExegesis.verseNumber,
+        firestoreExegesis.book || "",
+        firestoreExegesis.chapter || 0,
+        firestoreExegesis.verseNumber || 0,
+        firestoreExegesis.type || "unknown",
         shareAction.action
       );
     } catch (err: any) {

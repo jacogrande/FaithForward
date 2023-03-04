@@ -24,14 +24,8 @@ import { Snackbar } from "react-native-paper";
 
 export function PersonalizedDevotional() {
   const navigation = useNavigation<StackNavigationProp<any>>();
-  const {
-    promptStart,
-    input,
-    setInput,
-    setDevotional,
-    error,
-    setError,
-  } = useStore();
+  const { promptStart, input, setInput, setDevotional, error, setError } =
+    useStore();
   const inputRef = useRef<TextInput>(null);
   const {
     isLoading,
@@ -56,7 +50,7 @@ export function PersonalizedDevotional() {
 
     if (data && data.response) {
       if (!data.promptId) {
-        console.warn("No promptId returned from API")
+        console.warn("No promptId returned from API");
       }
       setDevotional(data.response);
       logCreateDevotional(data.promptId, input, requestTime || 0);
@@ -107,16 +101,16 @@ export function PersonalizedDevotional() {
         <View style={styles.container}>
           <View style={{ marginBottom: 32, alignItems: "center" }}>
             <Text className="text-ffBlack text-[28px] font-bold py-2">
-              Ask a question
+              What's on your mind?
             </Text>
             <Text style={{ color: "#444", fontSize: 16, fontWeight: "500" }}>
               Receive a tailored devotional just for you
             </Text>
           </View>
           <TextInput
-            ref={inputRef}
-            style={[styles.input]}
-            placeholder="What's on your mind?"
+            className="w-4/5 h-40 bg-ffPaper border-2 border-ffBlue rounded-lg p-4 my-4 items-center justify-center self-center"
+            style={styles.input}
+            placeholder="Enter your thoughts or prayers here..."
             placeholderTextColor="#999"
             onChangeText={(text) => setInput(text)}
             value={input}

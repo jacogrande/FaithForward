@@ -1,5 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import ExegesisScreen from "@src/screens/ExegesisScreen";
+import { PastExegeses } from "@src/screens/PastExegeses";
 import { ReaderAndStudyNavigator } from "@src/screens/ReaderAndStudyNavigator";
 import colors from "@src/styles/colors";
 import * as React from "react";
@@ -28,6 +29,11 @@ const BaseNavigator: React.FC = () => {
         name="Exegesis"
         component={ExegesisScreen}
         options={{ headerShown: true }}
+      />
+      <Stack.Screen
+        name="PastExegeses"
+        component={PastExegeses}
+        options={{ headerShown: true, headerTitle: "Exegeses" }}
       />
     </Stack.Navigator>
   );

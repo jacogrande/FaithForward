@@ -252,6 +252,7 @@ export const logShareExegesis = (
   book: string,
   chapter: number,
   verseNumber: number,
+  type: string,
   shareAction: "sharedAction" | "dismissedAction"
 ) => {
   try {
@@ -260,6 +261,7 @@ export const logShareExegesis = (
       book,
       chapter,
       verseNumber,
+      type,
       dismissed: shareAction === "dismissedAction",
     });
   } catch (err) {

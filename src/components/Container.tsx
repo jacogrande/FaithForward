@@ -1,8 +1,7 @@
 import { AudioControls } from "@src/components/AudioControls";
 import useStore from "@src/store";
-import colors from "@src/styles/colors";
 import React from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import { Snackbar } from "react-native-paper";
 
 interface ContainerProps {
@@ -14,8 +13,8 @@ export function Container(props: ContainerProps) {
   const { error, setError } = useStore();
 
   return (
-    <SafeAreaView style={styles.superContainer}>
-      <View style={styles.subContainer}>
+    <SafeAreaView className="flex-1 bg-ffPaper">
+      <View className="flex-1">
         {children}
         <AudioControls />
         <Snackbar
@@ -32,13 +31,3 @@ export function Container(props: ContainerProps) {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  superContainer: {
-    flex: 1,
-    backgroundColor: colors.paper,
-  },
-  subContainer: {
-    flex: 1,
-  },
-});
