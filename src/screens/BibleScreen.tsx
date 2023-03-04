@@ -193,7 +193,15 @@ const BibleScreen = ({ route }: { route: any }) => {
               onPress={previousChapter}
               className="text-ffBlack hover:text-gray-900"
             >
-              <Ionicons name="ios-arrow-back" size={28} color={colors.black} />
+              <Ionicons
+                name="ios-arrow-back"
+                size={28}
+                color={
+                  book === "Genesis" && chapter === 1
+                    ? colors.paper
+                    : colors.black
+                }
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setShowToc(true)}
@@ -215,7 +223,11 @@ const BibleScreen = ({ route }: { route: any }) => {
               <Ionicons
                 name="ios-arrow-forward"
                 size={28}
-                color={colors.black}
+                color={
+                  book === "Revelation" && chapter === 22
+                    ? colors.paper
+                    : colors.black
+                }
               />
             </TouchableOpacity>
           </View>
