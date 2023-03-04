@@ -136,14 +136,11 @@ function formatVerse(verse: string): string {
 
 const styles = StyleSheet.create({
   highlight: {
-    /* backgroundColor: "#fff3a8", */
     fontWeight: "600",
     fontFamily: "Baskerville",
-    /* marginVertical: 15, */
   },
   text: {
     fontSize: 16,
-    /* marginHorizontal: "10%", */
     padding: 8,
     color: "#333",
     lineHeight: 28,
