@@ -70,7 +70,7 @@ export function NewExegesis() {
             Ask the Bible
           </Text>
           <Text style={{ color: "#444", fontSize: 16, fontWeight: "500" }}>
-            Find new meaning in scripture
+            Explore the deeper meaning of the Word
           </Text>
         </View>
         <TextInput

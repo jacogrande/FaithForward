@@ -67,14 +67,7 @@ Sent with Faith Forward`,
       }}
     >
       <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-        {exegesis.type === "general" ? (
-          <Text style={[styles.text, styles.highlight]}>{exegesis.input}</Text>
-        ) : (
-          <Text style={[styles.text, styles.highlight]}>{`${formatVerse(
-            exegesis.verse || ""
-          )}
-- ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}`}</Text>
-        )}
+        <ExegesisTitle exegesis={exegesis} />
         {!isExpanded && (
           <View>
             <Text style={styles.text}>
@@ -135,6 +128,21 @@ Sent with Faith Forward`,
         </View>
       </View>
     </View>
+  );
+}
+
+function ExegesisTitle({ exegesis }: { exegesis: TExegesis }) {
+  if (exegesis.type === "general") {
+    return (
+      <Text style={[styles.text, styles.highlight]}>{exegesis.input}</Text>
+    );
+  }
+
+  return (
+    <Text style={[styles.text, styles.highlight]}>{`${formatVerse(
+      exegesis.verse || ""
+    )}
+- ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}`}</Text>
   );
 }
 
