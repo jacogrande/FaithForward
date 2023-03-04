@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { logShareDevotional } from "@src/analytics";
 import { formatVerse } from "@src/components/DevotionalCard";
-import LoadingMessages from "@src/components/LoadingMessages";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { getVerseRef, getVerseRefs } from "@src/utils";
@@ -16,7 +15,7 @@ import {
 } from "react-native";
 import ViewShot from "react-native-view-shot";
 
-const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
+function VerseContainer() {
   const navigation = useNavigation<any>();
   let devotional = useStore((state) => state.devotional);
   const { setBook, setChapter, setVerseNumber, setVerse } = useBibleStore();
@@ -98,11 +97,10 @@ const VerseContainer: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
             </ViewShot>
           </View>
         )}
-        {isLoading && <LoadingMessages />}
       </ScrollView>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   response: {

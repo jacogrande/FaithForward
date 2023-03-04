@@ -351,7 +351,7 @@ Sent with Faith Forward`,
   async function getExegesis() {
     try {
       setIsLoadingExegesis(true);
-      logGetExegesis(book, chapter, num + 1);
+      logGetExegesis(book, chapter, num + 1, "verse");
 
       const userId = auth.currentUser?.uid;
 

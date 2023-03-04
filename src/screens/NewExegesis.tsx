@@ -1,4 +1,5 @@
 import { API_URL } from "@src/constants";
+import { logGetExegesis } from "@src/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { auth } from "@src/firebase";
 import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
@@ -15,6 +16,7 @@ import {
   View,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
+import { BigButton } from "@src/components/BigButton";
 
 export function NewExegesis() {
   const navigation = useNavigation<any>();
@@ -26,8 +28,7 @@ export function NewExegesis() {
   async function getGeneralExegesis() {
     try {
       setIsLoadingExegesis(true);
-      // TODO: Implement logGetGeneralExegesis
-      /* logGetExegesis(book, chapter, num + 1); */
+      logGetExegesis("", 0, 0, "general");
 
       const userId = auth.currentUser?.uid;
 
@@ -82,20 +83,34 @@ export function NewExegesis() {
           multiline
         />
         <View className="flex-row justify-center items-center">
-          <TouchableOpacity
+          <BigButton
             onPress={getGeneralExegesis}
-            style={{ opacity: isLoadingExegesis ? 0.5 : 1 }}
-            className={`w-4/5 p-4 rounded-lg bg-ffBlue items-center justify-center self-center`}
-            disabled={isLoadingExegesis}
+            isLoading={isLoadingExegesis}
+            disabled={isLoadingExegesis || input.length === 0}
           >
             {isLoadingExegesis ? (
               <LoadingMessage />
             ) : (
               <Text className="text-white text-lg font-bold">Get Exegesis</Text>
             )}
-          </TouchableOpacity>
+          </BigButton>
+          {/* <TouchableOpacity */}
+          {/*   onPress={getGeneralExegesis} */}
+          {/*   style={{ opacity: isLoadingExegesis ? 0.5 : 1 }} */}
+          {/*   className={`w-4/5 p-4 rounded-lg bg-ffBlue items-center justify-center self-center`} */}
+          {/*   disabled={isLoadingExegesis} */}
+          {/* > */}
+          {/*   {isLoadingExegesis ? ( */}
+          {/*     <LoadingMessage /> */}
+          {/*   ) : ( */}
+          {/*     <Text className="text-white text-lg font-bold">Get Exegesis</Text> */}
+          {/*   )} */}
+          {/* </TouchableOpacity> */}
         </View>
-        <TouchableOpacity className="py-5" onPress={() => navigation.navigate("PastExegeses")}>
+        <TouchableOpacity
+          className="py-5"
+          onPress={() => navigation.navigate("PastExegeses")}
+        >
           <Text
             style={{
               color: "#444",

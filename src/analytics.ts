@@ -234,13 +234,15 @@ export const logGoToChapter = (chapter: string | null) => {
 export const logGetExegesis = (
   book: string,
   chapter: number,
-  verseNumber: number
+  verseNumber: number,
+  type: string
 ) => {
   try {
     analytics.track("Get Exegesis", {
       book,
       chapter,
       verseNumber,
+      type
     });
   } catch (err) {
     console.error(err);

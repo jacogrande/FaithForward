@@ -1,10 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { logCreateDevotional } from "@src/analytics";
+import { BigButton } from "@src/components/BigButton";
 import VerseContainer from "@src/components/VerseContainer";
 import { API_URL } from "@src/constants";
 import { auth } from "@src/firebase";
 import { useApi } from "@src/hooks/useApi";
+import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
@@ -116,40 +118,33 @@ export function PersonalizedDevotional() {
             value={input}
             multiline
           />
-          <View style={styles.buttonRow}>
-            <TouchableOpacity
+          <View className="flex-row justify-center items-center">
+            <BigButton
               onPress={submit}
-              style={[
-                styles.button,
-                { opacity: input && !isLoading ? 1 : 0.4 },
-              ]}
-              disabled={!input || isLoading}
+              isLoading={isLoading}
+              disabled={isLoading || input.length === 0}
             >
-              <Text style={styles.buttonText}>Get Devotional</Text>
-            </TouchableOpacity>
+              {isLoading ? (
+                <LoadingMessage />
+              ) : (
+                <Text className="text-white text-lg font-bold">
+                  Get Devotional
+                </Text>
+              )}
+            </BigButton>
           </View>
-          <View style={styles.buttonRow}>
-            <TouchableOpacity
-              onPress={seePastDevos}
+          <TouchableOpacity onPress={seePastDevos} className="py-5">
+            <Text
               style={{
-                flex: 1,
-                alignItems: "center",
-                paddingVertical: 20,
-                marginTop: 8,
+                color: "#444",
+                fontSize: 14,
+                fontWeight: "500",
               }}
             >
-              <Text
-                style={{
-                  color: "#444",
-                  fontSize: 14,
-                  fontWeight: "500",
-                }}
-              >
-                See past devotionals
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <VerseContainer isLoading={isLoading} />
+              See past devotionals
+            </Text>
+          </TouchableOpacity>
+          <VerseContainer />
         </View>
       </ScrollView>
       <Snackbar
@@ -166,6 +161,12 @@ export function PersonalizedDevotional() {
   );
 }
 
+function LoadingMessage() {
+  const message = useLoadingMessage("Writing your devotional");
+
+  return <Text className="text-white text-lg italic">{message}</Text>;
+}
+
 const styles = StyleSheet.create({
   scroller: {
     backgroundColor: colors.paper,
@@ -178,40 +179,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 50,
   },
-  button: {
-    backgroundColor: colors.blue,
-    borderRadius: 4,
-    paddingVertical: 18,
-    width: "100%",
-    marginTop: 12,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   header: {
     fontSize: 28,
     flexDirection: "row",
     marginBottom: 48,
     fontWeight: "600",
   },
-  buttonRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    width: "87%",
-    justifyContent: "flex-end",
-  },
   input: {
-    minHeight: 140,
+    minHeight: 100,
     backgroundColor: "rgba(0, 0, 0, 0.07)",
-    borderRadius: 4,
-    margin: 10,
-    padding: 10,
-    paddingTop: 12,
-    paddingBottom: 12,
-    width: "87%",
     fontSize: 16,
     fontWeight: "500",
     color: "#444",
