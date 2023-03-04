@@ -51,10 +51,12 @@ export type TVerseRef = {
 
 export type TExegesis = {
   id: string;
-  book: string;
-  chapter: number;
-  verseNumber: number;
-  verse: string;
+  book?: string;
+  chapter?: number;
+  verseNumber?: number;
+  verse?: string;
   response: string;
   createdAt: Date | Timestamp;
+  type?: string;
+  input?: string;
 };

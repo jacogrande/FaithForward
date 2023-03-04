@@ -21,20 +21,35 @@ export function ExegesisCard({
 
   async function shareExegesis() {
     try {
-      const shareAction = await Share.share({
-        message: `"${exegesis.verse}"
+      let shareAction;
+      // Build message differently for general exegeses vs verse exegeses
+      if (exegesis.type === "general") {
+        shareAction = await Share.share({
+          message: `"${exegesis.input}"
+
+${exegesis.response}
+
+
+Sent with Faith Forward`,
+        });
+      } else {
+        shareAction = await Share.share({
+          message: `"${exegesis.verse}"
 - ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}
 
 ${exegesis.response}
 
 
 Sent with Faith Forward`,
-      });
+        });
+      }
+
       logShareExegesis(
         exegesis.id,
-        exegesis.book,
-        exegesis.chapter,
-        exegesis.verseNumber,
+        exegesis.book || "",
+        exegesis.chapter || 0,
+        exegesis.verseNumber || 0,
+        exegesis.type || "unknown",
         shareAction.action
       );
     } catch (err: any) {
@@ -52,10 +67,7 @@ Sent with Faith Forward`,
       }}
     >
       <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
-        <Text style={[styles.text, styles.highlight]}>{`${formatVerse(
-          exegesis.verse
-        )}
-- ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}`}</Text>
+        <ExegesisTitle exegesis={exegesis} />
         {!isExpanded && (
           <View>
             <Text style={styles.text}>
@@ -116,6 +128,21 @@ Sent with Faith Forward`,
         </View>
       </View>
     </View>
+  );
+}
+
+function ExegesisTitle({ exegesis }: { exegesis: TExegesis }) {
+  if (exegesis.type === "general") {
+    return (
+      <Text style={[styles.text, styles.highlight]}>{exegesis.input}</Text>
+    );
+  }
+
+  return (
+    <Text style={[styles.text, styles.highlight]}>{`${formatVerse(
+      exegesis.verse || ""
+    )}
+- ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}`}</Text>
   );
 }
 

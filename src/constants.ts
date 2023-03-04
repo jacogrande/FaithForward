@@ -111,7 +111,7 @@ export const LOADING_MESSAGES = {
   PILE: [
     "Herding sheep",
     "Building an ark",
-    "Fighting the good fight of faith",
+    /* "Fighting the good fight of faith", */
     "Defeating Goliath",
     "Building the Tower of Babel",
     "Searching for manna",
@@ -124,21 +124,21 @@ export const LOADING_MESSAGES = {
     "Teaching the Word",
     "Washing the disciples' feet",
     "Feeding the five thousand",
-    "Singing a hymn of praise to the loading bar",
+    /* "Singing a hymn of praise to the loading bar", */
     "Building a virtual temple",
-    "Waiting for the burning bush to speak",
+    /* "Waiting for the burning bush to speak", */
     "Blessing the internet connection",
     "Tuning harps",
     "Fighting the temptation to close the app",
     "Practicing the patience of Job",
     "Climbing the mountain of faith",
-    "Walking through the valley of shadows",
+    /* "Walking through the valley of shadows", */
     "Planting seeds of hope",
     "Nurturing the fruits of the spirit",
-    "Lighting the way with the lamp of faith",
+    /* "Lighting the way with the lamp of faith", */
     "Striving for righteousness",
     "Sowing the seeds of love and kindness",
-    "Refining gold in the furnace of affliction",
+    /* "Refining gold in the furnace of affliction", */
     "Rising on eagle's wings",
     "Holding on to the anchor of hope",
   ],

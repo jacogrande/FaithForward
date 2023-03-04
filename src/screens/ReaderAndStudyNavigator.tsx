@@ -1,6 +1,6 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import BibleScreen from "@src/screens/BibleScreen";
-import { PastExegeses } from "@src/screens/PastExegeses";
+import { NewExegesis } from "@src/screens/NewExegesis";
 import colors from "@src/styles/colors";
 import * as React from "react";
 
@@ -23,7 +23,7 @@ export function ReaderAndStudyNavigator() {
       }}
     >
       <Tab.Screen name="Reader" component={BibleScreen} />
-      <Tab.Screen name="Exegeses" component={PastExegeses} />
+      <Tab.Screen name="Exegeses" component={NewExegesis} />
     </Tab.Navigator>
   );
 }
