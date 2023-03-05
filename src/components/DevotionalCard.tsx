@@ -185,7 +185,10 @@ export const formatVerse = (
       const verseRef = getVerseRef(quote, devotional);
       const fullVerse = `${quote} (${verseRef})`;
       const { book, chapter } = getVerseRefs(fullVerse || "");
-      if (verseRef)
+
+      if (verseRef) {
+        // Generate random key
+        const key = Math.random().toString(36).substring(7);
         return (
           <Text
             style={{
@@ -193,13 +196,15 @@ export const formatVerse = (
               fontWeight: "600",
               fontFamily: "Baskerville",
             }}
-            key={quote}
+            key={key}
             onPress={() => onVersePress(book, chapter)}
             accessibilityHint="Tap to open the verse action menu."
           >
             {quote}
           </Text>
         );
+      }
+
       // return non biblical quotes normally
       return quote;
     });

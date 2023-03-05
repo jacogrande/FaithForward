@@ -13,7 +13,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 function ExegesisScreen() {
@@ -34,8 +34,11 @@ function ExegesisScreen() {
         exegesis.verseNumber === verseNumber
       );
     });
-    setFirestoreExegesis(fe);
-    setIsFavorited(fe.favorited);
+
+    if (fe) {
+      setFirestoreExegesis(fe);
+      setIsFavorited(fe.favorited);
+    }
   }, [exegesis, JSON.stringify(pastExegeses)]);
 
   async function handleFavoritingExegesis() {

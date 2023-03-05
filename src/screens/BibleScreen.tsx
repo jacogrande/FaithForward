@@ -16,7 +16,7 @@ import { useBibleChapter } from "@src/hooks/useBibleChapter";
 import { useFavorites } from "@src/hooks/useFavorites";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -36,10 +36,13 @@ const BibleScreen = ({ route }: { route: any }) => {
     string | null
   >(null);
   const { isLoading, data } = useBibleChapter(book, chapter);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     if (book && chapter) {
       logViewBibleChapter(book, chapter);
+      // Reset scroll view
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
     }
   }, [book, chapter]);
 
@@ -147,7 +150,10 @@ const BibleScreen = ({ route }: { route: any }) => {
             </Text>
             <View />
           </View>
-          <ScrollView style={[styles.scroll, { width: "100%" }]}>
+          <ScrollView
+            ref={scrollViewRef}
+            style={[styles.scroll, { width: "100%" }]}
+          >
             {/* view with bottom border */}
             <View className="flex-1 px-6 mb-10 bg-ffPaper">
               {Object.keys(BIBLE_BOOKS).map((book) => (
