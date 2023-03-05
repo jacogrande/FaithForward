@@ -10,6 +10,7 @@ export function ExegesesList({
   handleUnfavoritingExegesis,
   refreshing,
   onRefresh,
+  expandFirst
 }: {
   exegeses: TExegesis[];
   faves: string[];
@@ -17,16 +18,18 @@ export function ExegesesList({
   handleUnfavoritingExegesis: (exegesis: TExegesis) => void;
   refreshing: boolean;
   onRefresh: () => void;
+  expandFirst?: boolean;
 }) {
   return (
     <FlatList
       data={exegeses}
-      renderItem={({ item }: { item: TExegesis }) => (
+      renderItem={({ item, index }: { item: TExegesis, index: number }) => (
         <ExegesisCard
           exegesis={item}
           faves={faves}
           handleFavoritingExegesis={handleFavoritingExegesis}
           handleUnfavoritingExegesis={handleUnfavoritingExegesis}
+          initExpanded={expandFirst && index === 0}
         />
       )}
       keyExtractor={(item: any) => item.id}
