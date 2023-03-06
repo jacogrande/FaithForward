@@ -15,7 +15,7 @@ function initOptimisticFaves(exegeses: any[]): string[] {
     .map((exegesis: any) => exegesis.id);
 }
 
-export function PastExegeses() {
+export function PastExegeses({ route }: { route: any }) {
   const {
     pastExegeses,
     loading,
@@ -74,6 +74,7 @@ export function PastExegeses() {
         handleUnfavoritingExegesis={handleUnfavoritingExegesis}
         refreshing={refreshing}
         onRefresh={() => setRefreshing(true)}
+        expandFirst={route.params?.expandFirst || false}
       />
     </Container>
   );

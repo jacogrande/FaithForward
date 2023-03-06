@@ -45,7 +45,7 @@ export function NewExegesis() {
 
       setQuietlyRefreshing(true);
       setInput("");
-      navigation.navigate("PastExegeses");
+      navigation.navigate("PastExegeses", { expandFirst: true });
     } catch (err: any) {
       console.warn("Error getting general exegesis:");
       console.error(err);

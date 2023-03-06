@@ -11,13 +11,15 @@ export function ExegesisCard({
   faves,
   handleFavoritingExegesis,
   handleUnfavoritingExegesis,
+  initExpanded
 }: {
   exegesis: TExegesis;
   faves: string[];
   handleFavoritingExegesis: ((exegesis: TExegesis) => void) | null;
   handleUnfavoritingExegesis: (exegesis: TExegesis) => void;
+  initExpanded?: boolean;
 }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(initExpanded || false);
 
   async function shareExegesis() {
     try {
