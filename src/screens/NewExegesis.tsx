@@ -66,16 +66,15 @@ export function NewExegesis() {
         className="flex-1 justify-center items-center bg-ffPaper"
       >
         <View style={{ marginBottom: 32, alignItems: "center" }}>
-          <Text className="text-ffBlack text-[28px] font-bold py-2">
+          <Text className="text-ffBlack text-h1 font-bold py-2">
             Ask the Bible
           </Text>
-          <Text style={{ color: "#444", fontSize: 16, fontWeight: "500" }}>
+          <Text className="font-medium text-ffText text-h2">
             Explore the deeper meaning of the Word
           </Text>
         </View>
         <TextInput
-          className="w-4/5 h-40 bg-ffPaper border-2 border-ffBlue rounded-lg p-4 my-4 items-center justify-center self-center"
-          style={styles.input}
+          className="w-4/5 h-40 text-ffText overflow-scroll font-medium bg-ffDarkPaper rounded p-3 my-4 text-h2"
           placeholder="What are you curious about?"
           placeholderTextColor="#999"
           onChangeText={(text) => setInput(text)}
@@ -91,7 +90,7 @@ export function NewExegesis() {
             {isLoadingExegesis ? (
               <LoadingMessage />
             ) : (
-              <Text className="text-white text-lg font-bold">Get Exegesis</Text>
+              <Text className="text-white font-bold text-h2">Get Exegesis</Text>
             )}
           </BigButton>
           {/* <TouchableOpacity */}
@@ -111,13 +110,7 @@ export function NewExegesis() {
           className="py-5"
           onPress={() => navigation.navigate("PastExegeses")}
         >
-          <Text
-            style={{
-              color: "#444",
-              fontSize: 14,
-              fontWeight: "500",
-            }}
-          >
+          <Text className="text-ffText text-[14px] font-medium">
             See past exegeses
           </Text>
         </TouchableOpacity>
@@ -139,15 +132,7 @@ export function NewExegesis() {
 function LoadingMessage() {
   const message = useLoadingMessage("Writing exegesis");
 
-  return <Text className="text-white text-lg italic">{message}</Text>;
+  return (
+    <Text className="text-white font-medium text-h2 italic">{message}</Text>
+  );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    minHeight: 100,
-    backgroundColor: "rgba(0, 0, 0, 0.07)",
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#444",
-  },
-});

@@ -93,25 +93,24 @@ export function PersonalizedDevotional() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
+      className="flex-1"
     >
       <ScrollView
-        style={styles.scroller}
+        className="flex-1 bg-ffPaper"
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.container}>
+        <View className="flex-1 justify-center items-center bg-ffPaper py-16">
           <View style={{ marginBottom: 32, alignItems: "center" }}>
-            <Text className="text-ffBlack text-[28px] font-bold py-2">
+            <Text className="text-ffBlack text-h1 font-bold py-2">
               What's on your mind?
             </Text>
-            <Text style={{ color: "#444", fontSize: 16, fontWeight: "500" }}>
+            <Text className="font-medium text-ffText text-h2">
               Receive a tailored devotional just for you
             </Text>
           </View>
           <TextInput
-            className="w-4/5 h-40 bg-ffPaper border-2 border-ffBlue rounded-lg p-4 my-4 items-center justify-center self-center"
-            style={styles.input}
+            className="w-4/5 h-40 text-ffText overflow-scroll font-medium bg-ffDarkPaper rounded p-3 my-4 text-h2"
             placeholder="Enter your thoughts or prayers here..."
             placeholderTextColor="#999"
             onChangeText={(text) => setInput(text)}
@@ -127,20 +126,14 @@ export function PersonalizedDevotional() {
               {isLoading ? (
                 <LoadingMessage />
               ) : (
-                <Text className="text-white text-lg font-bold">
+                <Text className="text-white font-bold text-h2">
                   Get Devotional
                 </Text>
               )}
             </BigButton>
           </View>
-          <TouchableOpacity onPress={seePastDevos} className="py-5">
-            <Text
-              style={{
-                color: "#444",
-                fontSize: 14,
-                fontWeight: "500",
-              }}
-            >
+          <TouchableOpacity onPress={seePastDevos} className="py-3 mt-4">
+            <Text className="text-ffText text-[14px] font-medium">
               See past devotionals
             </Text>
           </TouchableOpacity>
@@ -164,64 +157,7 @@ export function PersonalizedDevotional() {
 function LoadingMessage() {
   const message = useLoadingMessage("Writing your devotional");
 
-  return <Text className="text-white text-lg italic">{message}</Text>;
+  return (
+    <Text className="text-white font-medium text-h2 italic">{message}</Text>
+  );
 }
-
-const styles = StyleSheet.create({
-  scroller: {
-    backgroundColor: colors.paper,
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.paper,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 50,
-  },
-  header: {
-    fontSize: 28,
-    flexDirection: "row",
-    marginBottom: 48,
-    fontWeight: "600",
-  },
-  input: {
-    minHeight: 100,
-    backgroundColor: "rgba(0, 0, 0, 0.07)",
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#444",
-  },
-  devoTypeButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "45%",
-    borderRadius: 4,
-    flexDirection: "row",
-    paddingHorizontal: 10,
-    paddingVertical: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  traditionalButton: {
-    backgroundColor: colors.blue,
-  },
-  personalizedButton: {
-    backgroundColor: colors.orange,
-  },
-  devoTypeButtonActive: {
-    // Deactivate shadow
-    shadowColor: "transparent",
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0,
-    shadowRadius: 0,
-  },
-});
