@@ -132,17 +132,18 @@ Sent with Faith Forward`,
 }
 
 function ExegesisTitle({ exegesis }: { exegesis: TExegesis }) {
-  if (exegesis.type === "general") {
-    return (
-      <Text style={[styles.text, styles.highlight]}>{exegesis.input}</Text>
-    );
-  }
+  const getTitle = () => {
+    if (exegesis.type === "general") {
+      return exegesis.input;
+    }
 
+    return `${formatVerse(exegesis.verse || "")}
+- ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}`;
+  };
   return (
-    <Text style={[styles.text, styles.highlight]}>{`${formatVerse(
-      exegesis.verse || ""
-    )}
-- ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}`}</Text>
+    <Text style={[styles.text]} className="text-h1 text-ffBlack font-bold">
+      {getTitle()}
+    </Text>
   );
 }
 
