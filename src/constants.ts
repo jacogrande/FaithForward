@@ -477,8 +477,7 @@ export const BIBLE_BOOKS: { [key: string]: TBook } = {
   },
 };
 
-export const BIBLE_BOOK_CHAPTER_AUDIO_FILES: any = {
-  Genesis: {
-    1: "genesis-01-bella.mp3"
-  }
-}
+export const BIBLE_BOOK_CHAPTER_AUDIO_FILES = [
+  "Genesis 1",
+  "Genesis 2"
+]

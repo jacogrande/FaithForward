@@ -244,7 +244,9 @@ const BibleScreen = ({ route }: { route: any }) => {
               onPress={() => setShowToc(true)}
               className="flex flex-row items-center"
             >
-              {BIBLE_BOOK_CHAPTER_AUDIO_FILES[book][chapter] && (
+              {BIBLE_BOOK_CHAPTER_AUDIO_FILES.includes(
+                `${book} ${chapter}`
+              ) && (
                 <TouchableOpacity onPress={playChapter} className="mr-4">
                   {playingAudioObject?.title === `${book} ${chapter}` &&
                   !!sound ? (
