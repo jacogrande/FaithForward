@@ -189,7 +189,7 @@ function FavoriteDevos() {
     refreshing,
     setRefreshing,
     setQuietlyRefreshing,
-  } = useFavorites();
+  } = useFavorites("devos");
   const { setQuietlyRefreshing: setQuietlyRefreshingTradDevos } =
     useTradDevos();
   const { setQuietlyRefreshing: setQuietlyRefreshingPastDevos } =
@@ -298,7 +298,7 @@ function FavoriteSermons() {
     refreshing,
     setRefreshing,
     setQuietlyRefreshing,
-  } = useFavorites();
+  } = useFavorites("sermons");
   const { setQuietlyRefreshing: setQuietlyRefreshingSermons } = useSermons();
   const { stopSound, playSound } = useAudio();
   const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
@@ -395,7 +395,7 @@ function FavoriteVerses() {
     refreshing,
     setRefreshing,
     setQuietlyRefreshing,
-  } = useFavorites();
+  } = useFavorites("verses");
   const [favoriteVerses, setFavoriteVerses] = useState<any[]>([]);
   const { setError } = useStore();
 
@@ -462,7 +462,7 @@ function FavoriteExegeses() {
     refreshing,
     setRefreshing,
     setQuietlyRefreshing,
-  } = useFavorites();
+  } = useFavorites("exegeses");
   const { setQuietlyRefreshing: setQuietlyRefreshingPastExegeses } =
     usePastExegeses();
   const [favoriteExegeses, setFavoriteExegeses] = useState<any[]>([]);

@@ -24,7 +24,7 @@ export function PastDevotionals() {
     setRefreshing,
     setQuietlyRefreshing,
   } = usePastDevos();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites();
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites("devos");
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(pastDevos)
   );
