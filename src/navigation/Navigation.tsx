@@ -1,8 +1,8 @@
 import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import BibleNavigator from "@src/screens/BibleNavigator";
-import HomeNavigator from "@src/screens/HomeNavigator";
-import ProfileNavigator from "@src/screens/ProfileNavigator";
+import BibleNavigator from "@src/navigation/BibleNavigator";
+import HomeNavigator from "@src/navigation/HomeNavigator";
+import ProfileNavigator from "@src/navigation/ProfileNavigator";
 import SermonsScreen from "@src/screens/SermonsScreen";
 import colors from "@src/styles/colors";
 import * as React from "react";

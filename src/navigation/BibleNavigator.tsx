@@ -1,7 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
+import { ReaderAndStudyNavigator } from "@src/navigation/ReaderAndStudyNavigator";
 import ExegesisScreen from "@src/screens/ExegesisScreen";
 import { PastExegeses } from "@src/screens/PastExegeses";
-import { ReaderAndStudyNavigator } from "@src/screens/ReaderAndStudyNavigator";
 import colors from "@src/styles/colors";
 import * as React from "react";
 

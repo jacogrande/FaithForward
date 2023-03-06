@@ -1,5 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import DevoNavigator from "@src/screens/DevoNavigator";
+import DevoNavigator from "@src/navigation/DevoNavigator";
 import { PastDevotionals } from "@src/screens/PastDevotionals";
 import colors from "@src/styles/colors";
 import * as React from "react";
