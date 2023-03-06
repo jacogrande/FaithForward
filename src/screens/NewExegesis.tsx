@@ -1,6 +1,7 @@
-import { API_URL } from "@src/constants";
-import { logGetExegesis } from "@src/analytics";
 import { useNavigation } from "@react-navigation/native";
+import { logGetExegesis } from "@src/analytics";
+import { BigButton } from "@src/components/BigButton";
+import { API_URL } from "@src/constants";
 import { auth } from "@src/firebase";
 import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import { usePastExegeses } from "@src/hooks/usePastExegeses";
@@ -9,14 +10,12 @@ import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
-import { BigButton } from "@src/components/BigButton";
 
 export function NewExegesis() {
   const navigation = useNavigation<any>();

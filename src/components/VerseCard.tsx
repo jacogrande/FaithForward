@@ -75,7 +75,6 @@ Sent with Faith Forward`,
             color: "#333",
             fontFamily: "Baskerville",
             fontWeight: "600",
-            /* backgroundColor: "#fff3a8", */
             paddingHorizontal: 8,
             paddingTop: 8,
           }}

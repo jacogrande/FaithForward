@@ -9,6 +9,7 @@ import {
 import { Container } from "@src/components/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { ExegesesList } from "@src/components/ExegesesList";
+import { Loading } from "@src/components/Loading";
 import { Sermon } from "@src/components/Sermon";
 import { VersesList } from "@src/components/VersesList";
 import {
@@ -28,10 +29,8 @@ import { useTradDevos } from "@src/hooks/useTradDevos";
 import useStore, { useAudioStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { TExegesis, TPersonalDevo, TSermon, TTradDevo } from "@src/types";
-import { onIdTokenChanged } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   RefreshControl,
   Text,
@@ -39,8 +38,151 @@ import {
   View,
 } from "react-native";
 
+type ViewType = "devos" | "verses" | "sermons" | "exegeses";
+
 export default function FavoritesScreen() {
-  const [isAnonymous, setIsAnonymous] = useState(true);
+  const [viewType, setViewType] = useState<ViewType>("devos");
+
+  function handleFilterPress(pressedViewType: ViewType): void {
+    switch (pressedViewType) {
+      case "devos":
+        setViewType("devos");
+        break;
+      case "sermons":
+        setViewType("sermons");
+        break;
+      case "verses":
+        setViewType("verses");
+        break;
+      case "exegeses":
+        setViewType("exegeses");
+        break;
+      default:
+        throw new Error("Unrecognized view type pressed");
+    }
+  }
+
+  return (
+    <Container>
+      <View className="flex-1">
+        <Filters viewType={viewType} onPressFilter={handleFilterPress} />
+        <FavoritesList viewType={viewType} />
+      </View>
+    </Container>
+  );
+}
+
+const EmptyFavorites = () => {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginVertical: 40,
+      }}
+    >
+      <Text style={{ fontSize: 16 }}>No favorites to display.</Text>
+    </View>
+  );
+};
+
+function Filters({
+  viewType,
+  onPressFilter,
+}: {
+  viewType: ViewType;
+  onPressFilter: (viewType: ViewType) => void;
+}) {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingHorizontal: 24,
+        marginVertical: 24,
+      }}
+    >
+      <TouchableOpacity
+        onPress={() => onPressFilter("devos")}
+        className={`px-6 py-2  rounded-full ${
+          viewType === "devos" ? "bg-ffBlue" : "bg-ffDarkPaper"
+        }`}
+      >
+        <Ionicons
+          name="md-sunny"
+          size={24}
+          color={viewType === "devos" ? colors.paper : colors.blue}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => onPressFilter("verses")}
+        className={`px-6 py-2  rounded-full ${
+          viewType === "verses" ? "bg-ffBlue" : "bg-ffDarkPaper"
+        }`}
+      >
+        <Ionicons
+          name="book"
+          size={24}
+          color={viewType === "verses" ? colors.paper : colors.blue}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => onPressFilter("sermons")}
+        className={`px-6 py-2  rounded-full ${
+          viewType === "sermons" ? "bg-ffBlue" : "bg-ffDarkPaper"
+        }`}
+      >
+        <FontAwesome5
+          name="church"
+          size={24}
+          color={viewType === "sermons" ? colors.paper : colors.blue}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => onPressFilter("exegeses")}
+        className={`px-6 py-2  rounded-full ${
+          viewType === "exegeses" ? "bg-ffBlue" : "bg-ffDarkPaper"
+        }`}
+      >
+        <FontAwesome5
+          name="scroll"
+          size={24}
+          color={viewType === "exegeses" ? colors.paper : colors.blue}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function FavoritesList({ viewType }: { viewType: ViewType }) {
+  if (auth.currentUser?.isAnonymous) {
+    return (
+      <View className="flex-1 my-5 mx-7">
+        <Text>You must have an account to save favorites.</Text>
+      </View>
+    );
+  }
+
+  switch (viewType) {
+    case "devos":
+      return <FavoriteDevos />;
+    case "sermons":
+      return <FavoriteSermons />;
+    case "verses":
+      return <FavoriteVerses />;
+    case "exegeses":
+      return <FavoriteExegeses />;
+    default:
+      return (
+        <View className="flex-1 my-5 mx-7">
+          <Text>Oops, something went wrong. Please try again.</Text>
+        </View>
+      );
+  }
+}
+
+function FavoriteDevos() {
   const {
     favorites,
     loading,
@@ -48,49 +190,15 @@ export default function FavoritesScreen() {
     setRefreshing,
     setQuietlyRefreshing,
   } = useFavorites();
-  const { setQuietlyRefreshing: setQuietlyRefreshingSermons } = useSermons();
   const { setQuietlyRefreshing: setQuietlyRefreshingTradDevos } =
     useTradDevos();
   const { setQuietlyRefreshing: setQuietlyRefreshingPastDevos } =
     usePastDevos();
-  const { setQuietlyRefreshing: setQuietlyRefreshingPastExegeses } =
-    usePastExegeses();
-  const { stopSound, playSound } = useAudio();
-  const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
-  const [favoriteSermons, setFavoriteSermons] = useState<TSermon[]>([]);
   const [favoriteDevos, setFavoriteDevos] = useState<any[]>([]);
-  const [favoriteVerses, setFavoriteVerses] = useState<any[]>([]);
-  const [favoriteExegeses, setFavoriteExegeses] = useState<any[]>([]);
-  const [viewType, setViewType] = useState<
-    "sermons" | "devos" | "verses" | "exegeses"
-  >("devos");
   const { setError } = useStore();
-
-  onIdTokenChanged(auth, (user) => {
-    if (user?.isAnonymous) {
-      setIsAnonymous(true);
-    } else {
-      setIsAnonymous(false);
-    }
-  });
 
   // Set favorites when favorites updates
   useEffect(() => {
-    setFavoriteSermons(
-      favorites
-        .filter((fave) => fave.type === "sermon")
-        .sort((a, b) => {
-          // Sort by createdAt
-          if (a.createdAt > b.createdAt) {
-            return -1;
-          }
-          if (a.createdAt < b.createdAt) {
-            return 1;
-          }
-          return 0;
-        })
-        .map((fave) => ({ ...fave.docData }))
-    );
     setFavoriteDevos(
       favorites
         .filter(
@@ -108,24 +216,100 @@ export default function FavoritesScreen() {
         })
         .map((fave) => ({ ...fave.docData }))
     );
-    setFavoriteVerses(
+  }, [JSON.stringify(favorites)]);
+
+  async function handleUnfavoritingDevo(devo: TTradDevo | TPersonalDevo) {
+    const fave = favorites.find((fave) => fave.docId === devo.id);
+
+    switch (fave?.type) {
+      case "tradDevo":
+        handleUnfavoritingTradDevo(devo as TTradDevo);
+        break;
+      case "personalDevo":
+        handleUnfavoritingPersonalDevo(devo as TPersonalDevo);
+        break;
+      default:
+        console.warn("Error unfavoriting devo: fave.type is not valid");
+        break;
+    }
+  }
+
+  async function handleUnfavoritingTradDevo(tradDevo: TTradDevo) {
+    try {
+      setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== tradDevo.id));
+      logUnfavoriteDevotional(tradDevo.id, tradDevo.title);
+      await unfavoriteTradDevo(tradDevo);
+    } catch (err: any) {
+      console.warn("Error unfavoriting tradDevo:");
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingTradDevos(true);
+    }
+  }
+
+  async function handleUnfavoritingPersonalDevo(devo: TPersonalDevo) {
+    try {
+      setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== devo.id));
+      logUnfavoriteDevotional(devo.id, "Personal Devo");
+      await unfavoritePersonalDevo(devo);
+    } catch (err: any) {
+      console.warn("Error unfavoriting devo:");
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setQuietlyRefreshing(true);
+      setQuietlyRefreshingPastDevos(true);
+    }
+  }
+
+  if (loading) return <Loading />;
+
+  return (
+    <FlatList
+      data={favoriteDevos}
+      renderItem={({ item: devo }: { item: any }) => (
+        <DevotionalCard
+          devotional={devo}
+          faves={favoriteDevos.map((fave) => fave.id)}
+          handleFavoritingDevo={() => {}}
+          handleUnfavoritingDevo={handleUnfavoritingDevo}
+        />
+      )}
+      keyExtractor={(item) => item.id}
+      style={{ height: "100%" }}
+      ListEmptyComponent={<EmptyFavorites />}
+      ListFooterComponent={<View style={{ height: 100 }} />}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => setRefreshing(true)}
+        />
+      }
+    />
+  );
+}
+
+function FavoriteSermons() {
+  const {
+    favorites,
+    loading,
+    refreshing,
+    setRefreshing,
+    setQuietlyRefreshing,
+  } = useFavorites();
+  const { setQuietlyRefreshing: setQuietlyRefreshingSermons } = useSermons();
+  const { stopSound, playSound } = useAudio();
+  const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
+  const [favoriteSermons, setFavoriteSermons] = useState<TSermon[]>([]);
+  const { setError } = useStore();
+
+  // Set favorites when favorites updates
+  useEffect(() => {
+    setFavoriteSermons(
       favorites
-        .filter((fave) => fave.type === "verse")
-        .sort((a, b) => {
-          // Sort by createdAt
-          if (a.createdAt > b.createdAt) {
-            return -1;
-          }
-          if (a.createdAt < b.createdAt) {
-            return 1;
-          }
-          return 0;
-        })
-        .map((fave) => ({ ...fave.docData }))
-    );
-    setFavoriteExegeses(
-      favorites
-        .filter((fave) => fave.type === "exegesis")
+        .filter((fave) => fave.type === "sermon")
         .sort((a, b) => {
           // Sort by createdAt
           if (a.createdAt > b.createdAt) {
@@ -174,51 +358,65 @@ export default function FavoritesScreen() {
     }
   }
 
-  async function handleUnfavoritingDevo(devo: TTradDevo | TPersonalDevo) {
-    const fave = favorites.find((fave) => fave.docId === devo.id);
+  if (loading) return <Loading />;
 
-    switch (fave?.type) {
-      case "tradDevo":
-        handleUnfavoritingTradDevo(devo as TTradDevo);
-        break;
-      case "personalDevo":
-        handleUnfavoritingPersonalDevo(devo as TPersonalDevo);
-        break;
-      default:
-        console.warn("Error unfavoriting devo: fave.type is not valid");
-        break;
-    }
-  }
+  return (
+    <FlatList
+      data={favoriteSermons}
+      renderItem={({ item: sermon }: { item: TSermon }) => (
+        <Sermon
+          sermon={sermon}
+          faves={favoriteSermons.map((fave) => fave.id)}
+          sound={sound}
+          playingSermonId={playingAudioObject?.id || null}
+          startPlayingSermon={startPlayingSermon}
+          handleFavoritingSermon={() => {}}
+          handleUnfavoritingSermon={handleUnfavoritingSermon}
+        />
+      )}
+      keyExtractor={(item) => item.id}
+      style={{ height: "100%" }}
+      ListEmptyComponent={<EmptyFavorites />}
+      ListFooterComponent={<View style={{ height: 100 }} />}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => setRefreshing(true)}
+        />
+      }
+    />
+  );
+}
 
-  async function handleUnfavoritingTradDevo(tradDevo: TTradDevo) {
-    try {
-      setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== tradDevo.id));
-      logUnfavoriteDevotional(tradDevo.id, tradDevo.title);
-      await unfavoriteTradDevo(tradDevo);
-    } catch (err: any) {
-      console.warn("Error unfavoriting tradDevo:");
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingTradDevos(true);
-    }
-  }
+function FavoriteVerses() {
+  const {
+    favorites,
+    loading,
+    refreshing,
+    setRefreshing,
+    setQuietlyRefreshing,
+  } = useFavorites();
+  const [favoriteVerses, setFavoriteVerses] = useState<any[]>([]);
+  const { setError } = useStore();
 
-  async function handleUnfavoritingPersonalDevo(devo: TPersonalDevo) {
-    try {
-      setFavoriteDevos(favoriteDevos.filter((fave) => fave.id !== devo.id));
-      logUnfavoriteDevotional(devo.id, "Personal Devo");
-      await unfavoritePersonalDevo(devo);
-    } catch (err: any) {
-      console.warn("Error unfavoriting devo:");
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setQuietlyRefreshing(true);
-      setQuietlyRefreshingPastDevos(true);
-    }
-  }
+  // Set favorites when favorites updates
+  useEffect(() => {
+    setFavoriteVerses(
+      favorites
+        .filter((fave) => fave.type === "verse")
+        .sort((a, b) => {
+          // Sort by createdAt
+          if (a.createdAt > b.createdAt) {
+            return -1;
+          }
+          if (a.createdAt < b.createdAt) {
+            return 1;
+          }
+          return 0;
+        })
+        .map((fave) => ({ ...fave.docData }))
+    );
+  }, [JSON.stringify(favorites)]);
 
   async function handleUnfavoritingVerse(
     book: string,
@@ -245,6 +443,50 @@ export default function FavoritesScreen() {
     }
   }
 
+  if (loading) return <Loading />;
+
+  return (
+    <VersesList
+      verses={favoriteVerses}
+      handleUnfavoritingVerse={handleUnfavoritingVerse}
+      refreshing={refreshing}
+      onRefresh={() => setRefreshing(true)}
+    />
+  );
+}
+
+function FavoriteExegeses() {
+  const {
+    favorites,
+    loading,
+    refreshing,
+    setRefreshing,
+    setQuietlyRefreshing,
+  } = useFavorites();
+  const { setQuietlyRefreshing: setQuietlyRefreshingPastExegeses } =
+    usePastExegeses();
+  const [favoriteExegeses, setFavoriteExegeses] = useState<any[]>([]);
+  const { setError } = useStore();
+
+  // Set favorites when favorites updates
+  useEffect(() => {
+    setFavoriteExegeses(
+      favorites
+        .filter((fave) => fave.type === "exegesis")
+        .sort((a, b) => {
+          // Sort by createdAt
+          if (a.createdAt > b.createdAt) {
+            return -1;
+          }
+          if (a.createdAt < b.createdAt) {
+            return 1;
+          }
+          return 0;
+        })
+        .map((fave) => ({ ...fave.docData }))
+    );
+  }, [JSON.stringify(favorites)]);
+
   async function handleUnfavoritingExegesis(exegesis: TExegesis) {
     try {
       setFavoriteExegeses(
@@ -252,9 +494,9 @@ export default function FavoritesScreen() {
       );
       logUnfavoriteExegesis(
         exegesis.id,
-        exegesis.book,
-        exegesis.chapter,
-        exegesis.verseNumber
+        exegesis.book || "",
+        exegesis.chapter || 0,
+        exegesis.verseNumber || 0
       );
       await unfavoriteExegesis(exegesis);
     } catch (err: any) {
@@ -267,182 +509,16 @@ export default function FavoritesScreen() {
     }
   }
 
-  function viewSermons() {
-    setViewType("sermons");
-    setQuietlyRefreshing(true);
-  }
-
-  function viewDevos() {
-    setViewType("devos");
-    setQuietlyRefreshing(true);
-  }
-
-  function viewVerses() {
-    setViewType("verses");
-    setQuietlyRefreshing(true);
-  }
-
-  function viewExegeses() {
-    setViewType("exegeses");
-    setQuietlyRefreshing(true);
-  }
+  if (loading) return <Loading />;
 
   return (
-    <Container>
-      <View className="flex-1">
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingHorizontal: 24,
-            marginVertical: 24,
-          }}
-        >
-          <TouchableOpacity
-            onPress={viewDevos}
-            className={`px-6 py-2  rounded-full ${
-              viewType === "devos" ? "bg-ffBlue" : "bg-ffDarkPaper"
-            }`}
-          >
-            <Ionicons
-              name="md-sunny"
-              size={24}
-              color={viewType === "devos" ? colors.paper : colors.blue}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={viewVerses}
-            className={`px-6 py-2  rounded-full ${
-              viewType === "verses" ? "bg-ffBlue" : "bg-ffDarkPaper"
-            }`}
-          >
-            <Ionicons
-              name="book"
-              size={24}
-              color={viewType === "verses" ? colors.paper : colors.blue}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={viewSermons}
-            className={`px-6 py-2  rounded-full ${
-              viewType === "sermons" ? "bg-ffBlue" : "bg-ffDarkPaper"
-            }`}
-          >
-            <FontAwesome5
-              name="church"
-              size={24}
-              color={viewType === "sermons" ? colors.paper : colors.blue}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={viewExegeses}
-            className={`px-6 py-2  rounded-full ${
-              viewType === "exegeses" ? "bg-ffBlue" : "bg-ffDarkPaper"
-            }`}
-          >
-            <FontAwesome5
-              name="scroll"
-              size={24}
-              color={viewType === "exegeses" ? colors.paper : colors.blue}
-            />
-          </TouchableOpacity>
-        </View>
-        {isAnonymous ? (
-          <View className="flex-1 my-5 mx-7">
-            <Text>You must have an account to save favorites.</Text>
-          </View>
-        ) : (
-          <View>
-            {loading ? (
-              <View>
-                <ActivityIndicator />
-              </View>
-            ) : viewType === "sermons" ? (
-              <FlatList
-                data={favoriteSermons}
-                renderItem={({ item: sermon }: { item: TSermon }) => (
-                  <Sermon
-                    sermon={sermon}
-                    faves={favoriteSermons.map((fave) => fave.id)}
-                    sound={sound}
-                    playingSermonId={playingAudioObject?.id || null}
-                    startPlayingSermon={startPlayingSermon}
-                    handleFavoritingSermon={() => {}}
-                    handleUnfavoritingSermon={handleUnfavoritingSermon}
-                  />
-                )}
-                keyExtractor={(item) => item.id}
-                style={{ height: "100%" }}
-                ListEmptyComponent={<EmptyFavorites />}
-                ListFooterComponent={<View style={{ height: 100 }} />}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={() => setRefreshing(true)}
-                  />
-                }
-              />
-            ) : viewType === "devos" ? (
-              <FlatList
-                data={favoriteDevos}
-                renderItem={({ item: devo }: { item: any }) => (
-                  <DevotionalCard
-                    devotional={devo}
-                    faves={favoriteDevos.map((fave) => fave.id)}
-                    handleFavoritingDevo={() => {}}
-                    handleUnfavoritingDevo={handleUnfavoritingDevo}
-                  />
-                )}
-                keyExtractor={(item) => item.id}
-                style={{ height: "100%" }}
-                ListEmptyComponent={<EmptyFavorites />}
-                ListFooterComponent={<View style={{ height: 100 }} />}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={() => setRefreshing(true)}
-                  />
-                }
-              />
-            ) : viewType === "verses" ? (
-              <VersesList
-                verses={favoriteVerses}
-                handleUnfavoritingVerse={handleUnfavoritingVerse}
-                refreshing={refreshing}
-                onRefresh={() => setRefreshing(true)}
-              />
-            ) : viewType === "exegeses" ? (
-              <ExegesesList
-                exegeses={favoriteExegeses}
-                faves={favoriteExegeses.map((fave) => fave.id)}
-                handleUnfavoritingExegesis={handleUnfavoritingExegesis}
-                handleFavoritingExegesis={null}
-                refreshing={refreshing}
-                onRefresh={() => setRefreshing(true)}
-              />
-            ) : (
-              <Text>
-                Unrecognized view type for favorites screen, {viewType}.
-              </Text>
-            )}
-          </View>
-        )}
-      </View>
-    </Container>
+    <ExegesesList
+      exegeses={favoriteExegeses}
+      faves={favoriteExegeses.map((fave) => fave.id)}
+      handleUnfavoritingExegesis={handleUnfavoritingExegesis}
+      handleFavoritingExegesis={null}
+      refreshing={refreshing}
+      onRefresh={() => setRefreshing(true)}
+    />
   );
 }
-
-const EmptyFavorites = () => {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginVertical: 40,
-      }}
-    >
-      <Text style={{ fontSize: 16 }}>No favorites to display.</Text>
-    </View>
-  );
-};
