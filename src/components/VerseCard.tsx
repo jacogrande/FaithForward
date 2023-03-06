@@ -74,7 +74,7 @@ Sent with Faith Forward`,
             lineHeight: 28,
             color: "#333",
             fontFamily: "Baskerville",
-            fontWeight: "400",
+            fontWeight: "600",
             /* backgroundColor: "#fff3a8", */
             paddingHorizontal: 8,
             paddingTop: 8,

@@ -310,6 +310,10 @@ function Verse({
   const [isLoadingExegesis, setIsLoadingExegesis] = useState(false);
   const [isFavorited, setIsFavorited] = useState(favorited);
 
+  useEffect(() => {
+    setIsFavorited(favorited);
+  }, [favorited]);
+
   async function shareVerse() {
     try {
       const verseNumber = num + 1;
