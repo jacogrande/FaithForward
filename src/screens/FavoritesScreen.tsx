@@ -216,6 +216,9 @@ function FavoriteDevos() {
         })
         .map((fave) => ({ ...fave.docData }))
     );
+    setQuietlyRefreshing(true)
+    setQuietlyRefreshingPastDevos(true)
+    setQuietlyRefreshingTradDevos(true)
   }, [JSON.stringify(favorites)]);
 
   async function handleUnfavoritingDevo(devo: TTradDevo | TPersonalDevo) {
@@ -322,6 +325,8 @@ function FavoriteSermons() {
         })
         .map((fave) => ({ ...fave.docData }))
     );
+    setQuietlyRefreshing(true)
+    setQuietlyRefreshingSermons(true)
   }, [JSON.stringify(favorites)]);
 
   async function startPlayingSermon(sermon: TSermon) {
@@ -416,6 +421,7 @@ function FavoriteVerses() {
         })
         .map((fave) => ({ ...fave.docData }))
     );
+    setQuietlyRefreshing(true)
   }, [JSON.stringify(favorites)]);
 
   async function handleUnfavoritingVerse(
@@ -485,6 +491,8 @@ function FavoriteExegeses() {
         })
         .map((fave) => ({ ...fave.docData }))
     );
+    setQuietlyRefreshing(true)
+    setQuietlyRefreshingPastExegeses(true)
   }, [JSON.stringify(favorites)]);
 
   async function handleUnfavoritingExegesis(exegesis: TExegesis) {

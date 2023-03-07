@@ -9,14 +9,12 @@ import { useApi } from "@src/hooks/useApi";
 import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore from "@src/store";
-import colors from "@src/styles/colors";
 import React, { useEffect, useRef } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
