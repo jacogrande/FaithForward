@@ -20,9 +20,9 @@ import {
   View,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
-import BaseText from "./ui/BaseText";
-import BiggerText from "./ui/BiggerText";
-import SmallText from "./ui/SmallText";
+import BaseText from "@src/components/ui/BaseText";
+import BiggerText from "@src/components/ui/BiggerText";
+import SmallText from "@src/components/ui/SmallText";
 
 export function PersonalizedDevotional() {
   const navigation = useNavigation<StackNavigationProp<any>>();

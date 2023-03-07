@@ -4,8 +4,8 @@ import { logShareVerse } from "@src/analytics";
 import colors from "@src/styles/colors";
 import React from "react";
 import { Share, TouchableOpacity, View } from "react-native";
-import BaseText from "./ui/BaseText";
-import BigText from "./ui/BigText";
+import BaseText from "@src/components/ui/BaseText";
+import BigText from "@src/components/ui/BigText";
 
 export function VerseCard({
   book,

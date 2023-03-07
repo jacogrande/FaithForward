@@ -1,7 +1,7 @@
 import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import React from "react";
 import { View } from "react-native";
-import SmallText from "./ui/SmallText";
+import SmallText from "@src/components/ui/SmallText";
 
 export function ExegesisLoadingMessage() {
   const loadingMessage = useLoadingMessage("Writing exegesis");

@@ -2,8 +2,8 @@ import { ExegesisCard } from "@src/components/ExegesisCard";
 import { TExegesis } from "@src/types";
 import React from "react";
 import { FlatList, RefreshControl, View } from "react-native";
-import BaseText from "./ui/BaseText";
-import BigText from "./ui/BigText";
+import BaseText from "@src/components/ui/BaseText";
+import BigText from "@src/components/ui/BigText";
 
 export function ExegesesList({
   exegeses,

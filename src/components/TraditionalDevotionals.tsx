@@ -9,7 +9,7 @@ import useStore from "@src/store";
 import { TTradDevo } from "@src/types";
 import React, { useEffect, useState } from "react";
 import { FlatList, RefreshControl, View } from "react-native";
-import BigText from "./ui/BigText";
+import BigText from "@src/components/ui/BigText";
 
 function initOptimisticFaves(devos: TTradDevo[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user

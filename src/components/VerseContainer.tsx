@@ -14,7 +14,7 @@ import {
   View,
 } from "react-native";
 import ViewShot from "react-native-view-shot";
-import BaseText from "./ui/BaseText";
+import BaseText from "@src/components/ui/BaseText";
 
 function VerseContainer() {
   const navigation = useNavigation<any>();
@@ -118,18 +118,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  // prompt: {
-  //   fontSize: 16,
-  //   color: "#333",
-  //   marginTop: 24,
-  //   paddingHorizontal: "10%",
-  // },
-
   bold: {
     fontWeight: "700",
     color: "#111",
   },
-
   screenshot: {
     position: "absolute",
     top: -100000,

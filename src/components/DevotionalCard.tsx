@@ -7,10 +7,10 @@ import { formatDate, getVerseRef, getVerseRefs } from "@src/utils";
 import React, { useRef, useState } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ViewShot from "react-native-view-shot";
-import BaseText from "./ui/BaseText";
-import BigText from "./ui/BigText";
-import Quote from "./ui/Quote";
-import SmallText from "./ui/SmallText";
+import BaseText from "@src/components/ui/BaseText";
+import BigText from "@src/components/ui/BigText";
+import Quote from "@src/components/ui/Quote";
+import SmallText from "@src/components/ui/SmallText";
 
 export function DevotionalCard({
   devotional,

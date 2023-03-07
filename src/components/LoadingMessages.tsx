@@ -2,8 +2,8 @@ import { LOADING_MESSAGES } from "@src/constants";
 import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import colors from "@src/styles/colors";
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import BaseText from "./ui/BaseText";
+import { ActivityIndicator, View } from "react-native";
+import BaseText from "@src/components/ui/BaseText";
 
 const LoadingMessages = () => {
   const loadingMessage = useLoadingMessage(LOADING_MESSAGES.INITIAL);

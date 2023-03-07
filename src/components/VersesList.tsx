@@ -1,7 +1,7 @@
 import { VerseCard } from "@src/components/VerseCard";
 import React from "react";
-import { FlatList, RefreshControl, Text, View } from "react-native";
-import BaseText from "./ui/BaseText";
+import { FlatList, RefreshControl, View } from "react-native";
+import BaseText from "@src/components/ui/BaseText";
 
 export function VersesList({
   verses,

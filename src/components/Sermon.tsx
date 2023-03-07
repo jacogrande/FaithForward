@@ -8,13 +8,12 @@ import {
   ActivityIndicator,
   Share,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import BaseText from "./ui/BaseText";
-import BigText from "./ui/BigText";
-import SmallText from "./ui/SmallText";
+import BaseText from "@src/components/ui/BaseText";
+import BigText from "@src/components/ui/BigText";
+import SmallText from "@src/components/ui/SmallText";
 
 interface SermonProps {
   sermon: TSermon;
