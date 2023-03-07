@@ -10,7 +10,7 @@ const Stack = createStackNavigator();
 const BaseNavigator: React.FC = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Reader"
+      initialRouteName="ReaderAndStudy"
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.paper,

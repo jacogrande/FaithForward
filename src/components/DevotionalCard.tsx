@@ -4,7 +4,7 @@ import { logShareDevotional, logViewDevotional } from "@src/analytics";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import { formatDate, getVerseRef, getVerseRefs } from "@src/utils";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ViewShot from "react-native-view-shot";
 
@@ -26,7 +26,7 @@ export function DevotionalCard({
   const verseRef = useRef<ViewShot | null>(null);
   const { setError } = useStore();
 
-  async function handleShare() {
+  const handleShare = useCallback(async () => {
     if (!verseRef.current || !verseRef.current.capture) return;
     try {
       const imageUri = await verseRef.current.capture();
@@ -38,9 +38,9 @@ export function DevotionalCard({
       console.error(err.message);
       setError(err.message);
     }
-  }
+  }, []);
 
-  function handleExpandingDevo() {
+  const handleExpandingDevo = useCallback(() => {
     if (isExpanded) {
       setIsExpanded(false);
     } else {
@@ -50,14 +50,20 @@ export function DevotionalCard({
         devotional.title || "Personal Devotional"
       );
     }
-  }
+  }, [isExpanded])
 
-  function goToVerse(book: string, chapter: number) {
-    navigation.navigate("Reader", {
-      book,
-      chapter,
-    });
-  }
+  const goToVerse = useCallback((book: string, chapter: number) => {
+    navigation.navigate("Bible", {
+      screen: "ReaderAndStudy",
+      params: {
+        screen: "Reader",
+        params: {
+          book,
+          chapter
+        }
+      },
+    })
+  }, [])
 
   return (
     <View

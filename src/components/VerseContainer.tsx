@@ -37,10 +37,16 @@ function VerseContainer() {
     setVerseNumber(verseNum);
     setVerse(pressedVerse);
 
-    navigation.navigate("Reader", {
-      book,
-      chapter,
-    });
+    navigation.navigate("Bible", {
+      screen: "ReaderAndStudy",
+      params: {
+        screen: "Reader",
+        params: {
+          book,
+          chapter
+        }
+      },
+    })
   };
 
   async function handleShare() {

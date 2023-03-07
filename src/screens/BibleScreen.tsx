@@ -53,7 +53,7 @@ const BibleScreen = ({ route }: { route: any }) => {
     if (route.params?.chapter) {
       setChapter(route.params.chapter);
     }
-  }, [JSON.stringify(route.params)]);
+  }, [route.params]);
 
   const nextChapter = () => {
     const currentBook = BIBLE_BOOKS[book];
