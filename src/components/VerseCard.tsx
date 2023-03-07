@@ -3,7 +3,9 @@ import { useNavigation } from "@react-navigation/native";
 import { logShareVerse } from "@src/analytics";
 import colors from "@src/styles/colors";
 import React from "react";
-import { Share, Text, TouchableOpacity, View } from "react-native";
+import { Share, TouchableOpacity, View } from "react-native";
+import BaseText from "./ui/BaseText";
+import BigText from "./ui/BigText";
 
 export function VerseCard({
   book,
@@ -55,32 +57,12 @@ Sent with Faith Forward`,
       }}
     >
       <TouchableOpacity onPress={goToVerse}>
-        <Text
-          style={{
-            fontSize: 18,
-            lineHeight: 28,
-            color: "#333",
-            fontFamily: "Baskerville",
-            fontWeight: "600",
-            /* backgroundColor: "#fff3a8", */
-            paddingHorizontal: 8,
-          }}
-        >
+        <BigText className="mb-2">
+          {book} {chapter}:{verseNumber}
+        </BigText>
+        <BaseText style={{ fontFamily: "Baskerville", fontWeight: "500" }}>
           "{verse.trim()}"
-        </Text>
-        <Text
-          style={{
-            fontSize: 18,
-            lineHeight: 28,
-            color: "#333",
-            fontFamily: "Baskerville",
-            fontWeight: "600",
-            paddingHorizontal: 8,
-            paddingTop: 8,
-          }}
-        >
-          - {book} {chapter}:{verseNumber}
-        </Text>
+        </BaseText>
       </TouchableOpacity>
       <View className="flex-row justify-end items-center py-2 mt-2">
         <View className="flex-row">
