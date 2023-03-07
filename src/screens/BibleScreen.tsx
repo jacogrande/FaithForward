@@ -38,6 +38,7 @@ const BibleScreen = ({ route }: { route: any }) => {
   >(null);
   const { isLoading, data } = useBibleChapter(book, chapter);
   const scrollViewRef = useRef<ScrollView>(null);
+  const tocScrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     if (book && chapter) {
@@ -45,7 +46,7 @@ const BibleScreen = ({ route }: { route: any }) => {
       // Reset scroll view
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
     }
-  }, [book, chapter]);
+  }, [book, chapter, scrollViewRef.current]);
 
   useEffect(() => {
     if (route.params?.book) {
@@ -54,7 +55,7 @@ const BibleScreen = ({ route }: { route: any }) => {
     if (route.params?.chapter) {
       setChapter(route.params.chapter);
     }
-  }, [JSON.stringify(route.params)]);
+  }, [route.params]);
 
   const nextChapter = () => {
     const currentBook = BIBLE_BOOKS[book];
@@ -108,6 +109,11 @@ const BibleScreen = ({ route }: { route: any }) => {
               setBook(bookName);
               setChapter(chapter + 1);
               setShowToc(false);
+              tocScrollViewRef.current?.scrollTo({
+                x: 0,
+                y: 0,
+                animated: true,
+              });
               setShowChapterSelection(null);
             }}
             className="flex items-center justify-center mt-4 bg-ffDarkPaper rounded"
@@ -136,7 +142,14 @@ const BibleScreen = ({ route }: { route: any }) => {
         <>
           <View className="flex flex-row justify-between items-center py-4 px-6 bg-ffPaper">
             <TouchableOpacity
-              onPress={() => setShowToc(false)}
+              onPress={() => {
+                setShowToc(false);
+                tocScrollViewRef.current?.scrollTo({
+                  x: 0,
+                  y: 0,
+                  animated: true,
+                });
+              }}
               className="text-gray-700 hover:text-gray-900 absolute left-[20px] z-10"
             >
               <Ionicons name="ios-arrow-back" size={28} color={colors.black} />
@@ -150,7 +163,7 @@ const BibleScreen = ({ route }: { route: any }) => {
             <View />
           </View>
           <ScrollView
-            ref={scrollViewRef}
+            ref={tocScrollViewRef}
             style={[styles.scroll, { width: "100%" }]}
           >
             {/* view with bottom border */}
@@ -209,7 +222,15 @@ const BibleScreen = ({ route }: { route: any }) => {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => setShowToc(true)}
+              onPress={() => {
+                setShowToc(true);
+                scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+                tocScrollViewRef.current?.scrollTo({
+                  x: 0,
+                  y: 0,
+                  animated: true,
+                });
+              }}
               className="flex flex-row items-center"
             >
               <Text style={styles.header} className="font-bold text-xl pr-1">
@@ -237,7 +258,7 @@ const BibleScreen = ({ route }: { route: any }) => {
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.scroll}>
+          <ScrollView ref={scrollViewRef} style={styles.scroll}>
             <View className="flex-1 justify-center items-center bg-ffPaper">
               <Chapter book={book} chapter={chapter} verses={data} />
             </View>

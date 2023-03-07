@@ -27,10 +27,16 @@ export function VerseCard({
   const navigation = useNavigation<any>();
 
   function goToVerse() {
-    navigation.navigate("Reader", {
-      book,
-      chapter,
-    });
+    navigation.navigate("Bible", {
+      screen: "ReaderAndStudy",
+      params: {
+        screen: "Reader",
+        params: {
+          book,
+          chapter
+        }
+      },
+    })
   }
 
   async function shareVerse() {

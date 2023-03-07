@@ -274,6 +274,10 @@ function FavoriteDevos() {
     }
   }
 
+  function stub() {}
+
+  const faves = favoriteDevos.map((fave) => fave.id);
+
   if (loading) return <Loading />;
 
   return (
@@ -282,8 +286,8 @@ function FavoriteDevos() {
       renderItem={({ item: devo }: { item: any }) => (
         <DevotionalCard
           devotional={devo}
-          faves={favoriteDevos.map((fave) => fave.id)}
-          handleFavoritingDevo={() => {}}
+          faves={faves}
+          handleFavoritingDevo={stub}
           handleUnfavoritingDevo={handleUnfavoritingDevo}
         />
       )}
