@@ -3,6 +3,7 @@ import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import colors from "@src/styles/colors";
 import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import BaseText from "./ui/BaseText";
 
 const LoadingMessages = () => {
   const loadingMessage = useLoadingMessage(LOADING_MESSAGES.INITIAL);
@@ -14,19 +15,9 @@ const LoadingMessages = () => {
         size={"large"}
         style={{ marginTop: 48 }}
       />
-      <Text style={styles.text}>{loadingMessage}</Text>
+      <BaseText className="mt-6">{loadingMessage}</BaseText>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  text: {
-    fontSize: 16,
-    marginTop: 24,
-    color: "#333",
-    fontStyle: "italic",
-    lineHeight: 28,
-  },
-});
 
 export default LoadingMessages;
