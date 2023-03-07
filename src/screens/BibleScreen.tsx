@@ -7,7 +7,7 @@ import {
   logUnfavoriteVerse,
   logViewBibleChapter,
 } from "@src/analytics";
-import { Container } from "@src/components/Container";
+import { Container } from "@src/components/ui/Container";
 import { ExegesisLoadingMessage } from "@src/components/ExegesisLoadingMessage";
 import { Loading } from "@src/components/Loading";
 import { API_URL, BIBLE_BOOKS } from "@src/constants";
@@ -27,6 +27,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import BigText from "@src/components/ui/BigText";
 
 const BibleScreen = ({ route }: { route: any }) => {
   const [book, setBook] = useState<string>(route.params?.book || "Genesis");
@@ -122,9 +123,7 @@ const BibleScreen = ({ route }: { route: any }) => {
               marginRight: i === group.length - 1 ? 0 : buttonMargin,
             }}
           >
-            <Text className="text-lg font-bold text-ffBlack">
-              {chapter + 1}
-            </Text>
+            <BigText>{chapter + 1}</BigText>
           </TouchableOpacity>
         ))}
       </View>
@@ -179,13 +178,13 @@ const BibleScreen = ({ route }: { route: any }) => {
                     }
                     className="flex flex-row items-center mt-4"
                   >
-                    <Text
-                      className={`text-lg text-[#333] font-${
+                    <BigText
+                      className={`text-ffText font-${
                         showChapterSelection === book ? "bold" : "medium"
                       } pr-2`}
                     >
                       {book}
-                    </Text>
+                    </BigText>
                     <FontAwesome5
                       name={
                         showChapterSelection === book

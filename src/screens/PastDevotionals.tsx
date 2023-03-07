@@ -1,4 +1,4 @@
-import { Container } from "@src/components/Container";
+import { Container } from "@src/components/ui/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { Loading } from "@src/components/Loading";
 import { favoritePersonalDevo, unfavoritePersonalDevo } from "@src/firebase";
@@ -24,7 +24,8 @@ export function PastDevotionals() {
     setRefreshing,
     setQuietlyRefreshing,
   } = usePastDevos();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites("devos");
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } =
+    useFavorites("devos");
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(pastDevos)
   );

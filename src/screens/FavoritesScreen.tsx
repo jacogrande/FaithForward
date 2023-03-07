@@ -6,7 +6,7 @@ import {
   logUnfavoriteSermon,
   logUnfavoriteVerse,
 } from "@src/analytics";
-import { Container } from "@src/components/Container";
+import { Container } from "@src/components/ui/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { ExegesesList } from "@src/components/ExegesesList";
 import { Loading } from "@src/components/Loading";
@@ -37,6 +37,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import BaseText from "@src/components/ui/BaseText";
 
 type ViewType = "devos" | "verses" | "sermons" | "exegeses";
 
@@ -82,7 +83,9 @@ const EmptyFavorites = () => {
         marginVertical: 40,
       }}
     >
-      <Text style={{ fontSize: 16 }}>No favorites to display.</Text>
+      <BaseText className="text-ffGrey italic">
+        No favorites to display.
+      </BaseText>
     </View>
   );
 };
@@ -159,7 +162,9 @@ function FavoritesList({ viewType }: { viewType: ViewType }) {
   if (auth.currentUser?.isAnonymous) {
     return (
       <View className="flex-1 my-5 mx-7">
-        <Text>You must have an account to save favorites.</Text>
+        <BaseText className="text-ffGrey italic">
+          You must have an account to save favorites.
+        </BaseText>
       </View>
     );
   }
@@ -176,7 +181,9 @@ function FavoritesList({ viewType }: { viewType: ViewType }) {
     default:
       return (
         <View className="flex-1 my-5 mx-7">
-          <Text>Oops, something went wrong. Please try again.</Text>
+          <BaseText className="text-ffGrey italic">
+            Oops, something went wrong. Please try again.
+          </BaseText>
         </View>
       );
   }

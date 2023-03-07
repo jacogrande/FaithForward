@@ -1,4 +1,4 @@
-import { Container } from "@src/components/Container";
+import { Container } from "@src/components/ui/Container";
 import { ExegesesList } from "@src/components/ExegesesList";
 import { Loading } from "@src/components/Loading";
 import { favoriteExegesis, unfavoriteExegesis } from "@src/firebase";
@@ -23,7 +23,8 @@ export function PastExegeses({ route }: { route: any }) {
     setRefreshing,
     setQuietlyRefreshing,
   } = usePastExegeses();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites("exegeses");
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } =
+    useFavorites("exegeses");
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(pastExegeses)
   );

@@ -7,6 +7,10 @@ import { formatDate, getVerseRef, getVerseRefs } from "@src/utils";
 import React, { useRef, useState, useCallback } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ViewShot from "react-native-view-shot";
+import BaseText from "@src/components/ui/BaseText";
+import BigText from "@src/components/ui/BigText";
+import Quote from "@src/components/ui/Quote";
+import SmallText from "@src/components/ui/SmallText";
 
 export function DevotionalCard({
   devotional,
@@ -76,36 +80,16 @@ export function DevotionalCard({
     >
       <TouchableOpacity onPress={handleExpandingDevo}>
         {!!devotional.title && (
-          <Text className="text-lg text-ffBlack font-bold leading-tight mb-2">
-            {devotional.title}
-          </Text>
+          <BigText className="mb-2">{devotional.title}</BigText>
         )}
-        <Text
-          style={{
-            fontSize: 16,
-            lineHeight: 24,
-            fontStyle: "italic",
-            color: "#333",
-          }}
-        >
-          {devotional.input}
-        </Text>
+        <BaseText className="italic">{devotional.input}</BaseText>
       </TouchableOpacity>
       {isExpanded && (
         <View style={{ alignItems: "center", marginTop: 20 }}>
           <View style={{ alignItems: "center", backgroundColor: colors.paper }}>
-            <Text
-              style={{
-                fontSize: 16,
-                paddingHorizontal: 0,
-                paddingBottom: 20,
-                paddingTop: 8,
-                color: "#333",
-                lineHeight: 28,
-              }}
-            >
+            <BaseText className="pb-4 pt-2">
               {formatVerse(devotional.response, goToVerse)}
-            </Text>
+            </BaseText>
           </View>
         </View>
       )}
@@ -120,9 +104,9 @@ export function DevotionalCard({
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <FontAwesome name="calendar-o" size={20} color="#999" />
-          <Text style={{ fontSize: 14, color: "#999", paddingLeft: 10 }}>
+          <SmallText className="pl-2">
             {formatDate(devotional.createdAt)}
-          </Text>
+          </SmallText>
         </View>
         <View style={{ flexDirection: "row" }}>
           {faves.includes(devotional.id) ? (
@@ -146,11 +130,11 @@ export function DevotionalCard({
         </View>
       </View>
       <ViewShot ref={verseRef} style={styles.screenshot}>
-        <Text style={styles.prompt}>{devotional.input}</Text>
-        <Text style={styles.response}>
+        <BaseText className="italic">{devotional.input}</BaseText>
+        <BaseText className="pb-4 pt-2">
           <Text style={styles.bold}>Faith Forward: </Text>
           {formatVerse(devotional.response, () => {})}
-        </Text>
+        </BaseText>
       </ViewShot>
     </View>
   );
@@ -183,18 +167,13 @@ export const formatVerse = (
         // Generate random key
         const key = Math.random().toString(36).substring(7);
         return (
-          <Text
-            style={{
-              backgroundColor: "#fff3a8",
-              fontWeight: "600",
-              fontFamily: "Baskerville",
-            }}
+          <Quote
             key={key}
             onPress={() => onVersePress(book, chapter)}
             accessibilityHint="Tap to open the verse action menu."
           >
             {quote}
-          </Text>
+          </Quote>
         );
       }
 
@@ -207,40 +186,6 @@ export const formatVerse = (
 };
 
 const styles = StyleSheet.create({
-  verse: {
-    width: "100%",
-    alignItems: "center",
-    backgroundColor: colors.paper,
-  },
-  button: {
-    borderWidth: 2,
-    borderColor: colors.blue,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 48,
-    marginTop: 12,
-    alignItems: "center",
-    zIndex: 1,
-  },
-  buttonText: {
-    color: colors.blue,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  prompt: {
-    fontSize: 16,
-    color: "#333",
-    marginTop: 24,
-    paddingHorizontal: "10%",
-  },
-  response: {
-    fontSize: 16,
-    paddingHorizontal: "10%",
-    paddingBottom: 36,
-    paddingTop: 8,
-    color: "#333",
-    lineHeight: 28,
-  },
   bold: {
     fontWeight: "700",
     color: "#111",

@@ -1,5 +1,5 @@
 import { logFavoriteDevotional, logUnfavoriteDevotional } from "@src/analytics";
-import { Container } from "@src/components/Container";
+import { Container } from "@src/components/ui/Container";
 import { DevotionalCard } from "@src/components/DevotionalCard";
 import { Loading } from "@src/components/Loading";
 import { auth, favoriteTradDevo, unfavoriteTradDevo } from "@src/firebase";
@@ -8,7 +8,8 @@ import { useTradDevos } from "@src/hooks/useTradDevos";
 import useStore from "@src/store";
 import { TTradDevo } from "@src/types";
 import React, { useEffect, useState } from "react";
-import { FlatList, RefreshControl, Text, View } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
+import BigText from "@src/components/ui/BigText";
 
 function initOptimisticFaves(devos: TTradDevo[]): string[] {
   // Return an array of sermon IDs that are favoritedBy the current user
@@ -27,7 +28,8 @@ export function TraditionalDevotionals() {
     setRefreshing,
     setQuietlyRefreshing,
   } = useTradDevos();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites("devos");
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } =
+    useFavorites("devos");
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(tradDevos)
   );
@@ -88,9 +90,7 @@ export function TraditionalDevotionals() {
         style={{ width: "100%" }}
         ListEmptyComponent={() => (
           <View style={{ alignItems: "center", marginTop: 24 }}>
-            <Text style={{ fontSize: 18, color: "#999" }}>
-              No devotions found
-            </Text>
+            <BigText className="text-ffGrey">No devotions found</BigText>
           </View>
         )}
         ListFooterComponent={() => <View style={{ height: 48 }} />}

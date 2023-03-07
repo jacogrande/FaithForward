@@ -1,7 +1,9 @@
 import { ExegesisCard } from "@src/components/ExegesisCard";
 import { TExegesis } from "@src/types";
 import React from "react";
-import { FlatList, RefreshControl, Text, View } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
+import BaseText from "@src/components/ui/BaseText";
+import BigText from "@src/components/ui/BigText";
 
 export function ExegesesList({
   exegeses,
@@ -10,7 +12,7 @@ export function ExegesesList({
   handleUnfavoritingExegesis,
   refreshing,
   onRefresh,
-  expandFirst
+  expandFirst,
 }: {
   exegeses: TExegesis[];
   faves: string[];
@@ -23,7 +25,7 @@ export function ExegesesList({
   return (
     <FlatList
       data={exegeses}
-      renderItem={({ item, index }: { item: TExegesis, index: number }) => (
+      renderItem={({ item, index }: { item: TExegesis; index: number }) => (
         <ExegesisCard
           exegesis={item}
           faves={faves}
@@ -35,9 +37,17 @@ export function ExegesesList({
       keyExtractor={(item: any) => item.id}
       style={{ width: "100%" }}
       ListEmptyComponent={() => (
-        <View style={{ alignItems: "center", marginTop: 24, marginHorizontal: '15%' }}>
-          <Text style={{ fontSize: 18, color: "#999" }}>No exegeses found</Text>
-          <Text style={{ fontSize: 16, color: "#999", marginTop: 20 }}>Get one by tapping a Bible verse and then tapping the scroll icon.</Text>
+        <View
+          style={{
+            alignItems: "center",
+            marginTop: 24,
+            marginHorizontal: "15%",
+          }}
+        >
+          <BigText className="text-ffGrey">No exegeses found</BigText>
+          <BaseText className="text-ffGrey mt-8">
+            Get one by tapping a Bible verse and then tapping the scroll icon.
+          </BaseText>
         </View>
       )}
       ListFooterComponent={() => <View style={{ height: 48 }} />}

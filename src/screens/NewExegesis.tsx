@@ -1,6 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import { logGetExegesis } from "@src/analytics";
-import { BigButton } from "@src/components/BigButton";
+import BaseText from "@src/components/ui/BaseText";
+import { BigButton } from "@src/components/ui/BigButton";
+import BiggerText from "@src/components/ui/BiggerText";
+import SmallText from "@src/components/ui/SmallText";
 import { API_URL } from "@src/constants";
 import { auth } from "@src/firebase";
 import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
@@ -65,15 +68,13 @@ export function NewExegesis() {
         className="flex-1 justify-center items-center bg-ffPaper"
       >
         <View style={{ marginBottom: 32, alignItems: "center" }}>
-          <Text className="text-ffBlack text-h1 font-bold py-2">
-            Ask the Bible
-          </Text>
-          <Text className="font-medium text-ffText text-h2">
+          <BiggerText className="py-2">Ask the Bible</BiggerText>
+          <BaseText className="font-medium">
             Explore the deeper meaning of the Word
-          </Text>
+          </BaseText>
         </View>
         <TextInput
-          className="w-4/5 h-40 text-ffText overflow-scroll font-medium bg-ffDarkPaper rounded p-3 my-4 text-h2"
+          className="w-4/5 h-40 text-ffText overflow-scroll font-medium bg-ffDarkPaper rounded p-3 my-4 text-base"
           placeholder="What are you curious about?"
           placeholderTextColor="#999"
           onChangeText={(text) => setInput(text)}
@@ -89,7 +90,7 @@ export function NewExegesis() {
             {isLoadingExegesis ? (
               <LoadingMessage />
             ) : (
-              <Text className="text-white font-bold text-h2">Get Exegesis</Text>
+              <BaseText className="text-white font-bold">Get Exegesis</BaseText>
             )}
           </BigButton>
           {/* <TouchableOpacity */}
@@ -109,9 +110,9 @@ export function NewExegesis() {
           className="py-5"
           onPress={() => navigation.navigate("PastExegeses")}
         >
-          <Text className="text-ffText text-[14px] font-medium">
+          <SmallText className="text-ffText font-medium">
             See past exegeses
-          </Text>
+          </SmallText>
         </TouchableOpacity>
       </View>
       <Snackbar
@@ -132,6 +133,6 @@ function LoadingMessage() {
   const message = useLoadingMessage("Writing exegesis");
 
   return (
-    <Text className="text-white font-medium text-h2 italic">{message}</Text>
+    <BaseText className="text-white font-medium italic">{message}</BaseText>
   );
 }

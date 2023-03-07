@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import ViewShot from "react-native-view-shot";
+import BaseText from "@src/components/ui/BaseText";
 
 function VerseContainer() {
   const navigation = useNavigation<any>();
@@ -70,22 +71,22 @@ function VerseContainer() {
             <View
               style={{ alignItems: "center", backgroundColor: colors.paper }}
             >
-              <Text style={styles.response}>
+              <BaseText className="px-[10%]">
                 {formatVerse(devotional, handleVersePress)}
-              </Text>
+              </BaseText>
             </View>
             <TouchableOpacity style={styles.button} onPress={handleShare}>
               <Text style={styles.buttonText}>Share</Text>
             </TouchableOpacity>
             <ViewShot ref={verseRef} style={styles.screenshot}>
-              <Text style={styles.prompt}>
+              <BaseText>
                 <Text style={styles.bold}>Me: </Text>
                 {input}
-              </Text>
-              <Text style={styles.response}>
+              </BaseText>
+              <BaseText>
                 <Text style={styles.bold}>Faith Forward: </Text>
                 {formatVerse(devotional, handleVersePress)}
-              </Text>
+              </BaseText>
             </ViewShot>
           </View>
         )}
@@ -123,18 +124,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  prompt: {
-    fontSize: 16,
-    color: "#333",
-    marginTop: 24,
-    paddingHorizontal: "10%",
-  },
-
   bold: {
     fontWeight: "700",
     color: "#111",
   },
-
   screenshot: {
     position: "absolute",
     top: -100000,
@@ -142,6 +135,8 @@ const styles = StyleSheet.create({
     zIndex: -2,
     alignItems: "flex-start",
     backgroundColor: colors.paper,
+    paddingHorizontal: "5%",
+    paddingVertical: 12,
   },
   highlight: {
     backgroundColor: "#fff3a8",

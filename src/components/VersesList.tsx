@@ -1,6 +1,7 @@
 import { VerseCard } from "@src/components/VerseCard";
 import React from "react";
-import { FlatList, RefreshControl, Text, View } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
+import BaseText from "@src/components/ui/BaseText";
 
 export function VersesList({
   verses,
@@ -40,7 +41,7 @@ export function VersesList({
             marginVertical: 40,
           }}
         >
-          <Text style={{ fontSize: 16 }}>No verses to display.</Text>
+          <BaseText className="text-ffGrey">No verses to display.</BaseText>
         </View>
       }
       ListFooterComponent={<View style={{ height: 100 }} />}

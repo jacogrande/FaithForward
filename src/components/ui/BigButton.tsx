@@ -15,7 +15,7 @@ export function BigButton({
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={{ opacity: isLoading ? 0.5 : 1 }}
+      style={{ opacity: isLoading ? 0.6 : 1 }}
       className={`w-4/5 p-4 rounded bg-ffBlue items-center justify-center self-center`}
       disabled={disabled}
     >

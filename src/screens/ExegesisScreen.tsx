@@ -1,5 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { logShareExegesis } from "@src/analytics";
+import BaseText from "@src/components/ui/BaseText";
+import BigText from "@src/components/ui/BigText";
 import { favoriteExegesis, unfavoriteExegesis } from "@src/firebase";
 import { useFavorites } from "@src/hooks/useFavorites";
 import { usePastExegeses } from "@src/hooks/usePastExegeses";
@@ -20,7 +22,8 @@ function ExegesisScreen() {
   const [isFavorited, setIsFavorited] = useState(false);
   const { verse, book, chapter, verseNumber, exegesis } = useBibleStore();
   const { pastExegeses, setQuietlyRefreshing } = usePastExegeses();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites("exegeses");
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } =
+    useFavorites("exegeses");
   const { setError } = useStore();
   const [firestoreExegesis, setFirestoreExegesis] = useState<TExegesis | null>(
     null
@@ -130,10 +133,10 @@ Sent with Faith Forward`,
       keyboardShouldPersistTaps="handled"
     >
       <View className="mb-10">
-        <View className="flex-1 bg-ffPaper justify-center items-center pb-3">
-          <Text style={[styles.text, styles.highlight]}>{`${formatVerse(verse)}
-- ${book} ${chapter}:${verseNumber}`}</Text>
-          <Text style={styles.text}>{exegesis}</Text>
+        <View className="flex-1 bg-ffPaper justify-center items-center pb-3 px-[10%]">
+          <BigText style={styles.highlight}>{`${formatVerse(verse)}
+- ${book} ${chapter}:${verseNumber}`}</BigText>
+          <BaseText>{exegesis}</BaseText>
         </View>
         <View
           style={{
@@ -181,13 +184,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Baskerville",
     marginVertical: 15,
-  },
-  text: {
-    fontSize: 16,
-    marginHorizontal: "10%",
-    padding: 8,
-    color: "#333",
-    lineHeight: 28,
   },
 });
 

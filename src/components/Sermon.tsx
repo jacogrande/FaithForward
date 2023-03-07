@@ -8,10 +8,12 @@ import {
   ActivityIndicator,
   Share,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import BaseText from "@src/components/ui/BaseText";
+import BigText from "@src/components/ui/BigText";
+import SmallText from "@src/components/ui/SmallText";
 
 interface SermonProps {
   sermon: TSermon;
@@ -47,15 +49,13 @@ export function Sermon(props: SermonProps) {
   return (
     <View style={styles.sermonSection}>
       <View>
-        <Text className="text-lg text-ffBlack font-bold leading-tight mb-2">
-          {sermon.title}
-        </Text>
-        <Text style={styles.sermonDescription}>{sermon.description}</Text>
+        <BigText className="mb-2">{sermon.title}</BigText>
+        <BaseText className="mb-4">{sermon.description}</BaseText>
       </View>
       <View className="flex flex-row items-center mt-4">
-        <Text style={styles.sermonSpeaker}>
+        <SmallText className="italic">
           {formatDuration(sermon.duration || null)} with {sermon.speaker}
-        </Text>
+        </SmallText>
         <View className="flex-1 flex flex-row items-center justify-end">
           <View style={{ marginRight: 20 }}>
             {playingSermonId === sermon.id && !!sound ? (
@@ -125,29 +125,6 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: colors.paper,
   },
-  sermonDescription: {
-    fontSize: 16,
-    paddingBottom: 10,
-    color: "#333",
-  },
-  sermonSpeaker: {
-    fontSize: 14,
-    fontStyle: "italic",
-    color: "#999",
-  },
-  button: {
-    backgroundColor: colors.blue,
-    borderRadius: 4,
-    paddingHorizontal: 20,
-    paddingVertical: 18,
-    marginTop: 12,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   playingSermonText: {
     fontSize: 18,
     fontWeight: "bold",
@@ -156,8 +133,5 @@ const styles = StyleSheet.create({
     verticalAlign: "middle",
     color: "#333",
     width: "50%",
-  },
-  buttonActive: {
-    backgroundColor: colors.orange,
   },
 });

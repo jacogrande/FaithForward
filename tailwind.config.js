@@ -14,6 +14,7 @@ module.exports = {
         ffDarkPaper: "rgba(0, 0, 0, 0.05)",
         ffBlack: "#222",
         ffText: "#444",
+        ffGrey: "#999",
       },
     },
   },
