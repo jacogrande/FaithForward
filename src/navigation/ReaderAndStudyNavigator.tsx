@@ -23,7 +23,7 @@ export function ReaderAndStudyNavigator() {
       }}
     >
       <Tab.Screen name="Reader" component={BibleScreen} />
-      <Tab.Screen name="Exegeses" component={NewExegesis} />
+      <Tab.Screen name="Analysis" component={NewExegesis} />
     </Tab.Navigator>
   );
 }

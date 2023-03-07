@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons";
 import { logGetExegesis } from "@src/analytics";
 import BaseText from "@src/components/ui/BaseText";
 import { BigButton } from "@src/components/ui/BigButton";
@@ -90,7 +91,7 @@ export function NewExegesis() {
             {isLoadingExegesis ? (
               <LoadingMessage />
             ) : (
-              <BaseText className="text-white font-bold">Get Exegesis</BaseText>
+              <BaseText className="text-white font-bold">Get Analysis</BaseText>
             )}
           </BigButton>
           {/* <TouchableOpacity */}
@@ -107,12 +108,11 @@ export function NewExegesis() {
           {/* </TouchableOpacity> */}
         </View>
         <TouchableOpacity
-          className="py-5"
+          className="py-5 items-center justify-center flex flex-row space-x-2"
           onPress={() => navigation.navigate("PastExegeses")}
         >
-          <SmallText className="text-ffText font-medium">
-            See past exegeses
-          </SmallText>
+          <FontAwesome name="history" size={18} />
+          <SmallText className="text-ffText font-medium">History</SmallText>
         </TouchableOpacity>
       </View>
       <Snackbar
@@ -130,7 +130,7 @@ export function NewExegesis() {
 }
 
 function LoadingMessage() {
-  const message = useLoadingMessage("Writing exegesis");
+  const message = useLoadingMessage("Writing analysis");
 
   return (
     <BaseText className="text-white font-medium italic">{message}</BaseText>

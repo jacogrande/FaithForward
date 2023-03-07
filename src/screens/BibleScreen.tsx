@@ -407,7 +407,7 @@ Sent with Faith Forward`,
       setVerse(verse);
       setExegesis(data.response);
 
-      navigation.navigate("Exegesis", {});
+      navigation.navigate("Verse Analysis", {});
     } catch (err: any) {
       console.error(err);
     } finally {

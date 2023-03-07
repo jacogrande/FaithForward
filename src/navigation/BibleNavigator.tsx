@@ -26,14 +26,14 @@ const BaseNavigator: React.FC = () => {
         }}
       />
       <Stack.Screen
-        name="Exegesis"
+        name="Verse Analysis"
         component={ExegesisScreen}
         options={{ headerShown: true }}
       />
       <Stack.Screen
         name="PastExegeses"
         component={PastExegeses}
-        options={{ headerShown: true, headerTitle: "Exegeses" }}
+        options={{ headerShown: true, headerTitle: "History" }}
       />
     </Stack.Navigator>
   );
