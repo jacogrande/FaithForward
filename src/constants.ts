@@ -1,4 +1,4 @@
-import { TBook } from '@src/types';
+import { TBook } from "@src/types";
 
 export const FLAGGED_INPUT_RESPONSES = {
   HATE: `I am deeply troubled to hear that you are making hateful remarks. Such behavior is not in alignment with the teachings of our faith and goes against the principles of love, compassion, and respect for all human beings.
@@ -129,7 +129,7 @@ export const LOADING_MESSAGES = {
     /* "Waiting for the burning bush to speak", */
     "Blessing the internet connection",
     "Tuning harps",
-    "Fighting the temptation to close the app",
+    "Fighting the urge to close the app",
     "Practicing the patience of Job",
     "Climbing the mountain of faith",
     /* "Walking through the valley of shadows", */
@@ -137,7 +137,7 @@ export const LOADING_MESSAGES = {
     "Nurturing the fruits of the spirit",
     /* "Lighting the way with the lamp of faith", */
     "Striving for righteousness",
-    "Sowing the seeds of love and kindness",
+    // "Sowing the seeds of love and kindness",
     /* "Refining gold in the furnace of affliction", */
     "Rising on eagle's wings",
     "Holding on to the anchor of hope",
