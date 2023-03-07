@@ -4,14 +4,17 @@ import colors from "@src/styles/colors";
 import { TExegesis } from "@src/types";
 import { formatDate, truncateString } from "@src/utils";
 import React, { useState } from "react";
-import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Share, StyleSheet, TouchableOpacity, View } from "react-native";
+import BaseText from "./ui/BaseText";
+import BigText from "./ui/BigText";
+import SmallText from "./ui/SmallText";
 
 export function ExegesisCard({
   exegesis,
   faves,
   handleFavoritingExegesis,
   handleUnfavoritingExegesis,
-  initExpanded
+  initExpanded,
 }: {
   exegesis: TExegesis;
   faves: string[];
@@ -72,15 +75,13 @@ Sent with Faith Forward`,
         <ExegesisTitle exegesis={exegesis} />
         {!isExpanded && (
           <View>
-            <Text style={styles.text}>
-              {truncateString(exegesis.response, 140)}
-            </Text>
+            <BaseText>{truncateString(exegesis.response, 140)}</BaseText>
           </View>
         )}
       </TouchableOpacity>
       {isExpanded && (
         <View>
-          <Text style={styles.text}>{exegesis.response}</Text>
+          <BaseText>{exegesis.response}</BaseText>
         </View>
       )}
       <View
@@ -90,7 +91,6 @@ Sent with Faith Forward`,
           alignItems: "center",
           paddingVertical: 10,
           marginTop: 10,
-          paddingHorizontal: 8,
         }}
       >
         <View
@@ -100,9 +100,9 @@ Sent with Faith Forward`,
           }}
         >
           <FontAwesome name="calendar-o" size={20} color="#999" />
-          <Text style={{ fontSize: 14, color: "#999", paddingLeft: 10 }}>
+          <SmallText className="pl-2">
             {formatDate(exegesis.createdAt)}
-          </Text>
+          </SmallText>
         </View>
         <View style={{ flexDirection: "row" }}>
           {faves.includes(exegesis.id) ? (
@@ -143,9 +143,9 @@ function ExegesisTitle({ exegesis }: { exegesis: TExegesis }) {
 - ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}`;
   };
   return (
-    <Text style={[styles.text]} className="text-h1 text-ffBlack font-bold">
+    <BigText style={styles.highlight} className="mb-2">
       {getTitle()}
-    </Text>
+    </BigText>
   );
 }
 
