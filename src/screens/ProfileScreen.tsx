@@ -1,7 +1,7 @@
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { Container } from "@src/components/Container";
+import { Container } from "@src/components/ui/Container";
 import DeleteAccountModal from "@src/components/DeleteAccountModal";
 import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from "@src/constants";
 import { auth } from "@src/firebase";

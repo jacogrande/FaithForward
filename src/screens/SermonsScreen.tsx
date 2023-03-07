@@ -3,7 +3,7 @@ import {
   logSermonPlay,
   logUnfavoriteSermon,
 } from "@src/analytics";
-import { Container } from "@src/components/Container";
+import { Container } from "@src/components/ui/Container";
 import { Loading } from "@src/components/Loading";
 import { Sermon } from "@src/components/Sermon";
 import { auth, favoriteSermon, unfavoriteSermon } from "@src/firebase";
@@ -28,7 +28,8 @@ function initOptimisticFaves(sermons: TSermon[]): string[] {
 export default function SermonsScreen() {
   const { sermons, loading, refreshing, setRefreshing, setQuietlyRefreshing } =
     useSermons();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites("sermons");
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } =
+    useFavorites("sermons");
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(sermons)
   );
