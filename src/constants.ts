@@ -476,3 +476,8 @@ export const BIBLE_BOOKS: { [key: string]: TBook } = {
     prevBook: "Jude",
   },
 };
+
+export const BIBLE_BOOK_CHAPTER_AUDIO_FILES = [
+  "Genesis 1",
+  "Genesis 2"
+]

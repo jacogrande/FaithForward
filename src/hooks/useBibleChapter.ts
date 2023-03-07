@@ -88,6 +88,7 @@ export function useBibleChapter(book: string, chapter: number) {
       const verses = Object.keys(chapterData.data).map(
         (key) => chapterData.data[key]
       );
+
       setData(verses);
       setIsLoading(false);
 

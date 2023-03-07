@@ -1,4 +1,5 @@
-import { Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { Feather, AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { useAudio } from "@src/hooks/useAudio";
 import { useNavigation } from "@react-navigation/native";
 import {
   logFavoriteVerse,
@@ -10,11 +11,15 @@ import {
 import { Container } from "@src/components/Container";
 import { ExegesisLoadingMessage } from "@src/components/ExegesisLoadingMessage";
 import { Loading } from "@src/components/Loading";
-import { API_URL, BIBLE_BOOKS } from "@src/constants";
+import {
+  API_URL,
+  BIBLE_BOOKS,
+  BIBLE_BOOK_CHAPTER_AUDIO_FILES,
+} from "@src/constants";
 import { auth, favoriteVerse, unfavoriteVerse } from "@src/firebase";
 import { useBibleChapter } from "@src/hooks/useBibleChapter";
 import { useFavorites } from "@src/hooks/useFavorites";
-import useStore, { useBibleStore } from "@src/store";
+import useStore, { useAudioStore, useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -37,6 +42,9 @@ const BibleScreen = ({ route }: { route: any }) => {
   >(null);
   const { isLoading, data } = useBibleChapter(book, chapter);
   const scrollViewRef = useRef<ScrollView>(null);
+  const { stopSound, playSound } = useAudio();
+  const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();
+  const { setError } = useStore();
 
   useEffect(() => {
     if (book && chapter) {
@@ -124,6 +132,29 @@ const BibleScreen = ({ route }: { route: any }) => {
       </View>
     ));
   };
+
+  async function playChapter() {
+    try {
+      if (playingAudioObject?.id === `${book} ${chapter}`) {
+        await playSound(null);
+      } else {
+        await stopSound();
+        // Pad chapter number with 0s to two characters
+        const paddedChapter = chapter.toString().padStart(2, "0");
+        const filename = `${book.toLowerCase()}-${paddedChapter}-bella.mp3`;
+        setPlayingAudioObject({
+          id: `${book} ${chapter}`,
+          filename,
+          title: `${book} ${chapter}`,
+        });
+        await playSound(filename);
+      }
+    } catch (err: any) {
+      console.warn("Error playing chapter");
+      console.error(err);
+      setError(err.message);
+    }
+  }
 
   if (isLoading) {
     return <Loading />;
@@ -213,6 +244,18 @@ const BibleScreen = ({ route }: { route: any }) => {
               onPress={() => setShowToc(true)}
               className="flex flex-row items-center"
             >
+              {BIBLE_BOOK_CHAPTER_AUDIO_FILES.includes(
+                `${book} ${chapter}`
+              ) && (
+                <TouchableOpacity onPress={playChapter} className="mr-4">
+                  {playingAudioObject?.title === `${book} ${chapter}` &&
+                  !!sound ? (
+                    <AntDesign name="sound" size={18} color={colors.blue} />
+                  ) : (
+                    <FontAwesome5 name="play" size={14} color={colors.blue} />
+                  )}
+                </TouchableOpacity>
+              )}
               <Text style={styles.header} className="font-bold text-xl pr-1">
                 {book} {chapter}
               </Text>
@@ -484,7 +527,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    paddingBottom: 40,
+    paddingBottom: 60,
   },
   verseContainer: {
     flexDirection: "row",
