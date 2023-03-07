@@ -4,7 +4,7 @@ import { formatVerse } from "@src/components/DevotionalCard";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { getVerseRef, getVerseRefs } from "@src/utils";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import {
   ScrollView,
   Share,
@@ -22,7 +22,6 @@ function VerseContainer() {
   const { setBook, setChapter, setVerseNumber, setVerse } = useBibleStore();
   const verseRef = useRef<ViewShot | null>(null);
   const { input } = useStore();
-  const [sharing, setSharing] = useState<boolean>(false);
 
   const handleVersePress = (pressedVerse: string) => {
     const verseRef = getVerseRef(pressedVerse, devotional);
@@ -45,31 +44,18 @@ function VerseContainer() {
     });
   };
 
-  const share = async () => {
-    setSharing(true);
-  };
-
-  useEffect(() => {
-    if (sharing) {
-      const asyncShare = async () => {
-        if (!verseRef.current || !verseRef.current.capture) return;
-        try {
-          const imageUri = await verseRef.current.capture();
-          const shareAction = await Share.share({
-            url: imageUri,
-          });
-          logShareDevotional("", "Personal Devotional", shareAction.action);
-        } catch (err) {
-          console.error(err);
-        } finally {
-          setSharing(false);
-        }
-      };
-      setTimeout(() => {
-        asyncShare();
-      }, 100);
+  async function handleShare() {
+    if (!verseRef.current || !verseRef.current.capture) return;
+    try {
+      const imageUri = await verseRef.current.capture();
+      const shareAction = await Share.share({
+        url: imageUri,
+      });
+      logShareDevotional("", "Personal Devotional", shareAction.action);
+    } catch (err) {
+      console.error(err);
     }
-  }, [sharing]);
+  }
 
   return (
     <View style={styles.verse}>
@@ -83,7 +69,7 @@ function VerseContainer() {
                 {formatVerse(devotional, handleVersePress)}
               </BaseText>
             </View>
-            <TouchableOpacity style={styles.button} onPress={share}>
+            <TouchableOpacity style={styles.button} onPress={handleShare}>
               <Text style={styles.buttonText}>Share</Text>
             </TouchableOpacity>
             <ViewShot ref={verseRef} style={styles.screenshot}>

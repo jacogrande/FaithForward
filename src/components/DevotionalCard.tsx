@@ -4,7 +4,7 @@ import { logShareDevotional, logViewDevotional } from "@src/analytics";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import { formatDate, getVerseRef, getVerseRefs } from "@src/utils";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ViewShot from "react-native-view-shot";
 import BaseText from "./ui/BaseText";
@@ -26,46 +26,35 @@ export function DevotionalCard({
   initExpanded?: boolean;
 }) {
   const navigation = useNavigation<any>();
-  const [isSharing, setIsSharing] = useState(false);
   const [isExpanded, setIsExpanded] = useState(initExpanded || false);
   const verseRef = useRef<ViewShot | null>(null);
   const { setError } = useStore();
 
-  useEffect(() => {
-    if (isSharing) {
-      const asyncShare = async () => {
-        if (!verseRef.current || !verseRef.current.capture) return;
-        try {
-          const imageUri = await verseRef.current.capture();
-          const shareAction = await Share.share({
-            url: imageUri,
-          });
-          logShareDevotional(
-            devotional.id,
-            devotional.title,
-            shareAction.action
-          );
-        } catch (err: any) {
-          console.error(err.message);
-          setError(err.message);
-        } finally {
-          setIsSharing(false);
-        }
-      };
-      setTimeout(() => {
-        asyncShare();
-      }, 100);
+  async function handleShare() {
+    if (!verseRef.current || !verseRef.current.capture) return;
+    try {
+      const imageUri = await verseRef.current.capture();
+      const shareAction = await Share.share({
+        url: imageUri,
+      });
+      logShareDevotional(devotional.id, devotional.title, shareAction.action);
+    } catch (err: any) {
+      console.error(err.message);
+      setError(err.message);
     }
-  }, [isSharing]);
+  }
 
-  useEffect(() => {
+  function handleExpandingDevo() {
     if (isExpanded) {
+      setIsExpanded(false);
+    } else {
+      setIsExpanded(true);
       logViewDevotional(
         devotional.id,
         devotional.title || "Personal Devotional"
       );
     }
-  }, [isExpanded]);
+  }
 
   function goToVerse(book: string, chapter: number) {
     navigation.navigate("Reader", {
@@ -83,9 +72,7 @@ export function DevotionalCard({
         borderBottomWidth: 2,
       }}
     >
-      <TouchableOpacity
-        onPress={() => setIsExpanded((isExpanded) => !isExpanded)}
-      >
+      <TouchableOpacity onPress={handleExpandingDevo}>
         {!!devotional.title && (
           <BigText className="mb-2">{devotional.title}</BigText>
         )}
@@ -131,7 +118,7 @@ export function DevotionalCard({
               <Ionicons name="heart-outline" size={24} color={colors.red} />
             </TouchableOpacity>
           )}
-          <TouchableOpacity onPress={() => setIsSharing(true)}>
+          <TouchableOpacity onPress={handleShare}>
             <Ionicons name="ios-share-outline" size={24} color={colors.blue} />
           </TouchableOpacity>
         </View>
