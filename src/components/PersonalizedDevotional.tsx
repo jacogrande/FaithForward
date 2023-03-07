@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { logCreateDevotional } from "@src/analytics";
-import { BigButton } from "@src/components/BigButton";
+import { BigButton } from "@src/components/ui/BigButton";
 import VerseContainer from "@src/components/VerseContainer";
 import { API_URL } from "@src/constants";
 import { auth } from "@src/firebase";
@@ -9,20 +9,20 @@ import { useApi } from "@src/hooks/useApi";
 import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore from "@src/store";
-import colors from "@src/styles/colors";
 import React, { useEffect, useRef } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
+import BaseText from "./ui/BaseText";
+import BiggerText from "./ui/BiggerText";
+import SmallText from "./ui/SmallText";
 
 export function PersonalizedDevotional() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -102,15 +102,13 @@ export function PersonalizedDevotional() {
       >
         <View className="flex-1 justify-center items-center bg-ffPaper py-16">
           <View style={{ marginBottom: 32, alignItems: "center" }}>
-            <Text className="text-ffBlack text-h1 font-bold py-2">
-              What's on your mind?
-            </Text>
-            <Text className="font-medium text-ffText text-h2">
+            <BiggerText className="py-2">What's on your mind?</BiggerText>
+            <BaseText className="font-medium">
               Receive a tailored devotional just for you
-            </Text>
+            </BaseText>
           </View>
           <TextInput
-            className="w-4/5 h-40 text-ffText overflow-scroll font-medium bg-ffDarkPaper rounded p-3 my-4 text-h2"
+            className="w-4/5 h-40 text-ffText overflow-scroll font-medium bg-ffDarkPaper rounded p-3 my-4 text-base"
             placeholder="Enter your thoughts or prayers here..."
             placeholderTextColor="#999"
             onChangeText={(text) => setInput(text)}
@@ -126,16 +124,16 @@ export function PersonalizedDevotional() {
               {isLoading ? (
                 <LoadingMessage />
               ) : (
-                <Text className="text-white font-bold text-h2">
+                <BaseText className="text-white font-bold">
                   Get Devotional
-                </Text>
+                </BaseText>
               )}
             </BigButton>
           </View>
           <TouchableOpacity onPress={seePastDevos} className="py-3 mt-4">
-            <Text className="text-ffText text-[14px] font-medium">
+            <SmallText className="text-ffText font-medium">
               See past devotionals
-            </Text>
+            </SmallText>
           </TouchableOpacity>
           <VerseContainer />
         </View>
@@ -158,6 +156,6 @@ function LoadingMessage() {
   const message = useLoadingMessage("Writing your devotional");
 
   return (
-    <Text className="text-white font-medium text-h2 italic">{message}</Text>
+    <BaseText className="text-white font-medium italic">{message}</BaseText>
   );
 }
