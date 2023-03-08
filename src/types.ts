@@ -60,3 +60,5 @@ export type TExegesis = {
   type?: string;
   input?: string;
 };
+
+export type FaveViewType = "devos" | "verses" | "sermons" | "exegeses";
