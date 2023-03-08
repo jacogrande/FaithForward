@@ -18,7 +18,7 @@ export function FavoriteDevos() {
     refreshing,
     setRefreshing,
     setQuietlyRefreshing,
-  } = useFavorites("devos");
+  } = useFavorites({ fetch: true, faveType: "devos" });
   const { setQuietlyRefreshing: setQuietlyRefreshingTradDevos } =
     useTradDevos();
   const { setQuietlyRefreshing: setQuietlyRefreshingPastDevos } =

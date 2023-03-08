@@ -21,8 +21,10 @@ function ExegesisScreen() {
   const [isFavorited, setIsFavorited] = useState(false);
   const { verse, book, chapter, verseNumber, exegesis } = useBibleStore();
   const { pastExegeses, setQuietlyRefreshing } = usePastExegeses();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } =
-    useFavorites("exegeses");
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites({
+    fetch: false,
+    faveType: "exegeses",
+  });
   const { setError } = useStore();
   const [firestoreExegesis, setFirestoreExegesis] = useState<TExegesis | null>(
     null

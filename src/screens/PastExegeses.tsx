@@ -23,8 +23,10 @@ export function PastExegeses({ route }: { route: any }) {
     setRefreshing,
     setQuietlyRefreshing,
   } = usePastExegeses();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } =
-    useFavorites("exegeses");
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites({
+    fetch: false,
+    faveType: "exegeses",
+  });
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(pastExegeses)
   );

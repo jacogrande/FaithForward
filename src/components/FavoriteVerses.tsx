@@ -13,7 +13,7 @@ export function FavoriteVerses() {
     refreshing,
     setRefreshing,
     setQuietlyRefreshing,
-  } = useFavorites("verses");
+  } = useFavorites({ fetch: true, faveType: "verses" });
   const [favoriteVerses, setFavoriteVerses] = useState<any[]>([]);
   const { setError } = useStore();
 

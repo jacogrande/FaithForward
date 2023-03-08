@@ -18,7 +18,7 @@ export function FavoriteSermons() {
     refreshing,
     setRefreshing,
     setQuietlyRefreshing,
-  } = useFavorites("sermons");
+  } = useFavorites({ fetch: true, faveType: "sermons" });
   const { setQuietlyRefreshing: setQuietlyRefreshingSermons } = useSermons();
   const { stopSound, playSound } = useAudio();
   const { sound, playingAudioObject, setPlayingAudioObject } = useAudioStore();

@@ -28,8 +28,10 @@ export function TraditionalDevotionals() {
     setRefreshing,
     setQuietlyRefreshing,
   } = useTradDevos();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } =
-    useFavorites("devos");
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites({
+    fetch: false,
+    faveType: "devos",
+  });
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(tradDevos)
   );

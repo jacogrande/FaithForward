@@ -15,7 +15,7 @@ export function FavoriteExegeses() {
     refreshing,
     setRefreshing,
     setQuietlyRefreshing,
-  } = useFavorites("exegeses");
+  } = useFavorites({ fetch: true, faveType: "exegeses" });
   const { setQuietlyRefreshing: setQuietlyRefreshingPastExegeses } =
     usePastExegeses();
   const [favoriteExegeses, setFavoriteExegeses] = useState<any[]>([]);

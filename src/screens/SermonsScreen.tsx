@@ -28,8 +28,10 @@ function initOptimisticFaves(sermons: TSermon[]): string[] {
 export default function SermonsScreen() {
   const { sermons, loading, refreshing, setRefreshing, setQuietlyRefreshing } =
     useSermons();
-  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } =
-    useFavorites("sermons");
+  const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites({
+    fetch: false,
+    faveType: "sermons",
+  });
   const [optimisticFaves, setOptimisticFaves] = useState<string[]>(
     initOptimisticFaves(sermons)
   );

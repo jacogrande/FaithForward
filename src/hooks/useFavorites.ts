@@ -9,6 +9,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { FaveViewType } from '@src/types'
 
 type Signature = {
   favorites: any[];
@@ -19,10 +20,14 @@ type Signature = {
   setQuietlyRefreshing: (quietlyRefreshing: boolean) => void;
 };
 
-type FaveType = "devos" | "verses" | "sermons" | "exegeses";
+type Params = {
+  fetch: boolean;
+  faveType?: FaveViewType;
+}
 
-export const useFavorites = (faveType?: FaveType): Signature => {
-  const [loading, setLoading] = useState(true);
+export const useFavorites = (params: Params): Signature => {
+  const { fetch, faveType } = params;
+  const [loading, setLoading] = useState(fetch);
   const [refreshing, setRefreshing] = useState(false);
   const [quietlyRefreshing, setQuietlyRefreshing] = useState(false);
   const { setError } = useStore();

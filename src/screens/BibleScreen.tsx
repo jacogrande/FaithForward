@@ -283,7 +283,10 @@ function Chapter({
   chapter: number;
   verses: string[];
 }) {
-  const { favorites, setQuietlyRefreshing } = useFavorites("verses");
+  const { favorites, setQuietlyRefreshing } = useFavorites({
+    fetch: true,
+    faveType: "verses",
+  });
   const favoriteVerses = favorites.filter((fave) => fave.type === "verse");
 
   if (!verses) {
