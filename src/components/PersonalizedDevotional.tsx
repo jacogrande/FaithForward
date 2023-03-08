@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { logCreateDevotional } from "@src/analytics";
 import { BigButton } from "@src/components/ui/BigButton";
@@ -23,6 +24,7 @@ import { Snackbar } from "react-native-paper";
 import BaseText from "@src/components/ui/BaseText";
 import BiggerText from "@src/components/ui/BiggerText";
 import SmallText from "@src/components/ui/SmallText";
+import colors from "@src/styles/colors";
 
 export function PersonalizedDevotional() {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -130,10 +132,12 @@ export function PersonalizedDevotional() {
               )}
             </BigButton>
           </View>
-          <TouchableOpacity onPress={seePastDevos} className="py-3 mt-4">
-            <SmallText className="text-ffText font-medium">
-              See past devotionals
-            </SmallText>
+          <TouchableOpacity
+            onPress={seePastDevos}
+            className="py-3 mt-4 items-center justify-center flex flex-row space-x-1"
+          >
+            <MaterialIcons name="history" size={18} color={colors.text} />
+            <SmallText className="text-ffText font-medium">History</SmallText>
           </TouchableOpacity>
           <VerseContainer />
         </View>

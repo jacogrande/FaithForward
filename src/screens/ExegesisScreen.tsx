@@ -141,7 +141,7 @@ Sent with Faith Forward`,
         <View
           style={{
             flexDirection: "row",
-            marginHorizontal: "15%",
+            marginHorizontal: "10%",
             justifyContent: "flex-end",
             alignItems: "center",
           }}
@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Baskerville",
     marginVertical: 15,
+    marginHorizontal: 0,
   },
 });
 
