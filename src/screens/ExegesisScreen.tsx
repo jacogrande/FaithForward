@@ -8,7 +8,7 @@ import { usePastExegeses } from "@src/hooks/usePastExegeses";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { TExegesis } from "@src/types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ScrollView,
   Share,
@@ -43,7 +43,7 @@ function ExegesisScreen() {
     }
   }, [exegesis, JSON.stringify(pastExegeses)]);
 
-  async function handleFavoritingExegesis() {
+  const handleFavoritingExegesis = useCallback(async () => {
     try {
       if (!firestoreExegesis) {
         throw new Error("Missing firestoreExegesis");
@@ -59,9 +59,14 @@ function ExegesisScreen() {
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     }
-  }
+  }, [
+    firestoreExegesis,
+    setError,
+    setQuietlyRefreshing,
+    setQuietlyRefreshingFaves,
+  ]);
 
-  async function handleUnfavoritingExegesis() {
+  const handleUnfavoritingExegesis = useCallback(async () => {
     try {
       if (!firestoreExegesis) {
         throw new Error("Missing firestoreExegesis");
@@ -77,7 +82,12 @@ function ExegesisScreen() {
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     }
-  }
+  }, [
+    firestoreExegesis,
+    setError,
+    setQuietlyRefreshing,
+    setQuietlyRefreshingFaves,
+  ]);
 
   const shareExegesis = useCallback(async () => {
     try {
@@ -121,6 +131,14 @@ Sent with Faith Forward`,
     }
   }, [firestoreExegesis]);
 
+  const formattedVerse = useMemo(() => {
+    if (!verse) {
+      return "";
+    }
+
+    return formatVerse(verse);
+  }, [verse]);
+
   if (!verse || !book || !chapter || !verseNumber || !exegesis) {
     return null;
   }
@@ -133,7 +151,7 @@ Sent with Faith Forward`,
     >
       <View className="mb-10">
         <View className="flex-1 bg-ffPaper justify-center items-center pb-3 px-[10%]">
-          <BigText style={styles.highlight}>{`${formatVerse(verse)}
+          <BigText className="p-4" style={styles.highlight}>{`${formattedVerse}
 - ${book} ${chapter}:${verseNumber}`}</BigText>
           <BaseText>{exegesis}</BaseText>
         </View>

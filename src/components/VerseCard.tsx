@@ -53,6 +53,10 @@ Sent with Faith Forward`,
     }
   }, [book, chapter, verseNumber]);
 
+  const unfavoriteVerse = useCallback(() => {
+    handleUnfavoritingVerse(book, chapter, verseNumber);
+  }, [book, chapter, verseNumber]);
+
   return (
     <View
       style={{
@@ -73,7 +77,7 @@ Sent with Faith Forward`,
       <View className="flex-row justify-end items-center py-2 mt-2">
         <View className="flex-row">
           <TouchableOpacity
-            onPress={() => handleUnfavoritingVerse(book, chapter, verseNumber)}
+            onPress={unfavoriteVerse}
             style={{ paddingRight: 20 }}
           >
             <Ionicons name="heart-sharp" size={24} color={colors.red} />
