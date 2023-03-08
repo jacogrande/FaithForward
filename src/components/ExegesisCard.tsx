@@ -1,13 +1,13 @@
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { logShareExegesis } from "@src/analytics";
-import colors from "@src/styles/colors";
-import { TExegesis } from "@src/types";
-import { formatDate, truncateString } from "@src/utils";
-import React, { useState } from "react";
-import { Share, StyleSheet, TouchableOpacity, View } from "react-native";
 import BaseText from "@src/components/ui/BaseText";
 import BigText from "@src/components/ui/BigText";
 import SmallText from "@src/components/ui/SmallText";
+import colors from "@src/styles/colors";
+import { TExegesis } from "@src/types";
+import { formatDate, truncateString } from "@src/utils";
+import React, { useCallback, useState } from "react";
+import { Share, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export function ExegesisCard({
   exegesis,
@@ -24,7 +24,7 @@ export function ExegesisCard({
 }) {
   const [isExpanded, setIsExpanded] = useState(initExpanded || false);
 
-  async function shareExegesis() {
+  const shareExegesis = useCallback(async () => {
     try {
       let shareAction;
       // Build message differently for general exegeses vs verse exegeses
@@ -60,7 +60,7 @@ Sent with Faith Forward`,
     } catch (err: any) {
       console.error(err);
     }
-  }
+  }, [exegesis]);
 
   return (
     <View

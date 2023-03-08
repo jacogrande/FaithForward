@@ -1,11 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { logShareVerse } from "@src/analytics";
-import colors from "@src/styles/colors";
-import React from "react";
-import { Share, TouchableOpacity, View } from "react-native";
 import BaseText from "@src/components/ui/BaseText";
 import BigText from "@src/components/ui/BigText";
+import colors from "@src/styles/colors";
+import React, { useCallback } from "react";
+import { Share, TouchableOpacity, View } from "react-native";
 
 export function VerseCard({
   book,
@@ -26,20 +26,20 @@ export function VerseCard({
 }) {
   const navigation = useNavigation<any>();
 
-  function goToVerse() {
+  const goToVerse = useCallback(() => {
     navigation.navigate("Bible", {
       screen: "ReaderAndStudy",
       params: {
         screen: "Reader",
         params: {
           book,
-          chapter
-        }
+          chapter,
+        },
       },
-    })
-  }
+    });
+  }, [book, chapter]);
 
-  async function shareVerse() {
+  const handleShare = useCallback(async () => {
     try {
       const shareAction = await Share.share({
         message: `"${verse}"
@@ -51,7 +51,7 @@ Sent with Faith Forward`,
     } catch (err: any) {
       console.error(err);
     }
-  }
+  }, [book, chapter, verseNumber]);
 
   return (
     <View
@@ -78,7 +78,7 @@ Sent with Faith Forward`,
           >
             <Ionicons name="heart-sharp" size={24} color={colors.red} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={shareVerse}>
+          <TouchableOpacity onPress={handleShare}>
             <Ionicons name="ios-share-outline" size={24} color={colors.blue} />
           </TouchableOpacity>
         </View>

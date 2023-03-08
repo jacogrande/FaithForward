@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { logShareDevotional } from "@src/analytics";
 import { formatVerse } from "@src/components/DevotionalCard";
+import BaseText from "@src/components/ui/BaseText";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { getVerseRef, getVerseRefs } from "@src/utils";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import {
   ScrollView,
   Share,
@@ -14,7 +15,6 @@ import {
   View,
 } from "react-native";
 import ViewShot from "react-native-view-shot";
-import BaseText from "@src/components/ui/BaseText";
 
 function VerseContainer() {
   const navigation = useNavigation<any>();
@@ -44,13 +44,13 @@ function VerseContainer() {
         screen: "Reader",
         params: {
           book,
-          chapter
-        }
+          chapter,
+        },
       },
-    })
+    });
   };
 
-  async function handleShare() {
+  const handleShare = useCallback(async () => {
     if (!verseRef.current || !verseRef.current.capture) return;
     try {
       const imageUri = await verseRef.current.capture();
@@ -61,7 +61,7 @@ function VerseContainer() {
     } catch (err) {
       console.error(err);
     }
-  }
+  }, [verseRef.current]);
 
   return (
     <View style={styles.verse}>

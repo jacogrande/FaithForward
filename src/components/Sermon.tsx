@@ -1,9 +1,12 @@
 import { AntDesign, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import BaseText from "@src/components/ui/BaseText";
+import BigText from "@src/components/ui/BigText";
+import SmallText from "@src/components/ui/SmallText";
 import colors from "@src/styles/colors";
 import { TSermon } from "@src/types";
 import { Audio } from "expo-av";
 import humanizeDuration from "humanize-duration";
-import React from "react";
+import React, { useCallback } from "react";
 import {
   ActivityIndicator,
   Share,
@@ -11,9 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import BaseText from "@src/components/ui/BaseText";
-import BigText from "@src/components/ui/BigText";
-import SmallText from "@src/components/ui/SmallText";
 
 interface SermonProps {
   sermon: TSermon;
@@ -38,13 +38,13 @@ export function Sermon(props: SermonProps) {
     handleUnfavoritingSermon,
   } = props;
 
-  async function shareSermon() {
+  const shareSermon = useCallback(async () => {
     const uri = `${SERMON_MARKETING_URL}?sermonID=${sermon.id}`;
     await Share.share({
       message: `Check out this Faith Forward sermon!\n\n${sermon.title}`,
       url: uri,
     });
-  }
+  }, [sermon]);
 
   return (
     <View style={styles.sermonSection}>

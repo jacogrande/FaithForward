@@ -7,16 +7,17 @@ import {
   logUnfavoriteVerse,
   logViewBibleChapter,
 } from "@src/analytics";
-import { Container } from "@src/components/ui/Container";
 import { ExegesisLoadingMessage } from "@src/components/ExegesisLoadingMessage";
 import { Loading } from "@src/components/Loading";
+import BigText from "@src/components/ui/BigText";
+import { Container } from "@src/components/ui/Container";
 import { API_URL, BIBLE_BOOKS } from "@src/constants";
 import { auth, favoriteVerse, unfavoriteVerse } from "@src/firebase";
 import { useBibleChapter } from "@src/hooks/useBibleChapter";
 import { useFavorites } from "@src/hooks/useFavorites";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -27,7 +28,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import BigText from "@src/components/ui/BigText";
 
 const BibleScreen = ({ route }: { route: any }) => {
   const [book, setBook] = useState<string>(route.params?.book || "Genesis");
@@ -334,7 +334,7 @@ function Verse({
     setIsFavorited(favorited);
   }, [favorited]);
 
-  async function shareVerse() {
+  const shareVerse = useCallback(async () => {
     try {
       const verseNumber = num + 1;
       const shareAction = await Share.share({
@@ -348,7 +348,7 @@ Sent with Faith Forward`,
       console.error(err);
       setError(err.message);
     }
-  }
+  }, [book, chapter, verse, num]);
 
   async function handleFavoritingVerse() {
     try {

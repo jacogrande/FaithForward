@@ -8,12 +8,11 @@ import { usePastExegeses } from "@src/hooks/usePastExegeses";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { TExegesis } from "@src/types";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ScrollView,
   Share,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -80,7 +79,7 @@ function ExegesisScreen() {
     }
   }
 
-  async function shareExegesis() {
+  const shareExegesis = useCallback(async () => {
     try {
       if (!firestoreExegesis) {
         throw new Error("Missing firestoreExegesis");
@@ -120,7 +119,7 @@ Sent with Faith Forward`,
     } catch (err: any) {
       console.error(err);
     }
-  }
+  }, [firestoreExegesis]);
 
   if (!verse || !book || !chapter || !verseNumber || !exegesis) {
     return null;
