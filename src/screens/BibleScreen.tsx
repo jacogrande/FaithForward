@@ -15,6 +15,7 @@ import { API_URL, BIBLE_BOOKS } from "@src/constants";
 import { auth, favoriteVerse, unfavoriteVerse } from "@src/firebase";
 import { useBibleChapter } from "@src/hooks/useBibleChapter";
 import { useFavorites } from "@src/hooks/useFavorites";
+import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -39,6 +40,7 @@ const BibleScreen = ({ route }: { route: any }) => {
   const { isLoading, data } = useBibleChapter(book, chapter);
   const scrollViewRef = useRef<ScrollView>(null);
   const tocScrollViewRef = useRef<ScrollView>(null);
+  const { requestReview } = useRequestReview();
 
   useEffect(() => {
     if (book && chapter) {
@@ -68,6 +70,7 @@ const BibleScreen = ({ route }: { route: any }) => {
         setChapter(1);
       }
     }
+    requestReview();
   };
 
   const previousChapter = () => {
@@ -81,6 +84,7 @@ const BibleScreen = ({ route }: { route: any }) => {
         setChapter(BIBLE_BOOKS[prevBook].chapters);
       }
     }
+    requestReview();
   };
 
   // width of the window minus the margins
@@ -115,6 +119,7 @@ const BibleScreen = ({ route }: { route: any }) => {
                 animated: true,
               });
               setShowChapterSelection(null);
+              requestReview();
             }}
             className="flex items-center justify-center mt-4 bg-ffDarkPaper rounded"
             style={{
