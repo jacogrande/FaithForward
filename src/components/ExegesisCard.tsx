@@ -6,7 +6,7 @@ import SmallText from "@src/components/ui/SmallText";
 import colors from "@src/styles/colors";
 import { TExegesis } from "@src/types";
 import { formatDate, truncateString } from "@src/utils";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Share, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export function ExegesisCard({
@@ -62,6 +62,26 @@ Sent with Faith Forward`,
     }
   }, [exegesis]);
 
+  const toggleExpansion = useCallback(() => {
+    setIsExpanded(!isExpanded);
+  }, [isExpanded]);
+
+  const truncatedResponse = useMemo(() => {
+    return truncateString(exegesis.response, 140);
+  }, [exegesis.response]);
+
+  const formattedDate = useMemo(() => {
+    return formatDate(exegesis.createdAt);
+  }, [exegesis.createdAt]);
+
+  const unfavoriteExegesis = useCallback(() => {
+    handleUnfavoritingExegesis(exegesis);
+  }, [exegesis, handleUnfavoritingExegesis]);
+
+  const favoriteExegesis = useCallback(() => {
+    handleFavoritingExegesis && handleFavoritingExegesis(exegesis);
+  }, [exegesis, handleFavoritingExegesis]);
+
   return (
     <View
       style={{
@@ -71,11 +91,11 @@ Sent with Faith Forward`,
         borderBottomWidth: 2,
       }}
     >
-      <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)}>
+      <TouchableOpacity onPress={toggleExpansion}>
         <ExegesisTitle exegesis={exegesis} />
         {!isExpanded && (
           <View>
-            <BaseText>{truncateString(exegesis.response, 140)}</BaseText>
+            <BaseText>{truncatedResponse}</BaseText>
           </View>
         )}
       </TouchableOpacity>
@@ -100,25 +120,19 @@ Sent with Faith Forward`,
           }}
         >
           <FontAwesome name="calendar-o" size={20} color="#999" />
-          <SmallText className="pl-2">
-            {formatDate(exegesis.createdAt)}
-          </SmallText>
+          <SmallText className="pl-2">{formattedDate}</SmallText>
         </View>
         <View style={{ flexDirection: "row" }}>
           {faves.includes(exegesis.id) ? (
             <TouchableOpacity
-              onPress={() => handleUnfavoritingExegesis(exegesis)}
+              onPress={unfavoriteExegesis}
               style={{ paddingRight: 20 }}
             >
               <Ionicons name="heart-sharp" size={24} color={colors.red} />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              onPress={() =>
-                handleFavoritingExegesis
-                  ? handleFavoritingExegesis(exegesis)
-                  : {}
-              }
+              onPress={favoriteExegesis}
               style={{ paddingRight: 20 }}
             >
               <Ionicons name="heart-outline" size={24} color={colors.red} />
@@ -134,17 +148,18 @@ Sent with Faith Forward`,
 }
 
 function ExegesisTitle({ exegesis }: { exegesis: TExegesis }) {
-  const getTitle = () => {
+  const title = useMemo(() => {
     if (exegesis.type === "general") {
       return exegesis.input;
     }
 
     return `${formatVerse(exegesis.verse || "")}
 - ${exegesis.book} ${exegesis.chapter}:${exegesis.verseNumber}`;
-  };
+  }, [exegesis]);
+
   return (
     <BigText style={styles.highlight} className="mb-2">
-      {getTitle()}
+      {title}
     </BigText>
   );
 }
