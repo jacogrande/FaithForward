@@ -134,7 +134,9 @@ Sent with Faith Forward`,
     >
       <View className="mb-10">
         <View className="flex-1 bg-ffPaper justify-center items-center pb-3 px-[10%]">
-          <BigText style={styles.highlight}>{`${formatVerse(verse)}
+          <BigText style={styles.highlight} className="p-2">{`${formatVerse(
+            verse
+          )}
 - ${book} ${chapter}:${verseNumber}`}</BigText>
           <BaseText>{exegesis}</BaseText>
         </View>
