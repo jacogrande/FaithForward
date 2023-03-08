@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { logGetExegesis } from "@src/analytics";
 import BaseText from "@src/components/ui/BaseText";
 import { BigButton } from "@src/components/ui/BigButton";
@@ -19,6 +20,7 @@ import {
   View,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
+import colors from "@src/styles/colors";
 
 export function NewExegesis() {
   const navigation = useNavigation<any>();
@@ -90,7 +92,7 @@ export function NewExegesis() {
             {isLoadingExegesis ? (
               <LoadingMessage />
             ) : (
-              <BaseText className="text-white font-bold">Get Exegesis</BaseText>
+              <BaseText className="text-white font-bold">Get Analysis</BaseText>
             )}
           </BigButton>
           {/* <TouchableOpacity */}
@@ -107,12 +109,11 @@ export function NewExegesis() {
           {/* </TouchableOpacity> */}
         </View>
         <TouchableOpacity
-          className="py-5"
+          className="py-5 items-center justify-center flex flex-row space-x-1"
           onPress={() => navigation.navigate("PastExegeses")}
         >
-          <SmallText className="text-ffText font-medium">
-            See past exegeses
-          </SmallText>
+          <MaterialIcons name="history" size={18} color={colors.text} />
+          <SmallText className="text-ffText font-medium">History</SmallText>
         </TouchableOpacity>
       </View>
       <Snackbar
@@ -130,7 +131,7 @@ export function NewExegesis() {
 }
 
 function LoadingMessage() {
-  const message = useLoadingMessage("Writing exegesis");
+  const message = useLoadingMessage("Writing analysis");
 
   return (
     <BaseText className="text-white font-medium italic">{message}</BaseText>

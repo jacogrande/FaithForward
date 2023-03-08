@@ -151,14 +151,14 @@ Sent with Faith Forward`,
     >
       <View className="mb-10">
         <View className="flex-1 bg-ffPaper justify-center items-center pb-3 px-[10%]">
-          <BigText className="p-4" style={styles.highlight}>{`${formattedVerse}
+          <BigText className="p-2" style={styles.highlight}>{`${formattedVerse}
 - ${book} ${chapter}:${verseNumber}`}</BigText>
           <BaseText>{exegesis}</BaseText>
         </View>
         <View
           style={{
             flexDirection: "row",
-            marginHorizontal: "15%",
+            marginHorizontal: "10%",
             justifyContent: "flex-end",
             alignItems: "center",
           }}
@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Baskerville",
     marginVertical: 15,
+    marginHorizontal: 0,
   },
 });
 

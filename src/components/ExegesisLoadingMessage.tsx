@@ -4,7 +4,7 @@ import { View } from "react-native";
 import SmallText from "@src/components/ui/SmallText";
 
 export function ExegesisLoadingMessage() {
-  const loadingMessage = useLoadingMessage("Writing exegesis");
+  const loadingMessage = useLoadingMessage("Writing analysis");
 
   return (
     <View
