@@ -18,13 +18,7 @@ import { useFavorites } from "@src/hooks/useFavorites";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -280,221 +274,212 @@ const BibleScreen = ({ route }: { route: any }) => {
   );
 };
 
-const Chapter = React.memo(
-  ({
-    book,
-    chapter,
-    verses,
-  }: {
-    book: string;
-    chapter: number;
-    verses: string[];
-  }) => {
-    const { favorites, setQuietlyRefreshing } = useFavorites({
-      fetch: true,
-      faveType: "verses",
-    });
+const Chapter = ({
+  book,
+  chapter,
+  verses,
+}: {
+  book: string;
+  chapter: number;
+  verses: string[];
+}) => {
+  const { favorites, setQuietlyRefreshing } = useFavorites({
+    fetch: true,
+    faveType: "verses",
+  });
 
-    const favoriteVerses = useMemo(
-      () => favorites?.filter((fave) => fave.type === "verse") || [],
-      [favorites]
-    );
+  const favoriteVerses =
+    favorites?.filter((fave) => fave.type === "verse") || [];
 
-    const handleFaveToggle = useCallback(() => {
-      setQuietlyRefreshing(true);
-    }, [setQuietlyRefreshing]);
+  const handleFaveToggle = useCallback(() => {
+    setQuietlyRefreshing(true);
+  }, [setQuietlyRefreshing]);
 
-    if (!verses) {
-      return <></>;
-    }
-
-    const keyExtractor = (index: number) => `${book}_${chapter}_${index}`;
-
-    return (
-      <View style={styles.container}>
-        {verses.map((verse: string, index: number) => (
-          <Verse
-            key={keyExtractor(index)}
-            book={book}
-            chapter={chapter}
-            verse={verse}
-            num={index}
-            favorited={favoriteVerses.some(
-              (fave) =>
-                fave.docData.book === book &&
-                fave.docData.chapter === chapter &&
-                fave.docData.verseNumber === index + 1
-            )}
-            onFaveToggle={handleFaveToggle}
-          />
-        ))}
-      </View>
-    );
+  if (!verses) {
+    return <></>;
   }
-);
 
-const Verse = React.memo(
-  ({
-    book,
-    chapter,
-    verse,
-    num,
-    favorited,
-    onFaveToggle,
-  }: {
-    book: string;
-    chapter: number;
-    verse: string;
-    num: number;
-    favorited: boolean;
-    onFaveToggle: () => void;
-  }) => {
-    const navigation = useNavigation<any>();
-    const { setBook, setChapter, setVerseNumber, setVerse, setExegesis } =
-      useBibleStore();
-    const { setError } = useStore();
-    const [showActions, setShowActions] = useState(false);
-    const [isLoadingExegesis, setIsLoadingExegesis] = useState(false);
-    const [isFavorited, setIsFavorited] = useState(favorited);
+  const keyExtractor = (index: number) => `${book}_${chapter}_${index}`;
 
-    useEffect(() => {
-      setIsFavorited(favorited);
-    }, [favorited]);
+  return (
+    <View style={styles.container}>
+      {verses.map((verse: string, index: number) => (
+        <Verse
+          key={keyExtractor(index)}
+          book={book}
+          chapter={chapter}
+          verse={verse}
+          num={index}
+          favorited={favoriteVerses.some(
+            (fave) =>
+              fave.docData.book === book &&
+              fave.docData.chapter === chapter &&
+              fave.docData.verseNumber === index + 1
+          )}
+          onFaveToggle={handleFaveToggle}
+        />
+      ))}
+    </View>
+  );
+};
 
-    const shareVerse = useCallback(async () => {
-      try {
-        const verseNumber = num + 1;
-        const shareAction = await Share.share({
-          message: `"${verse}"
+const Verse = ({
+  book,
+  chapter,
+  verse,
+  num,
+  favorited,
+  onFaveToggle,
+}: {
+  book: string;
+  chapter: number;
+  verse: string;
+  num: number;
+  favorited: boolean;
+  onFaveToggle: () => void;
+}) => {
+  const navigation = useNavigation<any>();
+  const { setBook, setChapter, setVerseNumber, setVerse, setExegesis } =
+    useBibleStore();
+  const { setError } = useStore();
+  const [showActions, setShowActions] = useState(false);
+  const [isLoadingExegesis, setIsLoadingExegesis] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(favorited);
+
+  useEffect(() => {
+    setIsFavorited(favorited);
+  }, [favorited]);
+
+  const shareVerse = useCallback(async () => {
+    try {
+      const verseNumber = num + 1;
+      const shareAction = await Share.share({
+        message: `"${verse}"
 - ${book} ${chapter}:${verseNumber}
 
 Sent with Faith Forward`,
-        });
-        logShareVerse(book, chapter, verseNumber, shareAction.action);
-      } catch (err: any) {
-        console.error(err);
-        setError(err.message);
-      }
-    }, [book, chapter, verse, num]);
+      });
+      logShareVerse(book, chapter, verseNumber, shareAction.action);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+    }
+  }, [book, chapter, verse, num]);
 
-    const handleFavoritingVerse = useCallback(async () => {
-      try {
-        setIsFavorited(true);
-        logFavoriteVerse(book, chapter, num + 1);
-        await favoriteVerse("kjv", book, chapter, num + 1, verse);
-      } catch (err: any) {
-        console.warn("Error favoriting verse:");
-        console.error(err);
-        setError(err.message);
-      } finally {
-        onFaveToggle();
-      }
-    }, [book, chapter, verse, num, onFaveToggle]);
+  const handleFavoritingVerse = useCallback(async () => {
+    try {
+      setIsFavorited(true);
+      logFavoriteVerse(book, chapter, num + 1);
+      await favoriteVerse("kjv", book, chapter, num + 1, verse);
+    } catch (err: any) {
+      console.warn("Error favoriting verse:");
+      console.error(err);
+      setError(err.message);
+    } finally {
+      onFaveToggle();
+    }
+  }, [book, chapter, verse, num, onFaveToggle]);
 
-    const handleUnfavoritingVerse = useCallback(async () => {
-      try {
-        setIsFavorited(false);
-        logUnfavoriteVerse(book, chapter, num + 1);
-        await unfavoriteVerse("kjv", book, chapter, num + 1);
-      } catch (err: any) {
-        console.warn("Error unfavoriting verse:");
-        console.error(err);
-        setError(err.message);
-      } finally {
-        onFaveToggle();
-      }
-    }, [book, chapter, verse, num, onFaveToggle]);
+  const handleUnfavoritingVerse = useCallback(async () => {
+    try {
+      setIsFavorited(false);
+      logUnfavoriteVerse(book, chapter, num + 1);
+      await unfavoriteVerse("kjv", book, chapter, num + 1);
+    } catch (err: any) {
+      console.warn("Error unfavoriting verse:");
+      console.error(err);
+      setError(err.message);
+    } finally {
+      onFaveToggle();
+    }
+  }, [book, chapter, verse, num, onFaveToggle]);
 
-    const getExegesis = useCallback(async () => {
-      try {
-        setIsLoadingExegesis(true);
-        logGetExegesis(book, chapter, num + 1, "verse");
+  const getExegesis = useCallback(async () => {
+    try {
+      setIsLoadingExegesis(true);
+      logGetExegesis(book, chapter, num + 1, "verse");
 
-        const userId = auth.currentUser?.uid;
+      const userId = auth.currentUser?.uid;
 
-        const response = await fetch(`${API_URL}/getExegesis`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: userId,
-            book,
-            chapter,
-            verseNumber: num + 1,
-            verse: verse,
-          }),
-        });
+      const response = await fetch(`${API_URL}/getExegesis`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          book,
+          chapter,
+          verseNumber: num + 1,
+          verse: verse,
+        }),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        setBook(book);
-        setChapter(chapter);
-        setVerseNumber(num + 1);
-        setVerse(verse);
-        setExegesis(data.response);
+      setBook(book);
+      setChapter(chapter);
+      setVerseNumber(num + 1);
+      setVerse(verse);
+      setExegesis(data.response);
 
-        navigation.navigate("Verse Analysis", {});
-      } catch (err: any) {
-        console.error(err);
-      } finally {
-        setIsLoadingExegesis(false);
-      }
-    }, [book, chapter, verse, num]);
+      navigation.navigate("Verse Analysis", {});
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setIsLoadingExegesis(false);
+    }
+  }, [book, chapter, verse, num]);
 
-    return (
-      <TouchableOpacity onPress={() => setShowActions(!showActions)}>
-        <View style={styles.verseContainer}>
-          <Text style={styles.verseNum}>{num + 1}</Text>
-          <Text style={styles.verseText}>{verse}</Text>
-        </View>
-        {showActions && (
-          <>
-            <View
-              className={`${isLoadingExegesis ? "mb-2" : "mb-5"}`}
-              style={styles.actionsContainer}
-            >
-              {isFavorited ? (
-                <TouchableOpacity
-                  onPress={handleUnfavoritingVerse}
-                  style={styles.actionButton}
-                >
-                  <Ionicons name="heart-sharp" size={24} color={colors.red} />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  onPress={handleFavoritingVerse}
-                  style={styles.actionButton}
-                >
-                  <Ionicons name="heart-outline" size={24} color={colors.red} />
-                </TouchableOpacity>
-              )}
+  return (
+    <TouchableOpacity onPress={() => setShowActions(!showActions)}>
+      <View style={styles.verseContainer}>
+        <Text style={styles.verseNum}>{num + 1}</Text>
+        <Text style={styles.verseText}>{verse}</Text>
+      </View>
+      {showActions && (
+        <>
+          <View
+            className={`${isLoadingExegesis ? "mb-2" : "mb-5"}`}
+            style={styles.actionsContainer}
+          >
+            {isFavorited ? (
               <TouchableOpacity
-                onPress={shareVerse}
+                onPress={handleUnfavoritingVerse}
                 style={styles.actionButton}
               >
-                <Feather name="share" size={20} color={colors.blue} />
+                <Ionicons name="heart-sharp" size={24} color={colors.red} />
               </TouchableOpacity>
-              {isLoadingExegesis ? (
-                <View style={styles.actionButton}>
-                  <ActivityIndicator size="small" color={colors.blue} />
-                </View>
-              ) : (
-                <TouchableOpacity
-                  onPress={getExegesis}
-                  style={styles.actionButton}
-                >
-                  <FontAwesome5 name="scroll" size={20} color={colors.blue} />
-                </TouchableOpacity>
-              )}
-            </View>
-            {isLoadingExegesis && <ExegesisLoadingMessage />}
-          </>
-        )}
-      </TouchableOpacity>
-    );
-  }
-);
+            ) : (
+              <TouchableOpacity
+                onPress={handleFavoritingVerse}
+                style={styles.actionButton}
+              >
+                <Ionicons name="heart-outline" size={24} color={colors.red} />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity onPress={shareVerse} style={styles.actionButton}>
+              <Feather name="share" size={20} color={colors.blue} />
+            </TouchableOpacity>
+            {isLoadingExegesis ? (
+              <View style={styles.actionButton}>
+                <ActivityIndicator size="small" color={colors.blue} />
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={getExegesis}
+                style={styles.actionButton}
+              >
+                <FontAwesome5 name="scroll" size={20} color={colors.blue} />
+              </TouchableOpacity>
+            )}
+          </View>
+          {isLoadingExegesis && <ExegesisLoadingMessage />}
+        </>
+      )}
+    </TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
   actionsContainer: {
