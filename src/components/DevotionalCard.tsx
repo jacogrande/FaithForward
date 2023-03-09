@@ -1,16 +1,17 @@
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { logShareDevotional, logViewDevotional } from "@src/analytics";
-import useStore from "@src/store";
-import colors from "@src/styles/colors";
-import { formatDate, getVerseRef, getVerseRefs } from "@src/utils";
-import React, { useRef, useState, useCallback } from "react";
-import { Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import ViewShot from "react-native-view-shot";
 import BaseText from "@src/components/ui/BaseText";
 import BigText from "@src/components/ui/BigText";
 import Quote from "@src/components/ui/Quote";
 import SmallText from "@src/components/ui/SmallText";
+import useStore from "@src/store";
+import colors from "@src/styles/colors";
+import { formatDate, getVerseRef, getVerseRefs } from "@src/utils";
+import React, { useCallback, useRef, useState } from "react";
+import { Share, StyleSheet, Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import ViewShot from "react-native-view-shot";
 
 export function DevotionalCard({
   devotional,
@@ -54,7 +55,7 @@ export function DevotionalCard({
         devotional.title || "Personal Devotional"
       );
     }
-  }, [isExpanded])
+  }, [isExpanded]);
 
   const goToVerse = useCallback((book: string, chapter: number) => {
     navigation.navigate("Bible", {
@@ -63,11 +64,11 @@ export function DevotionalCard({
         screen: "Reader",
         params: {
           book,
-          chapter
-        }
+          chapter,
+        },
       },
-    })
-  }, [])
+    });
+  }, []);
 
   return (
     <View

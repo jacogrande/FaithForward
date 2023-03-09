@@ -7,7 +7,8 @@ import colors from "@src/styles/colors";
 import { TExegesis } from "@src/types";
 import { formatDate, truncateString } from "@src/utils";
 import React, { useCallback, useMemo, useState } from "react";
-import { Share, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Share, StyleSheet, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export function ExegesisCard({
   exegesis,

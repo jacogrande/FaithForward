@@ -5,7 +5,8 @@ import BaseText from "@src/components/ui/BaseText";
 import BigText from "@src/components/ui/BigText";
 import colors from "@src/styles/colors";
 import React, { useCallback } from "react";
-import { Share, TouchableOpacity, View } from "react-native";
+import { Share, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export function VerseCard({
   book,
