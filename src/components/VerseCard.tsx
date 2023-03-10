@@ -8,6 +8,7 @@ import React, { useCallback } from "react";
 import { Share, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+// TODO: Handle fave/unfave states
 export function VerseCard({
   book,
   chapter,
