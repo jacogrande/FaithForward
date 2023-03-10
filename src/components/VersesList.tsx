@@ -1,7 +1,7 @@
 import BaseText from "@src/components/ui/BaseText";
 import { VerseCard } from "@src/components/VerseCard";
 import { useFavorites } from "@src/hooks/useFavorites";
-import React, { useCallback } from "react";
+import React from "react";
 import { FlatList, RefreshControl, View } from "react-native";
 
 // TODO: Handle fave/unfave states here
@@ -9,7 +9,7 @@ export function VersesList({
   verses,
   refreshing,
   onRefresh,
-  handleEndReached
+  handleEndReached,
 }: {
   verses: any[];
   refreshing: boolean;
@@ -24,9 +24,9 @@ export function VersesList({
   const favoriteVerses =
     favorites?.filter((fave) => fave.type === "verse") || [];
 
-  const handleFaveToggle = useCallback(() => {
+  const handleFaveToggle = () => {
     setQuietlyRefreshing(true);
-  }, [setQuietlyRefreshing]);
+  };
 
   return (
     <FlatList

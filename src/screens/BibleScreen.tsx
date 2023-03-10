@@ -18,7 +18,7 @@ import { useFavorites } from "@src/hooks/useFavorites";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -291,9 +291,9 @@ const Chapter = ({
   const favoriteVerses =
     favorites?.filter((fave) => fave.type === "verse") || [];
 
-  const handleFaveToggle = useCallback(() => {
+  const handleFaveToggle = () => {
     setQuietlyRefreshing(true);
-  }, [setQuietlyRefreshing]);
+  };
 
   if (!verses) {
     return <></>;
@@ -350,7 +350,7 @@ const Verse = ({
     setIsFavorited(favorited);
   }, [favorited]);
 
-  const shareVerse = useCallback(async () => {
+  const shareVerse = async () => {
     try {
       const verseNumber = num + 1;
       const shareAction = await Share.share({
@@ -364,9 +364,9 @@ Sent with Faith Forward`,
       console.error(err);
       setError(err.message);
     }
-  }, [book, chapter, verse, num]);
+  };
 
-  const handleFavoritingVerse = useCallback(async () => {
+  const handleFavoritingVerse = async () => {
     try {
       setIsFavorited(true);
       logFavoriteVerse(book, chapter, num + 1);
@@ -378,9 +378,9 @@ Sent with Faith Forward`,
     } finally {
       onFaveToggle();
     }
-  }, [book, chapter, verse, num, onFaveToggle]);
+  };
 
-  const handleUnfavoritingVerse = useCallback(async () => {
+  const handleUnfavoritingVerse = async () => {
     try {
       setIsFavorited(false);
       logUnfavoriteVerse(book, chapter, num + 1);
@@ -392,9 +392,9 @@ Sent with Faith Forward`,
     } finally {
       onFaveToggle();
     }
-  }, [book, chapter, verse, num, onFaveToggle]);
+  };
 
-  const getExegesis = useCallback(async () => {
+  const getExegesis = async () => {
     try {
       setIsLoadingExegesis(true);
       logGetExegesis(book, chapter, num + 1, "verse");
@@ -429,7 +429,7 @@ Sent with Faith Forward`,
     } finally {
       setIsLoadingExegesis(false);
     }
-  }, [book, chapter, verse, num]);
+  };
 
   return (
     <TouchableOpacity onPress={() => setShowActions(!showActions)}>

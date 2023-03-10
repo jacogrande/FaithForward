@@ -1,5 +1,5 @@
-import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { logGetExegesis } from "@src/analytics";
 import BaseText from "@src/components/ui/BaseText";
 import { BigButton } from "@src/components/ui/BigButton";
@@ -10,17 +10,16 @@ import { auth } from "@src/firebase";
 import { useLoadingMessage } from "@src/hooks/useLoadingMessage";
 import { usePastExegeses } from "@src/hooks/usePastExegeses";
 import useStore from "@src/store";
+import colors from "@src/styles/colors";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { Snackbar } from "react-native-paper";
-import colors from "@src/styles/colors";
 
 export function NewExegesis() {
   const navigation = useNavigation<any>();
@@ -95,18 +94,6 @@ export function NewExegesis() {
               <BaseText className="text-white font-bold">Get Analysis</BaseText>
             )}
           </BigButton>
-          {/* <TouchableOpacity */}
-          {/*   onPress={getGeneralExegesis} */}
-          {/*   style={{ opacity: isLoadingExegesis ? 0.5 : 1 }} */}
-          {/*   className={`w-4/5 p-4 rounded-lg bg-ffBlue items-center justify-center self-center`} */}
-          {/*   disabled={isLoadingExegesis} */}
-          {/* > */}
-          {/*   {isLoadingExegesis ? ( */}
-          {/*     <LoadingMessage /> */}
-          {/*   ) : ( */}
-          {/*     <Text className="text-white text-lg font-bold">Get Exegesis</Text> */}
-          {/*   )} */}
-          {/* </TouchableOpacity> */}
         </View>
         <TouchableOpacity
           className="py-5 items-center justify-center flex flex-row space-x-1"

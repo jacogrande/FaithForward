@@ -6,7 +6,7 @@ import colors from "@src/styles/colors";
 import { TSermon } from "@src/types";
 import { Audio } from "expo-av";
 import humanizeDuration from "humanize-duration";
-import React, { useCallback } from "react";
+import React from "react";
 import {
   ActivityIndicator,
   Share,
@@ -38,13 +38,13 @@ export function Sermon(props: SermonProps) {
     handleUnfavoritingSermon,
   } = props;
 
-  const shareSermon = useCallback(async () => {
+  const shareSermon = async () => {
     const uri = `${SERMON_MARKETING_URL}?sermonID=${sermon.id}`;
     await Share.share({
       message: `Check out this Faith Forward sermon!\n\n${sermon.title}`,
       url: uri,
     });
-  }, [sermon]);
+  };
 
   return (
     <View style={styles.sermonSection}>

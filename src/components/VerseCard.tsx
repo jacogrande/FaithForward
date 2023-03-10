@@ -10,7 +10,7 @@ import BigText from "@src/components/ui/BigText";
 import { favoriteVerse, unfavoriteVerse } from "@src/firebase";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Share, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -37,7 +37,7 @@ export function VerseCard({
     setIsFavorited(favorited);
   }, [favorited]);
 
-  const goToVerse = useCallback(() => {
+  const goToVerse = () => {
     navigation.navigate("Bible", {
       screen: "ReaderAndStudy",
       params: {
@@ -48,9 +48,9 @@ export function VerseCard({
         },
       },
     });
-  }, [book, chapter]);
+  };
 
-  const handleShare = useCallback(async () => {
+  const handleShare = async () => {
     try {
       const shareAction = await Share.share({
         message: `"${verse}"
@@ -62,9 +62,9 @@ Sent with Faith Forward`,
     } catch (err: any) {
       console.error(err);
     }
-  }, [book, chapter, verseNumber]);
+  };
 
-  const handleFavoritingVerse = useCallback(async () => {
+  const handleFavoritingVerse = async () => {
     try {
       setIsFavorited(true);
       logFavoriteVerse(book, chapter, verseNumber);
@@ -76,9 +76,9 @@ Sent with Faith Forward`,
     } finally {
       onFaveToggle();
     }
-  }, [book, chapter, verse, verseNumber, onFaveToggle]);
+  };
 
-  const handleUnfavoritingVerse = useCallback(async () => {
+  const handleUnfavoritingVerse = async () => {
     try {
       setIsFavorited(false);
       logUnfavoriteVerse(book, chapter, verseNumber);
@@ -90,7 +90,7 @@ Sent with Faith Forward`,
     } finally {
       onFaveToggle();
     }
-  }, [book, chapter, verse, verseNumber, onFaveToggle]);
+  };
 
   // TODO: Include getExegesis action button here
 
