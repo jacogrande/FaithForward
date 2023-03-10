@@ -1,10 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { logShareVerse } from "@src/analytics";
+import {
+  logFavoriteVerse,
+  logShareVerse,
+  logUnfavoriteVerse,
+} from "@src/analytics";
 import BaseText from "@src/components/ui/BaseText";
 import BigText from "@src/components/ui/BigText";
+import { favoriteVerse, unfavoriteVerse } from "@src/firebase";
+import useStore from "@src/store";
 import colors from "@src/styles/colors";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Share, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -14,19 +20,23 @@ export function VerseCard({
   chapter,
   verseNumber,
   verse,
-  handleUnfavoritingVerse,
+  favorited,
+  onFaveToggle,
 }: {
   book: string;
   chapter: number;
   verseNumber: number;
   verse: string;
-  handleUnfavoritingVerse: (
-    book: string,
-    chapter: number,
-    verseNumber: number
-  ) => void;
+  favorited: boolean;
+  onFaveToggle: () => void;
 }) {
   const navigation = useNavigation<any>();
+  const [isFavorited, setIsFavorited] = useState(favorited);
+  const { setError } = useStore();
+
+  useEffect(() => {
+    setIsFavorited(favorited);
+  }, [favorited]);
 
   const goToVerse = useCallback(() => {
     navigation.navigate("Bible", {
@@ -55,9 +65,35 @@ Sent with Faith Forward`,
     }
   }, [book, chapter, verseNumber]);
 
-  const unfavoriteVerse = useCallback(() => {
-    handleUnfavoritingVerse(book, chapter, verseNumber);
-  }, [book, chapter, verseNumber]);
+  const handleFavoritingVerse = useCallback(async () => {
+    try {
+      setIsFavorited(true);
+      logFavoriteVerse(book, chapter, verseNumber);
+      await favoriteVerse("kjv", book, chapter, verseNumber, verse);
+    } catch (err: any) {
+      console.warn("Error favoriting verse:");
+      console.error(err);
+      setError(err.message);
+    } finally {
+      onFaveToggle();
+    }
+  }, [book, chapter, verse, verseNumber, onFaveToggle]);
+
+  const handleUnfavoritingVerse = useCallback(async () => {
+    try {
+      setIsFavorited(false);
+      logUnfavoriteVerse(book, chapter, verseNumber);
+      await unfavoriteVerse("kjv", book, chapter, verseNumber);
+    } catch (err: any) {
+      console.warn("Error unfavoriting verse:");
+      console.error(err);
+      setError(err.message);
+    } finally {
+      onFaveToggle();
+    }
+  }, [book, chapter, verse, verseNumber, onFaveToggle]);
+
+  // TODO: Include getExegesis action button here
 
   return (
     <View
@@ -78,12 +114,18 @@ Sent with Faith Forward`,
       </TouchableOpacity>
       <View className="flex-row justify-end items-center py-2 mt-2">
         <View className="flex-row">
-          <TouchableOpacity
-            onPress={unfavoriteVerse}
-            style={{ paddingRight: 20 }}
-          >
-            <Ionicons name="heart-sharp" size={24} color={colors.red} />
-          </TouchableOpacity>
+          {isFavorited ? (
+            <TouchableOpacity
+              onPress={handleUnfavoritingVerse}
+              className="px-4"
+            >
+              <Ionicons name="heart-sharp" size={24} color={colors.red} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={handleFavoritingVerse} className="px-3">
+              <Ionicons name="heart-outline" size={24} color={colors.red} />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity onPress={handleShare}>
             <Ionicons name="ios-share-outline" size={24} color={colors.blue} />
           </TouchableOpacity>

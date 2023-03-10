@@ -1,23 +1,31 @@
-import { VerseCard } from "@src/components/VerseCard";
-import React from "react";
-import { FlatList, RefreshControl, View } from "react-native";
 import BaseText from "@src/components/ui/BaseText";
+import { VerseCard } from "@src/components/VerseCard";
+import { useFavorites } from "@src/hooks/useFavorites";
+import React, { useCallback } from "react";
+import { FlatList, RefreshControl, View } from "react-native";
 
+// TODO: Handle fave/unfave states here
 export function VersesList({
   verses,
-  handleUnfavoritingVerse,
   refreshing,
   onRefresh,
 }: {
   verses: any[];
-  handleUnfavoritingVerse: (
-    book: string,
-    chapter: number,
-    verseNumber: number
-  ) => void;
   refreshing: boolean;
   onRefresh: () => void;
 }) {
+  const { favorites, setQuietlyRefreshing } = useFavorites({
+    fetch: true,
+    faveType: "verses",
+  });
+
+  const favoriteVerses =
+    favorites?.filter((fave) => fave.type === "verse") || [];
+
+  const handleFaveToggle = useCallback(() => {
+    setQuietlyRefreshing(true);
+  }, [setQuietlyRefreshing]);
+
   return (
     <FlatList
       data={verses}
@@ -27,7 +35,13 @@ export function VersesList({
           chapter={verse.chapter}
           verseNumber={verse.verseNumber}
           verse={verse.verse}
-          handleUnfavoritingVerse={handleUnfavoritingVerse}
+          favorited={favoriteVerses.some(
+            (fave) =>
+              fave.docData.book === verse.book &&
+              fave.docData.chapter === parseInt(verse.chapter) &&
+              fave.docData.verseNumber === parseInt(verse.verseNumber)
+          )}
+          onFaveToggle={handleFaveToggle}
         />
       )}
       keyExtractor={(item) => `${item.book}${item.chapter}${item.verseNumber}`}

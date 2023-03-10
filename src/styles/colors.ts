@@ -9,4 +9,5 @@ export default {
   darkPaper: "rgba(0, 0, 0, 0.05)",
   black: "#222",
   text: "#444",
+  placeholderText: "#999"
 };

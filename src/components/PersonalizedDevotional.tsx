@@ -112,7 +112,7 @@ export function PersonalizedDevotional() {
           <TextInput
             className="w-4/5 h-40 text-ffText overflow-scroll font-medium bg-ffDarkPaper rounded p-3 my-4 text-base"
             placeholder="Enter your thoughts or prayers here..."
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.placeholderText}
             onChangeText={(text) => setInput(text)}
             value={input}
             multiline

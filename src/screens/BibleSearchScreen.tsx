@@ -1,28 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Loading } from "@src/components/Loading";
 import { Container } from "@src/components/ui/Container";
-import { VerseCard } from "@src/components/VerseCard";
+import { VersesList } from "@src/components/VersesList";
 import { API_URL } from "@src/constants";
 import colors from "@src/styles/colors";
 import React, { useCallback, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 export const BibleSearchScreen = () => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
   const [verses, setVerses] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [searched, setSearched] = useState(false);
-
-  console.debug("BibleSearchScreen");
-  console.debug("query", query);
-  console.debug("results", results);
-  console.debug("loading", loading);
-  console.debug("error", error);
-  console.debug("searched", searched);
-  console.debug("verses:", verses)
-  console.debug("***********************");
 
   const search = useCallback(async () => {
     if (query.length < 3) {
@@ -30,27 +19,28 @@ export const BibleSearchScreen = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/searchBible?query=${query}`, {
+      const response = await fetch(`${API_URL}/searchBible`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query }),
       });
       const json = await response.json();
-      setResults(json);
       setVerses(
         json.hits.map((hit: any) => {
           return {
             book: hit.document.book,
-            chapter: hit.document.chapter,
-            verse: hit.document.verse,
-            text: hit.document.text,
+            chapter: parseInt(hit.document.chapter),
+            verseNumber: parseInt(hit.document.verse),
+            verse: hit.document.text,
           };
         })
       );
     } catch (e) {
-      setError(true);
       setLoading(false);
     } finally {
       setLoading(false);
-      setSearched(true);
     }
   }, [query]);
 
@@ -74,33 +64,21 @@ export const BibleSearchScreen = () => {
           />
           <TextInput
             placeholder="Search the Bible"
-            placeholderTextColor={colors.text}
+            placeholderTextColor={colors.placeholderText}
             style={styles.searchInput}
             onChangeText={handleQueryChange}
             value={query}
             onSubmitEditing={handleSearch}
           />
         </View>
-        <TouchableOpacity onPress={handleSearch}>
+        <TouchableOpacity disabled={loading} onPress={handleSearch}>
           <Text style={styles.searchButton}>Search</Text>
         </TouchableOpacity>
       </View>
-      {searched && !loading && (
-        <ScrollView
-          style={styles.resultsContainer}
-          contentContainerStyle={styles.resultsContentContainer}
-        >
-          {verses.map((verse, index) => (
-            <VerseCard
-              key={index}
-              book={verse.book}
-              chapter={verse.chapter}
-              verseNumber={verse.verse}
-              verse={verse.text}
-              handleUnfavoritingVerse={() => {}}
-            />
-          ))}
-        </ScrollView>
+      {loading ? (
+        <Loading />
+      ) : (
+        <VersesList verses={verses} refreshing={false} onRefresh={() => {}} />
       )}
     </Container>
   );
@@ -133,9 +111,7 @@ const styles = StyleSheet.create({
   resultsContainer: {
     flex: 1,
   },
-  resultsContentContainer: {
-    padding: 16,
-  },
+  resultsContentContainer: {},
   result: {
     marginBottom: 16,
   },
