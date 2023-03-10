@@ -9,10 +9,12 @@ export function VersesList({
   verses,
   refreshing,
   onRefresh,
+  handleEndReached
 }: {
   verses: any[];
   refreshing: boolean;
   onRefresh: () => void;
+  handleEndReached: () => void;
 }) {
   const { favorites, setQuietlyRefreshing } = useFavorites({
     fetch: true,
@@ -62,6 +64,8 @@ export function VersesList({
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5}
     />
   );
 }

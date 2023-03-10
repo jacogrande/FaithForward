@@ -4,53 +4,69 @@ import { Container } from "@src/components/ui/Container";
 import { VersesList } from "@src/components/VersesList";
 import { API_URL } from "@src/constants";
 import colors from "@src/styles/colors";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+const PER_PAGE = 10;
+
 export const BibleSearchScreen = () => {
   const [query, setQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState<number | null>(null);
+  const [totalPages, setTotalPages] = useState<number | null>(null);
   const [verses, setVerses] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const search = useCallback(async () => {
-    if (query.length < 3) {
+  const search = async (page: number) => {
+    if (!!totalPages && page > totalPages) {
       return;
     }
-    setLoading(true);
+    setCurrentPage(page);
+    if (page === 1) {
+      setLoading(true);
+      setVerses([]);
+    }
     try {
       const response = await fetch(`${API_URL}/searchBible`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, page, perPage: PER_PAGE }),
       });
       const json = await response.json();
-      setVerses(
-        json.hits.map((hit: any) => {
-          return {
-            book: hit.document.book,
-            chapter: parseInt(hit.document.chapter),
-            verseNumber: parseInt(hit.document.verse),
-            verse: hit.document.text,
-          };
-        })
-      );
+      // Set total pages to json.found / PER_PAGE, rounded up
+      setTotalPages(Math.ceil(json.found / PER_PAGE));
+      const newVerses = json.hits.map((hit: any) => {
+        return {
+          book: hit.document.book,
+          chapter: parseInt(hit.document.chapter),
+          verseNumber: parseInt(hit.document.verse),
+          verse: hit.document.text,
+        };
+      });
+      setVerses((prevVerses) => [...prevVerses, ...newVerses]);
     } catch (e) {
       setLoading(false);
     } finally {
       setLoading(false);
     }
-  }, [query]);
+  };
 
-  const handleQueryChange = useCallback((text: string) => {
+  const handleQueryChange = (text: string) => {
     setQuery(text);
-  }, []);
+  };
 
-  const handleSearch = useCallback(() => {
-    search();
-  }, [search]);
+  const handleEndReached = () => {
+    if (!currentPage) {
+      throw new Error("currentPage is null");
+    }
+    search(currentPage + 1);
+  };
+
+  const startSearch = () => {
+    search(1);
+  };
 
   return (
     <Container>
@@ -68,17 +84,22 @@ export const BibleSearchScreen = () => {
             style={styles.searchInput}
             onChangeText={handleQueryChange}
             value={query}
-            onSubmitEditing={handleSearch}
+            onSubmitEditing={startSearch}
           />
         </View>
-        <TouchableOpacity disabled={loading} onPress={handleSearch}>
+        <TouchableOpacity disabled={loading} onPress={startSearch}>
           <Text style={styles.searchButton}>Search</Text>
         </TouchableOpacity>
       </View>
       {loading ? (
         <Loading />
       ) : (
-        <VersesList verses={verses} refreshing={false} onRefresh={() => {}} />
+        <VersesList
+          verses={verses}
+          refreshing={false}
+          onRefresh={() => {}}
+          handleEndReached={handleEndReached}
+        />
       )}
     </Container>
   );

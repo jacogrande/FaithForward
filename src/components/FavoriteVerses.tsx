@@ -40,6 +40,7 @@ export function FavoriteVerses() {
       verses={favoriteVerses}
       refreshing={refreshing}
       onRefresh={() => setRefreshing(true)}
+      handleEndReached={() => {}}
     />
   );
 }
