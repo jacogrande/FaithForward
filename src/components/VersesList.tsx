@@ -4,7 +4,6 @@ import { useFavorites } from "@src/hooks/useFavorites";
 import React from "react";
 import { FlatList, RefreshControl, View } from "react-native";
 
-// TODO: Handle fave/unfave states here
 export function VersesList({
   verses,
   refreshing,
@@ -14,7 +13,7 @@ export function VersesList({
   verses: any[];
   refreshing: boolean;
   onRefresh: () => void;
-  handleEndReached: () => void;
+  handleEndReached?: () => void;
 }) {
   const { favorites, setQuietlyRefreshing } = useFavorites({
     fetch: true,
