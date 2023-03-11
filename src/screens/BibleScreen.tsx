@@ -33,7 +33,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const BibleScreen = ({ route }: { route: any }) => {
   const [book, setBook] = useState<string>(route.params?.book || "Genesis");
   const [chapter, setChapter] = useState(route.params?.chapter || 1);
-  const [showToc, setShowToc] = useState(route.params?.book ? false : true);
+  const [showToc, setShowToc] = useState(route.params ? false : true);
   const [showChapterSelection, setShowChapterSelection] = useState<
     string | null
   >(null);
@@ -53,9 +53,11 @@ const BibleScreen = ({ route }: { route: any }) => {
   useEffect(() => {
     if (route.params?.book) {
       setBook(route.params.book);
+      setShowToc(false)
     }
     if (route.params?.chapter) {
       setChapter(route.params.chapter);
+      setShowToc(false)
     }
   }, [route.params]);
 
@@ -155,7 +157,7 @@ const BibleScreen = ({ route }: { route: any }) => {
                   animated: true,
                 });
               }}
-              className="text-gray-700 hover:text-gray-900 absolute left-[20px] z-10"
+              className="text-gray-700"
             >
               <Ionicons name="ios-arrow-back" size={28} color={colors.black} />
             </TouchableOpacity>
