@@ -37,7 +37,7 @@ export const BibleSearchScreen = () => {
       const json = await response.json();
       // Set total pages to json.found / PER_PAGE, rounded up
       setTotalPages(Math.ceil(json.found / PER_PAGE));
-      const newVerses = json.hits.map((hit: any) => {
+      const newVerses = json.results.results[0].hits.map((hit: any) => {
         return {
           book: hit.document.book,
           chapter: parseInt(hit.document.chapter),
