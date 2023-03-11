@@ -24,6 +24,10 @@ The app features an in-app Bible reader, allowing users to access and read scrip
 
 Users can easily favorite and share any content within the app, including devotionals, sermons, and biblical analyses.
 
+### Semantic Search of the Bible
+
+Faith Forward offers a powerful semantic search engine that leverages OpenAI embeddings and Typesense to help users find relevant verses and passages from the Bible. By analyzing the meaning and context of a user's search query, the search engine is able to surface results that may not match the exact wording of the query, but are semantically related. This allows users to explore the Bible in a more natural and intuitive way, without having to know the exact phrasing of a particular verse or passage.
+
 ## Technologies Used
 
 ### React Native and Expo
@@ -40,11 +44,15 @@ Faith Forward uses Firebase as its backend, utilizing Storage, Firestore, and Cl
 
 ### OpenAI
 
-Faith Forward's generative content is powered by OpenAI's GPT APIs, providing personalized and relevant content to users.
+Faith Forward's generative content and semantic search engine are powered by OpenAI, providing personalized and relevant content to users.
 
 ### Eleven Labs
 
 Audio content is produced by the Eleven Labs API for high quality text-to-speech audio.
+
+### Typesense
+
+Faith Forward leverages Typesense, a modern search engine, for storing and searching the Bible verses. Typesense's speed and relevance algorithms ensure that search queries are executed quickly and accurately, making it easy for users to find the information they need.
 
 ## Getting Started
 
