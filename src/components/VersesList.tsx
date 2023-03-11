@@ -46,7 +46,7 @@ export function VersesList({
           onFaveToggle={handleFaveToggle}
         />
       )}
-      keyExtractor={(item) => `${item.book}${item.chapter}${item.verseNumber}`}
+      keyExtractor={(item) => `${item.book} ${item.chapter}:${item.verseNumber}`}
       style={{ height: "100%" }}
       ListEmptyComponent={
         <View
