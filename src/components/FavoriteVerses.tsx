@@ -1,9 +1,6 @@
-import { logUnfavoriteVerse } from "@src/analytics";
 import { Loading } from "@src/components/Loading";
 import { VersesList } from "@src/components/VersesList";
-import { unfavoriteVerse } from "@src/firebase";
 import { useFavorites } from "@src/hooks/useFavorites";
-import useStore from "@src/store";
 import React, { useEffect, useState } from "react";
 
 export function FavoriteVerses() {
@@ -15,7 +12,6 @@ export function FavoriteVerses() {
     setQuietlyRefreshing,
   } = useFavorites({ fetch: true, faveType: "verses" });
   const [favoriteVerses, setFavoriteVerses] = useState<any[]>([]);
-  const { setError } = useStore();
 
   // Set favorites when favorites updates
   useEffect(() => {
@@ -37,37 +33,11 @@ export function FavoriteVerses() {
     setQuietlyRefreshing(true);
   }, [JSON.stringify(favorites)]);
 
-  async function handleUnfavoritingVerse(
-    book: string,
-    chapter: number,
-    verseNumber: number
-  ): Promise<void> {
-    try {
-      setFavoriteVerses(
-        favoriteVerses.filter(
-          (fave) =>
-            fave.book !== book &&
-            fave.chapter !== chapter &&
-            fave.verseNumber !== verseNumber
-        )
-      );
-      logUnfavoriteVerse(book, chapter, verseNumber);
-      await unfavoriteVerse("kjv", book, chapter, verseNumber);
-    } catch (err: any) {
-      console.warn("Error unfavoriting verse:");
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setQuietlyRefreshing(true);
-    }
-  }
-
   if (loading) return <Loading />;
 
   return (
     <VersesList
       verses={favoriteVerses}
-      handleUnfavoritingVerse={handleUnfavoritingVerse}
       refreshing={refreshing}
       onRefresh={() => setRefreshing(true)}
     />

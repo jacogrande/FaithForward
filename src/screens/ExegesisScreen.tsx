@@ -8,7 +8,7 @@ import { usePastExegeses } from "@src/hooks/usePastExegeses";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { TExegesis } from "@src/types";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   Share,
@@ -45,7 +45,7 @@ function ExegesisScreen() {
     }
   }, [exegesis, JSON.stringify(pastExegeses)]);
 
-  const handleFavoritingExegesis = useCallback(async () => {
+  const handleFavoritingExegesis = async () => {
     try {
       if (!firestoreExegesis) {
         throw new Error("Missing firestoreExegesis");
@@ -61,14 +61,9 @@ function ExegesisScreen() {
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     }
-  }, [
-    firestoreExegesis,
-    setError,
-    setQuietlyRefreshing,
-    setQuietlyRefreshingFaves,
-  ]);
+  };
 
-  const handleUnfavoritingExegesis = useCallback(async () => {
+  const handleUnfavoritingExegesis = async () => {
     try {
       if (!firestoreExegesis) {
         throw new Error("Missing firestoreExegesis");
@@ -84,14 +79,9 @@ function ExegesisScreen() {
       setQuietlyRefreshing(true);
       setQuietlyRefreshingFaves(true);
     }
-  }, [
-    firestoreExegesis,
-    setError,
-    setQuietlyRefreshing,
-    setQuietlyRefreshingFaves,
-  ]);
+  };
 
-  const shareExegesis = useCallback(async () => {
+  const shareExegesis = async () => {
     try {
       if (!firestoreExegesis) {
         throw new Error("Missing firestoreExegesis");
@@ -131,15 +121,15 @@ Sent with Faith Forward`,
     } catch (err: any) {
       console.error(err);
     }
-  }, [firestoreExegesis]);
+  };
 
-  const formattedVerse = useMemo(() => {
+  const formattedVerse = () => {
     if (!verse) {
       return "";
     }
 
     return formatVerse(verse);
-  }, [verse]);
+  };
 
   if (!verse || !book || !chapter || !verseNumber || !exegesis) {
     return null;

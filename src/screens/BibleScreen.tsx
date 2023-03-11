@@ -18,7 +18,7 @@ import { useFavorites } from "@src/hooks/useFavorites";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -33,7 +33,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const BibleScreen = ({ route }: { route: any }) => {
   const [book, setBook] = useState<string>(route.params?.book || "Genesis");
   const [chapter, setChapter] = useState(route.params?.chapter || 1);
-  const [showToc, setShowToc] = useState(route.params?.book ? false : true);
+  const [showToc, setShowToc] = useState(route.params ? false : true);
   const [showChapterSelection, setShowChapterSelection] = useState<
     string | null
   >(null);
@@ -53,9 +53,11 @@ const BibleScreen = ({ route }: { route: any }) => {
   useEffect(() => {
     if (route.params?.book) {
       setBook(route.params.book);
+      setShowToc(false)
     }
     if (route.params?.chapter) {
       setChapter(route.params.chapter);
+      setShowToc(false)
     }
   }, [route.params]);
 
@@ -155,7 +157,7 @@ const BibleScreen = ({ route }: { route: any }) => {
                   animated: true,
                 });
               }}
-              className="text-gray-700 hover:text-gray-900 absolute left-[20px] z-10"
+              className="text-gray-700"
             >
               <Ionicons name="ios-arrow-back" size={28} color={colors.black} />
             </TouchableOpacity>
@@ -291,9 +293,9 @@ const Chapter = ({
   const favoriteVerses =
     favorites?.filter((fave) => fave.type === "verse") || [];
 
-  const handleFaveToggle = useCallback(() => {
+  const handleFaveToggle = () => {
     setQuietlyRefreshing(true);
-  }, [setQuietlyRefreshing]);
+  };
 
   if (!verses) {
     return <></>;
@@ -350,7 +352,7 @@ const Verse = ({
     setIsFavorited(favorited);
   }, [favorited]);
 
-  const shareVerse = useCallback(async () => {
+  const shareVerse = async () => {
     try {
       const verseNumber = num + 1;
       const shareAction = await Share.share({
@@ -364,9 +366,9 @@ Sent with Faith Forward`,
       console.error(err);
       setError(err.message);
     }
-  }, [book, chapter, verse, num]);
+  };
 
-  const handleFavoritingVerse = useCallback(async () => {
+  const handleFavoritingVerse = async () => {
     try {
       setIsFavorited(true);
       logFavoriteVerse(book, chapter, num + 1);
@@ -378,9 +380,9 @@ Sent with Faith Forward`,
     } finally {
       onFaveToggle();
     }
-  }, [book, chapter, verse, num, onFaveToggle]);
+  };
 
-  const handleUnfavoritingVerse = useCallback(async () => {
+  const handleUnfavoritingVerse = async () => {
     try {
       setIsFavorited(false);
       logUnfavoriteVerse(book, chapter, num + 1);
@@ -392,9 +394,9 @@ Sent with Faith Forward`,
     } finally {
       onFaveToggle();
     }
-  }, [book, chapter, verse, num, onFaveToggle]);
+  };
 
-  const getExegesis = useCallback(async () => {
+  const getExegesis = async () => {
     try {
       setIsLoadingExegesis(true);
       logGetExegesis(book, chapter, num + 1, "verse");
@@ -429,7 +431,7 @@ Sent with Faith Forward`,
     } finally {
       setIsLoadingExegesis(false);
     }
-  }, [book, chapter, verse, num]);
+  };
 
   return (
     <TouchableOpacity onPress={() => setShowActions(!showActions)}>

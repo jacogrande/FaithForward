@@ -5,7 +5,7 @@ import BaseText from "@src/components/ui/BaseText";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import { getVerseRef, getVerseRefs } from "@src/utils";
-import { useCallback, useRef } from "react";
+import { useRef } from "react";
 import {
   ScrollView,
   Share,
@@ -50,7 +50,7 @@ function VerseContainer() {
     });
   };
 
-  const handleShare = useCallback(async () => {
+  const handleShare = async () => {
     if (!verseRef.current || !verseRef.current.capture) return;
     try {
       const imageUri = await verseRef.current.capture();
@@ -61,7 +61,7 @@ function VerseContainer() {
     } catch (err) {
       console.error(err);
     }
-  }, [verseRef.current]);
+  };
 
   return (
     <View style={styles.verse}>

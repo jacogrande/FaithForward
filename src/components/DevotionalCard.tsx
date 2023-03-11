@@ -8,7 +8,7 @@ import SmallText from "@src/components/ui/SmallText";
 import useStore from "@src/store";
 import colors from "@src/styles/colors";
 import { formatDate, getVerseRef, getVerseRefs } from "@src/utils";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Share, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ViewShot from "react-native-view-shot";
@@ -31,7 +31,7 @@ export function DevotionalCard({
   const verseRef = useRef<ViewShot | null>(null);
   const { setError } = useStore();
 
-  const handleShare = useCallback(async () => {
+  const handleShare = async () => {
     if (!verseRef.current || !verseRef.current.capture) return;
     try {
       const imageUri = await verseRef.current.capture();
@@ -43,9 +43,9 @@ export function DevotionalCard({
       console.error(err.message);
       setError(err.message);
     }
-  }, []);
+  };
 
-  const handleExpandingDevo = useCallback(() => {
+  const handleExpandingDevo = () => {
     if (isExpanded) {
       setIsExpanded(false);
     } else {
@@ -55,9 +55,9 @@ export function DevotionalCard({
         devotional.title || "Personal Devotional"
       );
     }
-  }, [isExpanded]);
+  };
 
-  const goToVerse = useCallback((book: string, chapter: number) => {
+  const goToVerse = (book: string, chapter: number) => {
     navigation.navigate("Bible", {
       screen: "ReaderAndStudy",
       params: {
@@ -68,7 +68,7 @@ export function DevotionalCard({
         },
       },
     });
-  }, []);
+  };
 
   return (
     <View
