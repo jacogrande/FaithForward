@@ -6,12 +6,12 @@ const analytics = createClient({
   //additional config options
 });
 
-const useLogger = <T>(method: T) => {
+const createLogger = <T>(method: T) => {
   if (process.env.NODE_ENV === "production") return method;
   else return (...args: any) => {};
 };
 
-export const logScreenView = useLogger((screenName: string) => {
+export const logScreenView = createLogger((screenName: string) => {
   try {
     analytics.screen(screenName);
   } catch (err) {
@@ -19,7 +19,7 @@ export const logScreenView = useLogger((screenName: string) => {
   }
 });
 
-export const logViewDevotional = useLogger(
+export const logViewDevotional = createLogger(
   (devotionalID: string, devotionalName: string) => {
     try {
       analytics.track("View Devotional", {
@@ -32,7 +32,7 @@ export const logViewDevotional = useLogger(
   }
 );
 
-export const logCreateDevotional = useLogger(
+export const logCreateDevotional = createLogger(
   (promptID: string, prompt: string, requestTime: number) => {
     try {
       analytics.track("Create Devotional", {
@@ -46,7 +46,7 @@ export const logCreateDevotional = useLogger(
   }
 );
 
-export const logShareDevotional = useLogger(
+export const logShareDevotional = createLogger(
   (
     devotionalID: string,
     devotionalName: string,
@@ -65,7 +65,7 @@ export const logShareDevotional = useLogger(
   }
 );
 
-export const logShareVerse = useLogger(
+export const logShareVerse = createLogger(
   (
     book: string,
     chapter: number,
@@ -85,7 +85,7 @@ export const logShareVerse = useLogger(
   }
 );
 
-export const logLogin = useLogger((loginMethod: "email") => {
+export const logLogin = createLogger((loginMethod: "email") => {
   try {
     analytics.track("Login", {
       loginMethod,
@@ -95,7 +95,7 @@ export const logLogin = useLogger((loginMethod: "email") => {
   }
 });
 
-export const logSignup = useLogger((signUpMethod: "email") => {
+export const logSignup = createLogger((signUpMethod: "email") => {
   try {
     analytics.track("Signup", {
       signUpMethod,
@@ -105,7 +105,7 @@ export const logSignup = useLogger((signUpMethod: "email") => {
   }
 });
 
-export const logFavoriteDevotional = useLogger(
+export const logFavoriteDevotional = createLogger(
   (devotionalID: string, devotionalName: string) => {
     try {
       analytics.track("Favorite Devotional", {
@@ -118,7 +118,7 @@ export const logFavoriteDevotional = useLogger(
   }
 );
 
-export const logUnfavoriteDevotional = useLogger(
+export const logUnfavoriteDevotional = createLogger(
   (devotionalID: string, devotionalName: string) => {
     try {
       analytics.track("Unfavorite Devotional", {
@@ -131,7 +131,7 @@ export const logUnfavoriteDevotional = useLogger(
   }
 );
 
-export const logUnfavoriteExegesis = useLogger(
+export const logUnfavoriteExegesis = createLogger(
   (exegesisId: string, book: string, chapter: number, verseNumber: number) => {
     try {
       analytics.track("Unfavorite Exegesis", {
@@ -146,7 +146,7 @@ export const logUnfavoriteExegesis = useLogger(
   }
 );
 
-export const logFavoriteSermon = useLogger(
+export const logFavoriteSermon = createLogger(
   (sermonID: string, sermonName: string) => {
     try {
       analytics.track("Favorite Sermon", {
@@ -159,7 +159,7 @@ export const logFavoriteSermon = useLogger(
   }
 );
 
-export const logFavoriteVerse = useLogger(
+export const logFavoriteVerse = createLogger(
   (book: string, chapter: number, verseNumber: number) => {
     try {
       analytics.track("Favorite Verse", {
@@ -173,7 +173,7 @@ export const logFavoriteVerse = useLogger(
   }
 );
 
-export const logUnfavoriteVerse = useLogger(
+export const logUnfavoriteVerse = createLogger(
   (book: string, chapter: number, verseNumber: number) => {
     try {
       analytics.track("Unfavorite Verse", {
@@ -187,7 +187,7 @@ export const logUnfavoriteVerse = useLogger(
   }
 );
 
-export const logUnfavoriteSermon = useLogger(
+export const logUnfavoriteSermon = createLogger(
   (sermonID: string, sermonName: string) => {
     try {
       analytics.track("Unfavorite Sermon", {
@@ -200,7 +200,7 @@ export const logUnfavoriteSermon = useLogger(
   }
 );
 
-export const logSermonPlay = useLogger(
+export const logSermonPlay = createLogger(
   (sermonID: string, sermonName: string) => {
     try {
       analytics.track("Play Sermon", {
@@ -213,7 +213,7 @@ export const logSermonPlay = useLogger(
   }
 );
 
-export const logSermonPause = useLogger(() => {
+export const logSermonPause = createLogger(() => {
   try {
     analytics.track("Pause Sermon");
   } catch (err) {
@@ -221,7 +221,7 @@ export const logSermonPause = useLogger(() => {
   }
 });
 
-export const logViewBibleChapter = useLogger(
+export const logViewBibleChapter = createLogger(
   (book: string, chapter: number) => {
     try {
       analytics.track("View Bible Chapter", {
@@ -234,7 +234,7 @@ export const logViewBibleChapter = useLogger(
   }
 );
 
-export const logGoToChapter = useLogger((chapter: string | null) => {
+export const logGoToChapter = createLogger((chapter: string | null) => {
   try {
     analytics.track("Go To Chapter", {
       chapter,
@@ -244,7 +244,7 @@ export const logGoToChapter = useLogger((chapter: string | null) => {
   }
 });
 
-export const logGetExegesis = useLogger(
+export const logGetExegesis = createLogger(
   (book: string, chapter: number, verseNumber: number, type: string) => {
     try {
       analytics.track("Get Exegesis", {
@@ -259,7 +259,7 @@ export const logGetExegesis = useLogger(
   }
 );
 
-export const logShareExegesis = useLogger(
+export const logShareExegesis = createLogger(
   (
     exegesisId: string,
     book: string,
