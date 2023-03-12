@@ -1,11 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Loading } from "@src/components/Loading";
+import BaseText from "@src/components/ui/BaseText";
 import { Container } from "@src/components/ui/Container";
 import { VersesList } from "@src/components/VersesList";
 import { API_URL } from "@src/constants";
 import colors from "@src/styles/colors";
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Keyboard, TextInput, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 const PER_PAGE = 10;
@@ -65,13 +66,14 @@ export const BibleSearchScreen = () => {
   };
 
   const startSearch = () => {
+    Keyboard.dismiss();
     search(1);
   };
 
   return (
     <Container>
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
+      <View className="flex flex-row items-center justify-between p-4 border-ffDarkPaper border-b-2">
+        <View className="flex flex-row items-center flex-1 mr-4">
           <Ionicons
             name="ios-search"
             size={24}
@@ -81,14 +83,15 @@ export const BibleSearchScreen = () => {
           <TextInput
             placeholder="Search the Bible"
             placeholderTextColor={colors.placeholderText}
-            style={styles.searchInput}
             onChangeText={handleQueryChange}
             value={query}
             onSubmitEditing={startSearch}
+            className="text-ffText font-medium flex-1 text-[16px]"
+            hitSlop={{ top: 16, bottom: 16, left: 8, right: 8 }}
           />
         </View>
         <TouchableOpacity disabled={loading} onPress={startSearch}>
-          <Text style={styles.searchButton}>Search</Text>
+          <BaseText className="text-ffBlue font-medium">Search</BaseText>
         </TouchableOpacity>
       </View>
       {loading ? (
@@ -104,40 +107,3 @@ export const BibleSearchScreen = () => {
     </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.darkPaper,
-  },
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    marginRight: 16,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: colors.black,
-  },
-  searchButton: {
-    fontSize: 16,
-    color: colors.blue,
-  },
-  resultsContainer: {
-    flex: 1,
-  },
-  resultsContentContainer: {},
-  result: {
-    marginBottom: 16,
-  },
-  resultTitle: {
-    fontSize: 16,
-    color: colors.black,
-  },
-});
