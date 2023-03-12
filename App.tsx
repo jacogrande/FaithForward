@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import analytics from "@src/analytics";
+import analytics, { logScreenView } from "@src/analytics";
 import { Loading } from "@src/components/Loading";
 import { PROJECT_ID } from "@src/constants";
 import { auth, syncPushToken } from "@src/firebase";
@@ -141,7 +141,7 @@ export default function App() {
   const handleNavigationStateChange = (state: any) => {
     const newRoute = getRouteName(state);
     if (currentRoute !== newRoute) {
-      analytics.screen(newRoute);
+      logScreenView(newRoute);
       setCurrentRoute(newRoute);
     }
   };
