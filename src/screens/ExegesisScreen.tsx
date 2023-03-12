@@ -123,14 +123,6 @@ Sent with Faith Forward`,
     }
   };
 
-  const formattedVerse = () => {
-    if (!verse) {
-      return "";
-    }
-
-    return formatVerse(verse);
-  };
-
   if (!verse || !book || !chapter || !verseNumber || !exegesis) {
     return null;
   }
@@ -143,7 +135,7 @@ Sent with Faith Forward`,
     >
       <View className="mb-10">
         <View className="flex-1 bg-ffPaper justify-center items-center pb-3 px-[10%]">
-          <BigText className="p-2" style={styles.highlight}>{`${formattedVerse}
+          <BigText className="p-2" style={styles.highlight}>{`${formatVerse(verse)}
 - ${book} ${chapter}:${verseNumber}`}</BigText>
           <BaseText>{exegesis}</BaseText>
         </View>

@@ -1,14 +1,17 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {
   logFavoriteVerse,
+  logGetExegesis,
   logShareVerse,
   logUnfavoriteVerse,
 } from "@src/analytics";
+import { ExegesisLoadingMessage } from "@src/components/ExegesisLoadingMessage";
 import BaseText from "@src/components/ui/BaseText";
 import BigText from "@src/components/ui/BigText";
-import { favoriteVerse, unfavoriteVerse } from "@src/firebase";
-import useStore from "@src/store";
+import { API_URL } from "@src/constants";
+import { auth, favoriteVerse, unfavoriteVerse } from "@src/firebase";
+import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
 import React, { useEffect, useState } from "react";
 import { Share, View } from "react-native";
@@ -32,6 +35,9 @@ export function VerseCard({
   const navigation = useNavigation<any>();
   const [isFavorited, setIsFavorited] = useState(favorited);
   const { setError } = useStore();
+  const { setBook, setChapter, setVerseNumber, setVerse, setExegesis } =
+    useBibleStore();
+  const [isLoadingExegesis, setIsLoadingExegesis] = useState(false);
 
   useEffect(() => {
     setIsFavorited(favorited);
@@ -92,7 +98,42 @@ Sent with Faith Forward`,
     }
   };
 
-  // TODO: Include getExegesis action button here
+  const getExegesis = async () => {
+    try {
+      setIsLoadingExegesis(true);
+      logGetExegesis(book, chapter, verseNumber, "verse");
+
+      const userId = auth.currentUser?.uid;
+
+      const response = await fetch(`${API_URL}/getExegesis`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          book,
+          chapter,
+          verseNumber,
+          verse: verse,
+        }),
+      });
+
+      const data = await response.json();
+
+      setBook(book);
+      setChapter(chapter);
+      setVerseNumber(verseNumber);
+      setVerse(verse);
+      setExegesis(data.response);
+
+      navigation.navigate("Verse Analysis", {});
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setIsLoadingExegesis(false);
+    }
+  };
 
   return (
     <View
@@ -112,24 +153,28 @@ Sent with Faith Forward`,
         </BaseText>
       </TouchableOpacity>
       <View className="flex-row justify-end items-center py-2 mt-2">
-        <View className="flex-row">
+        <View className="flex-row items-center">
           {isFavorited ? (
             <TouchableOpacity
               onPress={handleUnfavoritingVerse}
-              className="px-4"
+              className="px-2"
             >
               <Ionicons name="heart-sharp" size={24} color={colors.red} />
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity onPress={handleFavoritingVerse} className="px-3">
+            <TouchableOpacity onPress={handleFavoritingVerse} className="px-2">
               <Ionicons name="heart-outline" size={24} color={colors.red} />
             </TouchableOpacity>
           )}
-          <TouchableOpacity onPress={handleShare}>
+          <TouchableOpacity onPress={handleShare} className="px-2">
             <Ionicons name="ios-share-outline" size={24} color={colors.blue} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={getExegesis} className="px-2">
+            <FontAwesome5 name="scroll" size={20} color={colors.blue} />
           </TouchableOpacity>
         </View>
       </View>
+      {isLoadingExegesis && <ExegesisLoadingMessage />}
     </View>
   );
 }

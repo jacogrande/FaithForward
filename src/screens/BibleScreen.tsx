@@ -30,6 +30,8 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+// TODO: Save current book and chapter in local storage
+//       Pull from storage to act as bookmark between sessions
 const BibleScreen = ({ route }: { route: any }) => {
   const [book, setBook] = useState<string>(route.params?.book || "Genesis");
   const [chapter, setChapter] = useState(route.params?.chapter || 1);
@@ -53,11 +55,11 @@ const BibleScreen = ({ route }: { route: any }) => {
   useEffect(() => {
     if (route.params?.book) {
       setBook(route.params.book);
-      setShowToc(false)
+      setShowToc(false);
     }
     if (route.params?.chapter) {
       setChapter(route.params.chapter);
-      setShowToc(false)
+      setShowToc(false);
     }
   }, [route.params]);
 
@@ -476,7 +478,11 @@ Sent with Faith Forward`,
               </TouchableOpacity>
             )}
           </View>
-          {isLoadingExegesis && <ExegesisLoadingMessage />}
+          {isLoadingExegesis && (
+            <View style={{ marginHorizontal: "12%" }}>
+              <ExegesisLoadingMessage />
+            </View>
+          )}
         </>
       )}
     </TouchableOpacity>
