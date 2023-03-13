@@ -1,4 +1,5 @@
 import { Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import {
   logFavoriteVerse,
@@ -30,12 +31,13 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-// TODO: Save current book and chapter in local storage
-//       Pull from storage to act as bookmark between sessions
 const BibleScreen = ({ route }: { route: any }) => {
-  const [book, setBook] = useState<string>(route.params?.book || "Genesis");
-  const [chapter, setChapter] = useState(route.params?.chapter || 1);
-  const [showToc, setShowToc] = useState(route.params ? false : true);
+  const [initialBook, setInitialBook] = useState<string | null>(null);
+  const [initialChapter, setInitialChapter] = useState<number | null>(null);
+  const [book, setBook] = useState<string | null>(null);
+  const [chapter, setChapter] = useState<number | null>(null);
+  const [showToc, setShowToc] = useState<boolean | null>(null);
+
   const [showChapterSelection, setShowChapterSelection] = useState<
     string | null
   >(null);
@@ -45,25 +47,58 @@ const BibleScreen = ({ route }: { route: any }) => {
   const { requestReview } = useRequestReview();
 
   useEffect(() => {
+    const initializeBookAndChapter = async () => {
+      if (route.params?.book) {
+        setInitialBook(route.params.book);
+        if (route.params?.chapter) {
+          setInitialChapter(route.params.chapter);
+        } else {
+          setInitialChapter(1);
+        }
+        setShowToc(false);
+      } else {
+        const currentBook = await AsyncStorage.getItem("currentBook");
+        if (currentBook) {
+          setInitialBook(currentBook);
+          const currentChapter = await AsyncStorage.getItem("currentChapter");
+          if (currentChapter) {
+            setInitialChapter(parseInt(currentChapter));
+          } else {
+            setInitialChapter(1);
+          }
+          setShowToc(false);
+        } else {
+          setInitialBook(null);
+          setInitialChapter(null);
+          setShowToc(true);
+        }
+      }
+    };
+
+    initializeBookAndChapter();
+  }, [route.params]);
+
+  useEffect(() => {
+    if (initialBook && initialChapter) {
+      setBook(initialBook);
+      setChapter(initialChapter);
+    }
+  }, [initialBook, initialChapter]);
+
+  useEffect(() => {
     if (book && chapter) {
       logViewBibleChapter(book, chapter);
       // Reset scroll view
       scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+      // Save current book and chapter in local storage
+      AsyncStorage.setItem("currentBook", book);
+      AsyncStorage.setItem("currentChapter", chapter.toString());
     }
   }, [book, chapter, scrollViewRef.current]);
 
-  useEffect(() => {
-    if (route.params?.book) {
-      setBook(route.params.book);
-      setShowToc(false);
-    }
-    if (route.params?.chapter) {
-      setChapter(route.params.chapter);
-      setShowToc(false);
-    }
-  }, [route.params]);
-
   const nextChapter = () => {
+    if (!book || !chapter) return;
+
     const currentBook = BIBLE_BOOKS[book];
     if (chapter < currentBook.chapters) {
       setChapter(chapter + 1);
@@ -78,6 +113,8 @@ const BibleScreen = ({ route }: { route: any }) => {
   };
 
   const previousChapter = () => {
+    if (!book || !chapter) return;
+
     const currentBook = BIBLE_BOOKS[book];
     if (chapter > 1) {
       setChapter(chapter - 1);
@@ -269,7 +306,13 @@ const BibleScreen = ({ route }: { route: any }) => {
 
           <ScrollView ref={scrollViewRef} style={styles.scroll}>
             <View className="flex-1 justify-center items-center bg-ffPaper">
-              <Chapter book={book} chapter={chapter} verses={data} />
+              {book && chapter ? (
+                <Chapter book={book} chapter={chapter} verses={data} />
+              ) : (
+                <Text className="text-ffText text-center mt-4">
+                  No chapter selected
+                </Text>
+              )}
             </View>
           </ScrollView>
         </>

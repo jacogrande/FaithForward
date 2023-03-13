@@ -51,13 +51,17 @@ async function clearOldestLocalBook(): Promise<void> {
   }
 }
 
-export function useBibleChapter(book: string, chapter: number) {
+export function useBibleChapter(book: string | null, chapter: number | null) {
   const [data, setData] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
   const { setError } = useStore();
 
   const fetchChapter = async () => {
     try {
+      if (!book || !chapter) {
+        return;
+      }
+
       // Check if we have the chapters for this book in local storage
       const localChapter = await getLocalChapter(book, chapter);
       if (localChapter) {
