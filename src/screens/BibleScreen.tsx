@@ -19,6 +19,7 @@ import { useFavorites } from "@src/hooks/useFavorites";
 import { useRequestReview } from "@src/hooks/useRequestReview";
 import useStore, { useBibleStore } from "@src/store";
 import colors from "@src/styles/colors";
+import { throttle } from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -330,121 +331,192 @@ const Chapter = ({
   chapter: number;
   verses: string[];
 }) => {
+  const navigation = useNavigation<any>();
+  const {
+    setBook: setStoredBook,
+    setChapter: setStoredChapter,
+    setVerse: setStoredVerse,
+    setVerseNumber: setStoredVerseNumber,
+    setExegesis,
+  } = useBibleStore();
+  const [selectedVerses, setSelectedVerses] = useState<number[]>([]);
+  const [isLoadingExegesis, setIsLoadingExegesis] = useState(false);
+  const { setError } = useStore();
   const { favorites, setQuietlyRefreshing } = useFavorites({
     fetch: true,
     faveType: "verses",
   });
-
-  const favoriteVerses =
-    favorites?.filter((fave) => fave.type === "verse") || [];
-
-  const handleFaveToggle = () => {
-    setQuietlyRefreshing(true);
-  };
-
-  if (!verses) {
-    return <></>;
-  }
-
-  const keyExtractor = (index: number) => `${book}_${chapter}_${index}`;
-
-  return (
-    <View style={styles.container}>
-      {verses.map((verse: string, index: number) => (
-        <Verse
-          key={keyExtractor(index)}
-          book={book}
-          chapter={chapter}
-          verse={verse}
-          num={index}
-          favorited={favoriteVerses.some(
-            (fave) =>
-              fave.docData.book === book &&
-              fave.docData.chapter === chapter &&
-              fave.docData.verseNumber === index + 1
-          )}
-          onFaveToggle={handleFaveToggle}
-        />
-      ))}
-    </View>
-  );
-};
-
-const Verse = ({
-  book,
-  chapter,
-  verse,
-  num,
-  favorited,
-  onFaveToggle,
-}: {
-  book: string;
-  chapter: number;
-  verse: string;
-  num: number;
-  favorited: boolean;
-  onFaveToggle: () => void;
-}) => {
-  const navigation = useNavigation<any>();
-  const { setBook, setChapter, setVerseNumber, setVerse, setExegesis } =
-    useBibleStore();
-  const { setError } = useStore();
-  const [showActions, setShowActions] = useState(false);
-  const [isLoadingExegesis, setIsLoadingExegesis] = useState(false);
-  const [isFavorited, setIsFavorited] = useState(favorited);
+  const [favoriteVerses, setFavoriteVerses] = useState<number[]>([]);
 
   useEffect(() => {
-    setIsFavorited(favorited);
-  }, [favorited]);
+    const faveVerses =
+      favorites?.filter(
+        (fave) =>
+          fave.type === "verse" &&
+          fave.docData.book === book &&
+          fave.docData.chapter === chapter
+      ) || [];
+    // use lodash throttle to throttle calls to setFavoriteVerses
+    // so it doesn't run on every render
+    throttle(() => {
+      setFavoriteVerses(faveVerses.map((fave) => fave.docData.verseNumber));
+    }, 1000);
+  }, [JSON.stringify(favorites)]);
 
-  const shareVerse = async () => {
+  const faveVerses = async () => {
     try {
-      const verseNumber = num + 1;
-      const shareAction = await Share.share({
-        message: `"${verse}"
-- ${book} ${chapter}:${verseNumber}
-
-Sent with Faith Forward`,
+      // update favoriteVerses state to include all verses in selectedVerses, deduped
+      setFavoriteVerses([...new Set([...favoriteVerses, ...selectedVerses])]);
+      // Filter selectedVerses for ones that are not favorited
+      // Because sometimes a selected range will include verses that are already favorited
+      const versesToFavorite = selectedVerses.filter(
+        (verse) => !favoriteVerses.includes(verse)
+      );
+      // logFavoriteVerse for each selectedVerse
+      // favoriteVerse for each selectedVerse
+      versesToFavorite.forEach(async (verse) => {
+        logFavoriteVerse(book, chapter, verse);
+        await favoriteVerse("kjv", book, chapter, verse, verses[verse - 1]);
       });
-      logShareVerse(book, chapter, verseNumber, shareAction.action);
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message);
-    }
-  };
-
-  const handleFavoritingVerse = async () => {
-    try {
-      setIsFavorited(true);
-      logFavoriteVerse(book, chapter, num + 1);
-      await favoriteVerse("kjv", book, chapter, num + 1, verse);
     } catch (err: any) {
       console.warn("Error favoriting verse:");
       console.error(err);
       setError(err.message);
     } finally {
-      onFaveToggle();
+      setQuietlyRefreshing(true);
     }
   };
 
-  const handleUnfavoritingVerse = async () => {
+  const unfaveVerses = async () => {
     try {
-      setIsFavorited(false);
-      logUnfavoriteVerse(book, chapter, num + 1);
-      await unfavoriteVerse("kjv", book, chapter, num + 1);
+      // update favoriteVerses state to omit all verses in selectedVerses
+      setFavoriteVerses(
+        favoriteVerses.filter((fave) => !selectedVerses.includes(fave))
+      );
+      // Filter selectedVerses for ones that are favorited
+      // Because sometimes a selected range will include verses that are not favorited
+      const versesToUnfavorite = selectedVerses.filter((verse) =>
+        favoriteVerses.includes(verse)
+      );
+      // logUnfavoriteVerse for each selectedVerse
+      // unfavoriteVerse for each selectedVerse
+      versesToUnfavorite.forEach(async (verse) => {
+        logUnfavoriteVerse(book, chapter, verse);
+        await unfavoriteVerse("kjv", book, chapter, verse);
+      });
     } catch (err: any) {
       console.warn("Error unfavoriting verse:");
       console.error(err);
       setError(err.message);
     } finally {
-      onFaveToggle();
+      setQuietlyRefreshing(true);
     }
   };
 
-  const getExegesis = async () => {
+  const handleFaveToggle = () => {
+    // Base it on the fave state of the highest selected verse number
+    const highestSelectedVerse = selectedVerses[selectedVerses.length - 1];
+    const isFaved = favoriteVerses.some(
+      (fave) => fave === highestSelectedVerse
+    );
+    if (isFaved) {
+      unfaveVerses();
+    } else {
+      faveVerses();
+    }
+  };
+
+  // Update selectedVerses array
+  // - first, last, or only verse in the array? remove
+  // - middle verse in a range? remove everything but
+  // - verse not in or neighboring range? add, and remove all others
+  // - otherwise, add
+  const handleVersePress = (verseNumber: number) => {
+    // No verses selected? Select the pressed verse
+    if (selectedVerses.length === 0) {
+      setSelectedVerses([verseNumber]);
+      return;
+    }
+
+    // Only one verse is selected, and it's the pressed verse? Deselect it
+    if (selectedVerses.length === 1 && selectedVerses[0] === verseNumber) {
+      setSelectedVerses([]);
+      return;
+    }
+
+    // Only one verse is selected, and it's not the pressed verse?
+    // If it's +/- 1 from the pressed verse, select the range
+    // Otherwise, select the pressed verse
+    if (selectedVerses.length === 1) {
+      const selectedVerse = selectedVerses[0];
+      if (
+        verseNumber === selectedVerse + 1 ||
+        verseNumber === selectedVerse - 1
+      ) {
+        setSelectedVerses([selectedVerse, verseNumber].sort());
+      } else {
+        setSelectedVerses([verseNumber]);
+      }
+      return;
+    }
+
+    // Multiple verses are selected
+    // Check if the pressed verse is +/- 1 from the first or last selected verse
+    // or if it is the first or last selected verse
+    // If so, update the range
+    // If not, select the pressed verse
+    const firstSelectedVerse = selectedVerses[0];
+    const lastSelectedVerse = selectedVerses[selectedVerses.length - 1];
+    if (
+      verseNumber === firstSelectedVerse - 1 ||
+      verseNumber === lastSelectedVerse + 1 ||
+      verseNumber === firstSelectedVerse ||
+      verseNumber === lastSelectedVerse
+    ) {
+      const newSelectedVerses = [...selectedVerses];
+      if (verseNumber === firstSelectedVerse) {
+        newSelectedVerses.shift();
+      } else if (verseNumber === lastSelectedVerse) {
+        newSelectedVerses.pop();
+      } else {
+        newSelectedVerses.push(verseNumber);
+      }
+      setSelectedVerses(newSelectedVerses.sort());
+    } else {
+      setSelectedVerses([verseNumber]);
+    }
+  };
+
+  const handleSharePress = async () => {
     try {
+      const versesText = selectedVerses
+        .map((verse) => verses[verse - 1])
+        .join(" ");
+      const verseNumberText =
+        selectedVerses.length > 1
+          ? `${selectedVerses[0]}-${selectedVerses[selectedVerses.length - 1]}`
+          : selectedVerses[0];
+      const shareAction = await Share.share({
+        message: `"${versesText}"
+- ${book} ${chapter}:${verseNumberText}
+
+Sent with Faith Forward`,
+      });
+      logShareVerse(book, chapter, selectedVerses[0], shareAction.action);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+    }
+  };
+
+  const handleExegesisPress = async () => {
+    try {
+      const selectedVerseNumber = selectedVerses[selectedVerses.length - 1];
+      const selectedVerseTexts = verses
+        .filter((_verse, index) => selectedVerses.includes(index + 1))
+        .join(" ");
       setIsLoadingExegesis(true);
-      logGetExegesis(book, chapter, num + 1, "verse");
+      logGetExegesis(book, chapter, selectedVerseNumber, "verse");
 
       const userId = auth.currentUser?.uid;
 
@@ -457,17 +529,19 @@ Sent with Faith Forward`,
           userId: userId,
           book,
           chapter,
-          verseNumber: num + 1,
-          verse: verse,
+          verseNumber: `${selectedVerses[0]}-${
+            selectedVerses[selectedVerses.length - 1]
+          }`,
+          verse: selectedVerseTexts,
         }),
       });
 
       const data = await response.json();
 
-      setBook(book);
-      setChapter(chapter);
-      setVerseNumber(num + 1);
-      setVerse(verse);
+      setStoredBook(book);
+      setStoredChapter(chapter);
+      setStoredVerseNumber(selectedVerseNumber);
+      setStoredVerse(selectedVerseTexts);
       setExegesis(data.response);
 
       navigation.navigate("Verse Analysis", {});
@@ -478,11 +552,66 @@ Sent with Faith Forward`,
     }
   };
 
+  if (!verses) {
+    return <></>;
+  }
+
+  const keyExtractor = (index: number) => `${book} ${chapter}:${index}`;
+
   return (
-    <TouchableOpacity onPress={() => setShowActions(!showActions)}>
+    <View style={styles.container}>
+      {verses.map((verse: string, index: number) => (
+        <Verse
+          key={keyExtractor(index)}
+          verse={verse}
+          num={index + 1}
+          // Only show as favorited if every selected verse is favorited
+          favorited={selectedVerses.every((verse) =>
+            favoriteVerses.includes(verse)
+          )}
+          onFaveToggle={handleFaveToggle}
+          showActions={index + 1 === selectedVerses[selectedVerses.length - 1]}
+          isSelected={selectedVerses.includes(index + 1)}
+          onVersePress={() => handleVersePress(index + 1)}
+          onSharePress={handleSharePress}
+          onExegesisPress={handleExegesisPress}
+          isLoadingExegesis={isLoadingExegesis}
+        />
+      ))}
+    </View>
+  );
+};
+
+const Verse = ({
+  verse,
+  num,
+  favorited,
+  onFaveToggle,
+  showActions,
+  isSelected,
+  onVersePress,
+  onSharePress,
+  onExegesisPress,
+  isLoadingExegesis,
+}: {
+  verse: string;
+  num: number;
+  favorited: boolean;
+  onFaveToggle: () => void;
+  showActions: boolean;
+  isSelected: boolean;
+  onVersePress: () => void;
+  onSharePress: () => void;
+  onExegesisPress: () => void;
+  isLoadingExegesis: boolean;
+}) => {
+  return (
+    <TouchableOpacity onPress={onVersePress}>
       <View style={styles.verseContainer}>
-        <Text style={styles.verseNum}>{num + 1}</Text>
-        <Text style={styles.verseText}>{verse}</Text>
+        <Text style={styles.verseNum}>{num}</Text>
+        <Text style={[styles.verseText, isSelected ? styles.highlight : {}]}>
+          {verse}
+        </Text>
       </View>
       {showActions && (
         <>
@@ -490,22 +619,25 @@ Sent with Faith Forward`,
             className={`${isLoadingExegesis ? "mb-2" : "mb-5"}`}
             style={styles.actionsContainer}
           >
-            {isFavorited ? (
+            {favorited ? (
               <TouchableOpacity
-                onPress={handleUnfavoritingVerse}
+                onPress={onFaveToggle}
                 style={styles.actionButton}
               >
                 <Ionicons name="heart-sharp" size={24} color={colors.red} />
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
-                onPress={handleFavoritingVerse}
+                onPress={onFaveToggle}
                 style={styles.actionButton}
               >
                 <Ionicons name="heart-outline" size={24} color={colors.red} />
               </TouchableOpacity>
             )}
-            <TouchableOpacity onPress={shareVerse} style={styles.actionButton}>
+            <TouchableOpacity
+              onPress={onSharePress}
+              style={styles.actionButton}
+            >
               <Feather name="share" size={20} color={colors.blue} />
             </TouchableOpacity>
             {isLoadingExegesis ? (
@@ -514,7 +646,7 @@ Sent with Faith Forward`,
               </View>
             ) : (
               <TouchableOpacity
-                onPress={getExegesis}
+                onPress={onExegesisPress}
                 style={styles.actionButton}
               >
                 <FontAwesome5 name="scroll" size={20} color={colors.blue} />
@@ -552,6 +684,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff3a8",
     fontWeight: "600",
     fontFamily: "Baskerville",
+    paddingHorizontal: 5,
   },
   text: {
     fontSize: 16,
