@@ -19,7 +19,7 @@ import {
 
 function ExegesisScreen() {
   const [isFavorited, setIsFavorited] = useState(false);
-  const { verse, book, chapter, verseNumber, exegesis } = useBibleStore();
+  const { verse, book, chapter, exegesis } = useBibleStore();
   const { pastExegeses, setQuietlyRefreshing } = usePastExegeses();
   const { setQuietlyRefreshing: setQuietlyRefreshingFaves } = useFavorites({
     fetch: false,
@@ -35,7 +35,7 @@ function ExegesisScreen() {
       return (
         exegesis.book === book &&
         exegesis.chapter === chapter &&
-        exegesis.verseNumber === verseNumber
+        exegesis.verse === verse
       );
     });
 
@@ -123,7 +123,7 @@ Sent with Faith Forward`,
     }
   };
 
-  if (!verse || !book || !chapter || !verseNumber || !exegesis) {
+  if (!firestoreExegesis) {
     return null;
   }
 
@@ -135,8 +135,10 @@ Sent with Faith Forward`,
     >
       <View className="mb-10">
         <View className="flex-1 bg-ffPaper justify-center items-center pb-3 px-[10%]">
-          <BigText className="p-2" style={styles.highlight}>{`${formatVerse(verse)}
-- ${book} ${chapter}:${verseNumber}`}</BigText>
+          <BigText className="p-2" style={styles.highlight}>{`${formatVerse(
+            firestoreExegesis.verse || ""
+          )}
+- ${book} ${chapter}:${firestoreExegesis?.verseNumber}`}</BigText>
           <BaseText>{exegesis}</BaseText>
         </View>
         <View

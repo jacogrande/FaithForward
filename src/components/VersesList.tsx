@@ -27,6 +27,7 @@ export function VersesList({
     setQuietlyRefreshing(true);
   };
 
+  // TODO: Chunk verses into ranges
   return (
     <FlatList
       data={verses}
